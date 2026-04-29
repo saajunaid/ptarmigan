@@ -1,0 +1,25 @@
+# Files excluded from the packaged .vsix (excluded = not shipped to users)
+.vscode/**
+.vscode-test/**
+out/maps/**
+src/**
+scripts/**
+.gitignore
+.eslintrc.json
+tsconfig.json
+esbuild.mjs
+**/*.map
+**/*.ts
+!out/**/*.js
+icon-source.svg
+icon2.png
+icon.gif
+node_modules/**
+media/**
+
+# Local secret files — must NEVER be bundled into VSIX
+*.pat
+*.key
+
+# Diagrams — reference-only, not shipped with extension
+pool/.github/diagrams/**
