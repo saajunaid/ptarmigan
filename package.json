@@ -1,4 +1,4 @@
-﻿{
+{
     "name": "ptarmigan",
     "displayName": "ptarmigan - AI Agent Pipeline",
     "description": "Agentic Engineering for GitHub Copilot. 25 specialist agents, 9 MCP tools, and deterministic pipeline routing for public and open-source projects. Core and public-optional resources only.",
