@@ -4,6 +4,17 @@ All notable changes to the **ptarmigan** VS Code extension are documented here.
 
 ---
 
+## [0.1.9] — 2026-05-05
+
+### Marketplace README
+
+- Replaced text-only flow source line with an actual embedded image:
+  - `![ptarmigan agentic delivery flow](./assets/ptarmigan-agentic-flow.png)`
+- Restored `assets/ptarmigan-agentic-flow.png` from the SVG source so Marketplace can render the flow chart visually.
+- Kept `assets/ptarmigan-agentic-flow.svg` as the editable source-of-truth.
+
+---
+
 ## [0.1.8] — 2026-05-05
 
 ### Documentation
