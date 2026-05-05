@@ -1,6 +1,21 @@
 # Changelog
 
-All notable changes to the **junai** VS Code extension are documented here.
+All notable changes to the **ptarmigan** VS Code extension are documented here.
+
+---
+
+## [0.1.1] — 2026-05-05
+
+### Documentation
+
+- Added a complete marketplace-ready `README.md` with badges, feature highlights, command list, and quick-start flow.
+- Added `PUBLISHING.md` with release and marketplace publishing notes for maintainers.
+- Updated extension marketplace description text for clearer positioning.
+
+### Metadata
+
+- Fixed remaining legacy naming (`shannon` → `ptarmigan`) in configuration descriptions.
+- Normalized a few display strings to avoid mojibake-style rendering issues.
 
 ---
 
