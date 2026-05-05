@@ -1,9 +1,9 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 /**
- * bundle-pool.js  (shannon)
- * ──────────────────────────
- * Builds and syncs the shannon runtime bundle into the extension's pool/ directory before packaging.
- * Reads from dist/runtime-resources/shannon/ — subset profile (core_required + public_optional).
+ * bundle-pool.js  (ptarmigan)
+ * â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+ * Builds and syncs the ptarmigan runtime bundle into the extension's pool/ directory before packaging.
+ * Reads from dist/runtime-resources/ptarmigan/ â€” subset profile (core_required + public_optional).
  *
  * Usage:
  *   node scripts/bundle-pool.js
@@ -39,7 +39,7 @@ function resolveSourceRoot() {
         if (env && fs.existsSync(env)) {
             return env;
         }
-        console.warn(`⚠  JUNAI_SOURCE set but not found: ${process.env.JUNAI_SOURCE}`);
+        console.warn(`âš   JUNAI_SOURCE set but not found: ${process.env.JUNAI_SOURCE}`);
     }
 
     const candidates = [
@@ -59,14 +59,14 @@ function resolveSourceRoot() {
 function runExporter(sourceRoot) {
     const exporter = path.join(sourceRoot, 'export_runtime_resources.py');
     if (!fs.existsSync(exporter)) {
-        console.warn(`⚠  Exporter not found, skipping runtime export: ${exporter}`);
+        console.warn(`âš   Exporter not found, skipping runtime export: ${exporter}`);
         return false;
     }
 
     const candidates = [
-        { cmd: path.join(sourceRoot, '.venv', 'Scripts', 'python.exe'), args: [exporter, '--profile', 'shannon'] },
-        { cmd: 'python', args: [exporter, '--profile', 'shannon'] },
-        { cmd: 'py', args: ['-3', exporter, '--profile', 'shannon'] },
+        { cmd: path.join(sourceRoot, '.venv', 'Scripts', 'python.exe'), args: [exporter, '--profile', 'ptarmigan'] },
+        { cmd: 'python', args: [exporter, '--profile', 'ptarmigan'] },
+        { cmd: 'py', args: ['-3', exporter, '--profile', 'ptarmigan'] },
     ];
 
     for (const candidate of candidates) {
@@ -89,13 +89,13 @@ function runExporter(sourceRoot) {
         }
     }
 
-    console.warn('⚠  Failed to build runtime exports. pool/ content left as-is.');
+    console.warn('âš   Failed to build runtime exports. pool/ content left as-is.');
     return false;
 }
 
 function copyDirSync(src, dest) {
     if (!fs.existsSync(src)) {
-        console.warn(`  ⚠  Not found, skipping: ${path.relative(ROOT, src)}`);
+        console.warn(`  âš   Not found, skipping: ${path.relative(ROOT, src)}`);
         return 0;
     }
 
@@ -108,7 +108,7 @@ function copyDirSync(src, dest) {
             continue;
         }
         if (entry.isDirectory() && entry.name === parentName) {
-            console.warn(`  ⚠  Skipping accidental nesting: ${path.relative(ROOT, src)}/${entry.name}/`);
+            console.warn(`  âš   Skipping accidental nesting: ${path.relative(ROOT, src)}/${entry.name}/`);
             continue;
         }
 
@@ -126,11 +126,11 @@ function copyDirSync(src, dest) {
     return count;
 }
 
-console.log('\n🔧  Bundling shannon runtime resources → pool/');
+console.log('\nðŸ”§  Bundling ptarmigan runtime resources â†’ pool/');
 
 const sourceRoot = resolveSourceRoot();
 if (!sourceRoot) {
-    console.warn('⚠  No source found. pool/ content left as-is.\n');
+    console.warn('âš   No source found. pool/ content left as-is.\n');
     console.warn('   Set JUNAI_SOURCE=<path-to-repo-root-or-.github> to specify source explicitly.\n');
     process.exit(0);
 }
@@ -142,7 +142,7 @@ if (!runExporter(sourceRoot)) {
 
 const runtimeRoot = path.join(sourceRoot, 'dist', 'runtime-resources');
 if (!fs.existsSync(runtimeRoot)) {
-    console.warn(`⚠  Runtime export output not found: ${runtimeRoot}`);
+    console.warn(`âš   Runtime export output not found: ${runtimeRoot}`);
     process.exit(0);
 }
 
@@ -153,22 +153,23 @@ fs.mkdirSync(poolDir, { recursive: true });
 
 let total = 0;
 const runtimes = [
-    { name: 'shannon', folder: '.github' },
+    { name: 'ptarmigan', folder: '.github' },
 ];
 
 for (const runtime of runtimes) {
     const src = path.join(runtimeRoot, runtime.name, runtime.folder);
     const dest = path.join(poolDir, runtime.folder);
     if (!fs.existsSync(src)) {
-        console.warn(`  ⚠  Missing runtime folder, skipped: ${runtime.name}/${runtime.folder}`);
+        console.warn(`  âš   Missing runtime folder, skipped: ${runtime.name}/${runtime.folder}`);
         continue;
     }
     const count = copyDirSync(src, dest);
-    console.log(`  ✓  ${runtime.folder.padEnd(20)} ${count} files`);
+    console.log(`  âœ“  ${runtime.folder.padEnd(20)} ${count} files`);
     total += count;
 }
 
 const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
 fs.writeFileSync(path.join(poolDir, 'POOL_VERSION'), pkg.version, 'utf8');
 
-console.log(`\n✅  Pool bundled — ${total} files written to pool/  [pool version: ${pkg.version}]\n`);
+console.log(`\nâœ…  Pool bundled â€” ${total} files written to pool/  [pool version: ${pkg.version}]\n`);
+

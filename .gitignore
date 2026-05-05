@@ -1,0 +1,7 @@
+﻿out/
+node_modules/
+*.vsix
+pool/
+
+# Local secret files (never commit)
+ptarmigan.pat
