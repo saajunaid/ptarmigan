@@ -2,7 +2,7 @@
     "name": "ptarmigan",
     "displayName": "ptarmigan - AI Agent Pipeline",
     "description": "Beautiful, deterministic agentic engineering for GitHub Copilot: orchestrated pipeline stages, specialist agents, and auditable delivery for open-source teams.",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "publisher": "junai-labs",
     "engines": {
         "vscode": "^1.101.0"

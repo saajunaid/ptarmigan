@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 510" width="1200" height="510" role="img" aria-labelledby="ptitle pdesc">
   <title id="ptitle">Ptarmigan Agentic Development Pipeline</title>
-  <desc id="pdesc">Two-row pipeline: row 1 flows Intent through Planner to a Plan gate; YES drops to row 2 running Implement through Tester, Test gate, Code Reviewer, Review gate, and Ship. NO loops route above row 1 and below row 2 without crossing the main flow.</desc>
+      <desc id="pdesc">Two-row pipeline: row 1 flows Intent through Planner to a Plan gate; YES drops to row 2 running an explicit TDD loop between Implement and Tester before Test gate, then Code Reviewer, Review gate, and Ship. NO loops route above row 1 and below row 2 without crossing the main flow.</desc>
 
   <defs>
     <marker id="ab" viewBox="0 0 8 8" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
@@ -25,7 +25,7 @@
   </text>
   <text x="600" y="58" text-anchor="middle"
         fill="#4b5563" font-family="Inter, system-ui, sans-serif" font-size="12">
-    Deterministic stage routing · explicit quality gates · auditable artefacts
+            Deterministic stage routing · explicit quality gates · TDD loop (Red → Green → Refactor)
   </text>
 
   <!-- ══ ROW 1 (y-centre 150) ══
@@ -140,6 +140,10 @@
 
   <!-- Row 2 forward arrows -->
   <path d="M210 335 H240" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
+  <text x="225" y="303" text-anchor="middle"
+        fill="#a7f3d0" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700">TDD</text>
+  <text x="225" y="316" text-anchor="middle"
+        fill="#6ee7b7" font-family="Inter, system-ui, sans-serif" font-size="9">Red → Green → Refactor</text>
   <path d="M350 335 H380" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
   <!-- Test gate YES → Code Reviewer -->
   <path d="M510 335 H540" stroke="#4ade80" stroke-width="2" fill="none" marker-end="url(#ag)"/>

@@ -4,6 +4,23 @@ All notable changes to the **ptarmigan** VS Code extension are documented here.
 
 ---
 
+## [0.1.6] — 2026-05-05
+
+### Marketplace fixes
+
+- Fixed broken README images on Marketplace by removing externally hosted raw GitHub image dependencies from README rendering paths.
+- Upgraded README badge rendering to high-clarity `for-the-badge` SVG badges to reduce blur.
+
+### Documentation
+
+- Added a Marketplace-safe, text-rendered pipeline diagram that explicitly documents the TDD loop (`Red → Green → Refactor`) between Implement and Tester.
+- Added **What gets installed** tables (folders + root files), aligned with the junai-vscode structure.
+- Added a **Commands** reference table with command intent descriptions.
+- Added an **Extension settings** table with default values and behavior summaries.
+- Updated `assets/ptarmigan-agentic-flow.svg` and regenerated `assets/ptarmigan-agentic-flow.png` to include explicit TDD labeling while preserving non-overlapping connectors.
+
+---
+
 ## [0.1.5] — 2026-05-05
 
 ### Bug fixes
