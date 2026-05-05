@@ -4,6 +4,14 @@ All notable changes to the **ptarmigan** VS Code extension are documented here.
 
 ---
 
+## [0.1.10] — 2026-05-05
+
+### Marketplace refresh
+
+- Forced a fresh Marketplace package ingest so the README section under **Agentic delivery map (TDD-aware)** uses the embedded PNG image block instead of a text-only flow-source line.
+
+---
+
 ## [0.1.9] — 2026-05-05
 
 ### Marketplace README
