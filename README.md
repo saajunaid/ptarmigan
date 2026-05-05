@@ -1,10 +1,10 @@
 <div align="center">
 
-# ptarmigan — AI Agent Pipeline
+# ptarmigan — AI Agent Delivery System
 
 ### Lean, deterministic agentic delivery for public/open-source teams
 
-**A focused, auditable multi-agent workflow for GitHub Copilot — optimized for the minimum resource set that still runs the full pipeline with confidence.**
+**A focused, auditable multi-agent delivery system for GitHub Copilot — optimized for the minimum resource set that still runs deterministic stage orchestration with confidence.**
 
 [![Marketplace](https://img.shields.io/badge/Marketplace-junai--labs.ptarmigan-007ACC.svg?style=for-the-badge&logo=visualstudiocode&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=junai-labs.ptarmigan)
 [![Profile](https://img.shields.io/badge/Profile-lean%20public%20lane-22c55e.svg?style=for-the-badge)](https://github.com/saajunaid/ptarmigan)
@@ -20,11 +20,13 @@
 
 ptarmigan is the **lean public lane** of the junai ecosystem.
 
-It keeps the pipeline deterministic and production-disciplined while trimming the resource surface for open-source/public workflows:
+It keeps the delivery system deterministic and production-disciplined while trimming the resource surface for open-source/public workflows:
 
 - curated specialist agents
 - curated skills/instructions/prompts
 - explicit stage routing + quality gates
+- resources pool deployment and updates
+- recipe-driven setup for repeatable project patterns
 - full repo-local audit trail (`pipeline-state.json` + artefacts)
 
 ### How ptarmigan compares
@@ -39,12 +41,16 @@ It keeps the pipeline deterministic and production-disciplined while trimming th
 
 ---
 
-## Agentic development flow (TDD-aware)
+## Agentic delivery map (TDD-aware)
+
+![junai delivery map reference](https://raw.githubusercontent.com/saajunaid/junai-vscode/main/media/pipeline-modes.png)
+
+> Visual note: this image is hosted from a public source so it renders reliably on Marketplace while ptarmigan repository assets are private.
 
 ```text
 Intent
 	↓
-Initialize Pipeline
+Initialize Delivery System
 	↓
 @Orchestrator
 	↓
@@ -86,6 +92,33 @@ TDD loop inside Implement + Tester: Red → Green → Refactor → Re-run tests
 
 ---
 
+## Recipes: what they are and how to use them
+
+A **recipe** is a reusable delivery blueprint that configures how ptarmigan should scaffold and guide work for a project type.
+
+Think of it as:
+
+- **intent template**: defines the default implementation playbook for a domain
+- **resource selector**: helps align agents/skills/prompts to a project context
+- **consistency layer**: keeps team workflows repeatable across repos
+
+Use recipes when you want predictable setup for similar projects (for example dashboard-heavy work, API-first work, or migration workflows).
+
+### How to use recipes
+
+1. Initialize the delivery system with `ptarmigan: Initialize Agent Pipeline`.
+2. Run `ptarmigan: Set Recipe`.
+3. Pick a recipe from `.github/recipes/*.recipe.md`.
+4. The selected recipe is written to `project-config.md` and used by routing/planning flows.
+
+### When to change recipes
+
+- Your project scope changed (e.g., from prototype to production hardening).
+- You want different defaults for planning and execution behavior.
+- You are standardizing multiple repos on the same delivery pattern.
+
+---
+
 ## What gets installed
 
 One command. Everything lands in your `.github/` folder and travels with your repo.
@@ -105,7 +138,7 @@ Plus at the root level:
 
 | File | Purpose |
 |---|---|
-| `pipeline-state.json` | Live pipeline state (stage, mode, gates, routing, artefacts) |
+| `pipeline-state.json` | Live delivery-state ledger (stage, mode, gates, routing, artefacts) |
 | `copilot-instructions.md` | Project context file with a junai-managed sentinel section |
 | `.vscode/mcp.json` | MCP server registration for VS Code |
 
@@ -115,7 +148,7 @@ Plus at the root level:
 
 | Command | What it does |
 |---|---|
-| `ptarmigan: Initialize Agent Pipeline` | Install pipeline resources and configure MCP wiring |
+| `ptarmigan: Initialize Agent Pipeline` | Install delivery-system resources and configure MCP wiring |
 | `ptarmigan: Initialize Agent Pool` | Install/update pool resources without full pipeline init |
 | `ptarmigan: Update Agent Pool` | Pull latest pool resources while preserving project state |
 | `ptarmigan: Show Pipeline Status` | Show current stage, mode, and gate state |
@@ -134,7 +167,7 @@ Plus at the root level:
 
 | Setting | Default | Description |
 |---|---|---|
-| `junai.defaultMode` | `supervised` | Default pipeline mode used for new projects. |
+| `junai.defaultMode` | `supervised` | Default delivery mode used for new projects. |
 | `junai.autoInitializeOnActivation` | `prompt` | Control first-open behavior: prompt, always, or never initialize automatically. |
 | `junai.avoidUserLevelRuntimeDuplication` | `true` | Skip deploying workspace `.claude`/`.codex` runtime bundles when matching user-level runtimes exist. |
 | `junai.avoidClaudeRuleDuplication` | `true` | Skip workspace `.claude/rules` when `.github/instructions` already exists to reduce duplicate instruction surfaces. |

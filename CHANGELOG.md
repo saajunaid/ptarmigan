@@ -4,6 +4,25 @@ All notable changes to the **ptarmigan** VS Code extension are documented here.
 
 ---
 
+## [0.1.7] — 2026-05-05
+
+### Marketplace fixes
+
+- Restored a visible README visual on Marketplace using a publicly reachable image source to avoid private-repo raw asset failures.
+- Kept high-clarity badge rendering from 0.1.6.
+
+### Documentation
+
+- Added a dedicated **Recipes** section explaining what recipes are, when to use them, and the exact setup flow (`Initialize` → `Set Recipe` → selection from `.github/recipes/*.recipe.md`).
+- Reframed README language from "pipeline" to **delivery system** where appropriate to better reflect scope (stages + pool resources + recipes + orchestration).
+
+### Metadata
+
+- Updated extension display name to `ptarmigan - AI Agent Delivery System`.
+- Updated extension description to include delivery stages, resources pool, and recipes.
+
+---
+
 ## [0.1.6] — 2026-05-05
 
 ### Marketplace fixes
