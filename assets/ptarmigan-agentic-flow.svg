@@ -1,95 +1,168 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="460" viewBox="0 0 1600 460" role="img" aria-labelledby="title desc">
-  <title id="title">Ptarmigan Agentic Development Flow</title>
-  <desc id="desc">Feature intent flows through initialize pipeline, orchestrator, planner, approval gate, implement, tester, test gate, code reviewer, review gate, then ship and merge.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 510" width="1200" height="510" role="img" aria-labelledby="ptitle pdesc">
+  <title id="ptitle">Ptarmigan Agentic Development Pipeline</title>
+  <desc id="pdesc">Two-row pipeline: row 1 flows Intent through Planner to a Plan gate; YES drops to row 2 running Implement through Tester, Test gate, Code Reviewer, Review gate, and Ship. NO loops route above row 1 and below row 2 without crossing the main flow.</desc>
 
   <defs>
-    <style>
-      .bg { fill: #0b1220; }
-      .title { fill: #e5e7eb; font: 700 30px Inter, Segoe UI, Arial, sans-serif; }
-      .subtitle { fill: #9ca3af; font: 500 16px Inter, Segoe UI, Arial, sans-serif; }
-      .node { fill: #111827; stroke: #334155; stroke-width: 2; rx: 12; ry: 12; }
-      .gate { fill: #111827; stroke: #22c55e; stroke-width: 2.5; rx: 12; ry: 12; }
-      .nodeText { fill: #e5e7eb; font: 600 16px Inter, Segoe UI, Arial, sans-serif; text-anchor: middle; dominant-baseline: middle; }
-      .smallText { fill: #86efac; font: 600 12px Inter, Segoe UI, Arial, sans-serif; }
-      .line { stroke: #60a5fa; stroke-width: 3; fill: none; marker-end: url(#arrow); }
-      .loop { stroke: #f59e0b; stroke-width: 3; fill: none; marker-end: url(#arrowLoop); }
-    </style>
-
-    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
-      <path d="M0,0 L12,6 L0,12 Z" fill="#60a5fa" />
+    <marker id="ab" viewBox="0 0 8 8" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,1 L7,4 L0,7 Z" fill="#60a5fa"/>
     </marker>
-
-    <marker id="arrowLoop" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
-      <path d="M0,0 L12,6 L0,12 Z" fill="#f59e0b" />
+    <marker id="ag" viewBox="0 0 8 8" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,1 L7,4 L0,7 Z" fill="#4ade80"/>
+    </marker>
+    <marker id="aa" viewBox="0 0 8 8" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,1 L7,4 L0,7 Z" fill="#fbbf24"/>
     </marker>
   </defs>
 
-  <rect class="bg" x="0" y="0" width="1600" height="460" />
+  <!-- Background -->
+  <rect width="1200" height="510" fill="#0d0f14"/>
 
-  <text class="title" x="800" y="48" text-anchor="middle">Ptarmigan Agentic Development Flow</text>
-  <text class="subtitle" x="800" y="76" text-anchor="middle">Lean deterministic pipeline with explicit quality gates</text>
+  <!-- Header -->
+  <text x="600" y="38" text-anchor="middle"
+        fill="#f3f4f6" font-family="Inter, system-ui, sans-serif"
+        font-size="20" font-weight="700" letter-spacing="-0.3">
+    Ptarmigan — Agentic Development Pipeline
+  </text>
+  <text x="600" y="58" text-anchor="middle"
+        fill="#4b5563" font-family="Inter, system-ui, sans-serif" font-size="12">
+    Deterministic stage routing · explicit quality gates · auditable artefacts
+  </text>
 
-  <!-- Top row nodes -->
-  <rect class="node" x="50" y="140" width="150" height="64" />
-  <text class="nodeText" x="125" y="172">Feature intent</text>
+  <!-- ══ ROW 1 (y-centre 150) ══
+       Node height 48: y=126..174
+       Plan gate height 64: y=118..182
+       x positions: Intent 50, Init 190, Orchestrator 340, Planner 510, Plan gate 650 -->
 
-  <rect class="node" x="240" y="140" width="170" height="64" />
-  <text class="nodeText" x="325" y="172">Initialize pipeline</text>
+  <!-- Intent -->
+  <rect x="50" y="126" width="110" height="48" rx="10"
+        fill="#111827" stroke="#374151" stroke-width="1.5"/>
+  <text x="105" y="155" text-anchor="middle"
+        fill="#d1d5db" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Intent</text>
 
-  <rect class="node" x="450" y="140" width="150" height="64" />
-  <text class="nodeText" x="525" y="172">Orchestrator</text>
+  <!-- Initialize pipeline -->
+  <rect x="190" y="126" width="120" height="48" rx="10"
+        fill="#111827" stroke="#374151" stroke-width="1.5"/>
+  <text x="250" y="149" text-anchor="middle"
+        fill="#d1d5db" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Initialize</text>
+  <text x="250" y="165" text-anchor="middle"
+        fill="#6b7280" font-family="Inter, system-ui, sans-serif" font-size="11">pipeline</text>
 
-  <rect class="node" x="640" y="140" width="130" height="64" />
-  <text class="nodeText" x="705" y="172">Planner</text>
+  <!-- @Orchestrator -->
+  <rect x="340" y="126" width="140" height="48" rx="10"
+        fill="#111827" stroke="#374151" stroke-width="1.5"/>
+  <text x="410" y="155" text-anchor="middle"
+        fill="#93c5fd" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">@Orchestrator</text>
 
-  <rect class="gate" x="810" y="132" width="170" height="80" />
-  <text class="nodeText" x="895" y="166">Plan approved?</text>
+  <!-- Planner -->
+  <rect x="510" y="126" width="110" height="48" rx="10"
+        fill="#111827" stroke="#374151" stroke-width="1.5"/>
+  <text x="565" y="155" text-anchor="middle"
+        fill="#d1d5db" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Planner</text>
 
-  <rect class="node" x="1020" y="140" width="140" height="64" />
-  <text class="nodeText" x="1090" y="172">Implement</text>
+  <!-- Plan gate (taller, green border) -->
+  <rect x="650" y="118" width="140" height="64" rx="13"
+        fill="#071a07" stroke="#22c55e" stroke-width="2"/>
+  <text x="720" y="143" text-anchor="middle"
+        fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">PLAN</text>
+  <text x="720" y="158" text-anchor="middle"
+        fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">APPROVED?</text>
+  <text x="720" y="174" text-anchor="middle"
+        fill="#166534" font-family="Inter, system-ui, sans-serif" font-size="10">gate ①</text>
 
-  <rect class="node" x="1200" y="140" width="120" height="64" />
-  <text class="nodeText" x="1260" y="172">Tester</text>
+  <!-- Row 1 forward arrows -->
+  <path d="M160 150 H190" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
+  <path d="M310 150 H340" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
+  <path d="M480 150 H510" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
+  <path d="M620 150 H650" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
 
-  <!-- Bottom row nodes -->
-  <rect class="gate" x="1200" y="275" width="160" height="80" />
-  <text class="nodeText" x="1280" y="309">Tests pass?</text>
+  <!-- Plan NO loop — routes ABOVE row 1 at y=80, clear of all nodes -->
+  <path d="M720 118 V88 Q720 78 710 78 H575 Q565 78 565 88 V126"
+        stroke="#fbbf24" stroke-width="1.8" fill="none" marker-end="url(#aa)"/>
+  <text x="642" y="71" text-anchor="middle"
+        fill="#fbbf24" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600">NO — refine plan</text>
 
-  <rect class="node" x="1020" y="283" width="160" height="64" />
-  <text class="nodeText" x="1100" y="315">Code Reviewer</text>
+  <!-- YES connector: Plan gate bottom → bridge at y=240 → Implement top -->
+  <path d="M720 182 V232 Q720 240 712 240 H153 Q145 240 145 248 V311"
+        stroke="#4ade80" stroke-width="2.2" fill="none" marker-end="url(#ag)"/>
+  <text x="734" y="215" fill="#4ade80"
+        font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700">YES ↓</text>
 
-  <rect class="gate" x="810" y="275" width="170" height="80" />
-  <text class="nodeText" x="895" y="309">Review approved?</text>
+  <!-- ══ ROW 2 (y-centre 335) ══
+       Node height 48: y=311..359
+       Gate height 64: y=303..367
+       x positions: Implement 80, Tester 240, Test gate 380, Code Reviewer 540, Review gate 715, Ship 900 -->
 
-  <rect class="node" x="640" y="283" width="130" height="64" />
-  <text class="nodeText" x="705" y="315">Ship / merge</text>
+  <!-- Implement -->
+  <rect x="80" y="311" width="130" height="48" rx="10"
+        fill="#111827" stroke="#374151" stroke-width="1.5"/>
+  <text x="145" y="340" text-anchor="middle"
+        fill="#d1d5db" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Implement</text>
 
-  <!-- Forward flow -->
-  <path class="line" d="M200 172 H240" />
-  <path class="line" d="M410 172 H450" />
-  <path class="line" d="M600 172 H640" />
-  <path class="line" d="M770 172 H810" />
-  <path class="line" d="M980 172 H1020" />
-  <path class="line" d="M1160 172 H1200" />
+  <!-- Tester -->
+  <rect x="240" y="311" width="110" height="48" rx="10"
+        fill="#111827" stroke="#374151" stroke-width="1.5"/>
+  <text x="295" y="340" text-anchor="middle"
+        fill="#d1d5db" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Tester</text>
 
-  <path class="line" d="M1260 204 V275" />
-  <path class="line" d="M1200 315 H1180" />
-  <path class="line" d="M1020 315 H980" />
-  <path class="line" d="M810 315 H770" />
+  <!-- Test gate -->
+  <rect x="380" y="303" width="130" height="64" rx="13"
+        fill="#071a07" stroke="#22c55e" stroke-width="2"/>
+  <text x="445" y="328" text-anchor="middle"
+        fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">TESTS</text>
+  <text x="445" y="343" text-anchor="middle"
+        fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">PASS?</text>
+  <text x="445" y="358" text-anchor="middle"
+        fill="#166534" font-family="Inter, system-ui, sans-serif" font-size="10">gate ②</text>
 
-  <!-- Decision labels -->
-  <text class="smallText" x="1000" y="160">YES</text>
-  <text class="smallText" x="1270" y="245">YES</text>
-  <text class="smallText" x="995" y="299">YES</text>
-  <text class="smallText" x="785" y="299">YES</text>
+  <!-- Code Reviewer -->
+  <rect x="540" y="311" width="145" height="48" rx="10"
+        fill="#111827" stroke="#374151" stroke-width="1.5"/>
+  <text x="612" y="340" text-anchor="middle"
+        fill="#d1d5db" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Code Reviewer</text>
 
-  <!-- Loops -->
-  <path class="loop" d="M895 132 V110 H705 V140" />
-  <text class="smallText" x="805" y="104">NO → refine plan</text>
+  <!-- Review gate -->
+  <rect x="715" y="303" width="155" height="64" rx="13"
+        fill="#071a07" stroke="#22c55e" stroke-width="2"/>
+  <text x="792" y="328" text-anchor="middle"
+        fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">REVIEW</text>
+  <text x="792" y="343" text-anchor="middle"
+        fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">APPROVED?</text>
+  <text x="792" y="358" text-anchor="middle"
+        fill="#166534" font-family="Inter, system-ui, sans-serif" font-size="10">gate ③</text>
 
-  <path class="loop" d="M1360 315 H1420 V380 H1090 V347" />
-  <text class="smallText" x="1290" y="398">NO → return to implement</text>
+  <!-- Ship -->
+  <rect x="900" y="311" width="120" height="48" rx="10"
+        fill="#061a06" stroke="#22c55e" stroke-width="2"/>
+  <text x="960" y="333" text-anchor="middle"
+        fill="#4ade80" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="700">Ship /</text>
+  <text x="960" y="350" text-anchor="middle"
+        fill="#4ade80" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="700">Merge ✓</text>
 
-  <path class="loop" d="M810 309 H560 V236 H1020 V283" />
-  <text class="smallText" x="610" y="228">NO → address review feedback</text>
+  <!-- Row 2 forward arrows -->
+  <path d="M210 335 H240" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
+  <path d="M350 335 H380" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
+  <!-- Test gate YES → Code Reviewer -->
+  <path d="M510 335 H540" stroke="#4ade80" stroke-width="2" fill="none" marker-end="url(#ag)"/>
+  <text x="523" y="329" text-anchor="middle"
+        fill="#4ade80" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700">YES</text>
+  <path d="M685 335 H715" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
+  <!-- Review gate YES → Ship -->
+  <path d="M870 335 H900" stroke="#4ade80" stroke-width="2" fill="none" marker-end="url(#ag)"/>
+  <text x="883" y="329" text-anchor="middle"
+        fill="#4ade80" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700">YES</text>
+
+  <!-- Test NO loop — routes BELOW row 2 at y=418, clear of all nodes
+       From Test gate bottom-centre (445,367) → down → left → up into Implement bottom (160,359) -->
+  <path d="M445 367 V408 Q445 418 435 418 H168 Q158 418 158 408 V359"
+        stroke="#fbbf24" stroke-width="1.8" fill="none" marker-end="url(#aa)"/>
+  <text x="300" y="436" text-anchor="middle"
+        fill="#fbbf24" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600">NO — fix and retest</text>
+
+  <!-- Review NO loop — routes BELOW row 2 at y=458, deeper than Test NO (no crossing)
+       From Review gate bottom-centre (792,367) → down → left → up into Implement bottom (125,359) -->
+  <path d="M792 367 V448 Q792 458 782 458 H133 Q123 458 123 448 V359"
+        stroke="#fbbf24" stroke-width="1.8" fill="none" marker-end="url(#aa)"/>
+  <text x="458" y="477" text-anchor="middle"
+        fill="#fbbf24" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600">NO — address review feedback</text>
+
 </svg>

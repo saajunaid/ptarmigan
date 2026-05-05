@@ -4,6 +4,18 @@ All notable changes to the **ptarmigan** VS Code extension are documented here.
 
 ---
 
+## [0.1.5] — 2026-05-05
+
+### Bug fixes
+
+- Fixed broken README images on Marketplace: replaced relative `./assets/` paths with absolute `https://raw.githubusercontent.com/saajunaid/ptarmigan/main/assets/` URLs.
+
+### Documentation
+
+- Redesigned pipeline flow diagram (`assets/ptarmigan-agentic-flow.svg` and `.png`) with a clean two-row layout and zero overlapping arrows. NO loops are routed above row 1 and below row 2 at different depths so all three paths are distinct.
+
+---
+
 ## [0.1.4] — 2026-05-05
 
 ### Documentation

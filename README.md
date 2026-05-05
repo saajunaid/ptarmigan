@@ -42,7 +42,7 @@ It keeps the pipeline deterministic and production-disciplined while trimming th
 
 ## Agentic development flow (recommended)
 
-![Ptarmigan agentic development flow](./assets/ptarmigan-agentic-flow.png)
+![Ptarmigan agentic development flow](https://raw.githubusercontent.com/saajunaid/ptarmigan/main/assets/ptarmigan-agentic-flow.png)
 
 ### Mode behavior
 
