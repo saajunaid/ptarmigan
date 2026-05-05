@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="460" viewBox="0 0 1600 460" role="img" aria-labelledby="title desc">
+  <title id="title">Ptarmigan Agentic Development Flow</title>
+  <desc id="desc">Feature intent flows through initialize pipeline, orchestrator, planner, approval gate, implement, tester, test gate, code reviewer, review gate, then ship and merge.</desc>
+
+  <defs>
+    <style>
+      .bg { fill: #0b1220; }
+      .title { fill: #e5e7eb; font: 700 30px Inter, Segoe UI, Arial, sans-serif; }
+      .subtitle { fill: #9ca3af; font: 500 16px Inter, Segoe UI, Arial, sans-serif; }
+      .node { fill: #111827; stroke: #334155; stroke-width: 2; rx: 12; ry: 12; }
+      .gate { fill: #111827; stroke: #22c55e; stroke-width: 2.5; rx: 12; ry: 12; }
+      .nodeText { fill: #e5e7eb; font: 600 16px Inter, Segoe UI, Arial, sans-serif; text-anchor: middle; dominant-baseline: middle; }
+      .smallText { fill: #86efac; font: 600 12px Inter, Segoe UI, Arial, sans-serif; }
+      .line { stroke: #60a5fa; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .loop { stroke: #f59e0b; stroke-width: 3; fill: none; marker-end: url(#arrowLoop); }
+    </style>
+
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#60a5fa" />
+    </marker>
+
+    <marker id="arrowLoop" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1600" height="460" />
+
+  <text class="title" x="800" y="48" text-anchor="middle">Ptarmigan Agentic Development Flow</text>
+  <text class="subtitle" x="800" y="76" text-anchor="middle">Lean deterministic pipeline with explicit quality gates</text>
+
+  <!-- Top row nodes -->
+  <rect class="node" x="50" y="140" width="150" height="64" />
+  <text class="nodeText" x="125" y="172">Feature intent</text>
+
+  <rect class="node" x="240" y="140" width="170" height="64" />
+  <text class="nodeText" x="325" y="172">Initialize pipeline</text>
+
+  <rect class="node" x="450" y="140" width="150" height="64" />
+  <text class="nodeText" x="525" y="172">Orchestrator</text>
+
+  <rect class="node" x="640" y="140" width="130" height="64" />
+  <text class="nodeText" x="705" y="172">Planner</text>
+
+  <rect class="gate" x="810" y="132" width="170" height="80" />
+  <text class="nodeText" x="895" y="166">Plan approved?</text>
+
+  <rect class="node" x="1020" y="140" width="140" height="64" />
+  <text class="nodeText" x="1090" y="172">Implement</text>
+
+  <rect class="node" x="1200" y="140" width="120" height="64" />
+  <text class="nodeText" x="1260" y="172">Tester</text>
+
+  <!-- Bottom row nodes -->
+  <rect class="gate" x="1200" y="275" width="160" height="80" />
+  <text class="nodeText" x="1280" y="309">Tests pass?</text>
+
+  <rect class="node" x="1020" y="283" width="160" height="64" />
+  <text class="nodeText" x="1100" y="315">Code Reviewer</text>
+
+  <rect class="gate" x="810" y="275" width="170" height="80" />
+  <text class="nodeText" x="895" y="309">Review approved?</text>
+
+  <rect class="node" x="640" y="283" width="130" height="64" />
+  <text class="nodeText" x="705" y="315">Ship / merge</text>
+
+  <!-- Forward flow -->
+  <path class="line" d="M200 172 H240" />
+  <path class="line" d="M410 172 H450" />
+  <path class="line" d="M600 172 H640" />
+  <path class="line" d="M770 172 H810" />
+  <path class="line" d="M980 172 H1020" />
+  <path class="line" d="M1160 172 H1200" />
+
+  <path class="line" d="M1260 204 V275" />
+  <path class="line" d="M1200 315 H1180" />
+  <path class="line" d="M1020 315 H980" />
+  <path class="line" d="M810 315 H770" />
+
+  <!-- Decision labels -->
+  <text class="smallText" x="1000" y="160">YES</text>
+  <text class="smallText" x="1270" y="245">YES</text>
+  <text class="smallText" x="995" y="299">YES</text>
+  <text class="smallText" x="785" y="299">YES</text>
+
+  <!-- Loops -->
+  <path class="loop" d="M895 132 V110 H705 V140" />
+  <text class="smallText" x="805" y="104">NO → refine plan</text>
+
+  <path class="loop" d="M1360 315 H1420 V380 H1090 V347" />
+  <text class="smallText" x="1290" y="398">NO → return to implement</text>
+
+  <path class="loop" d="M810 309 H560 V236 H1020 V283" />
+  <text class="smallText" x="610" y="228">NO → address review feedback</text>
+</svg>

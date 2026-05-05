@@ -4,6 +4,15 @@ All notable changes to the **ptarmigan** VS Code extension are documented here.
 
 ---
 
+## [0.1.4] — 2026-05-05
+
+### Documentation
+
+- Replaced the README Mermaid flowchart with a bundled static flow image to improve Marketplace rendering stability.
+- Added `assets/ptarmigan-agentic-flow.svg` as source artwork and `assets/ptarmigan-agentic-flow.png` for Marketplace-compatible display.
+
+---
+
 ## [0.1.3] — 2026-05-05
 
 ### Marketplace presentation

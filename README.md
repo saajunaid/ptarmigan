@@ -42,22 +42,7 @@ It keeps the pipeline deterministic and production-disciplined while trimming th
 
 ## Agentic development flow (recommended)
 
-```mermaid
-flowchart LR
-    A[Feature intent] --> B[Initialize pipeline]
-    B --> C[@Orchestrator]
-    C --> D[Planner]
-    D --> E{Plan approved?}
-    E -- No --> D
-    E -- Yes --> F[Implement]
-    F --> G[Tester]
-    G --> H{Tests pass?}
-    H -- No --> F
-    H -- Yes --> I[Code Reviewer]
-    I --> J{Review approved?}
-    J -- No --> F
-    J -- Yes --> K[Ship / merge]
-```
+![Ptarmigan agentic development flow](./assets/ptarmigan-agentic-flow.png)
 
 ### Mode behavior
 
