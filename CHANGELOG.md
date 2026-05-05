@@ -4,6 +4,19 @@ All notable changes to the **ptarmigan** VS Code extension are documented here.
 
 ---
 
+## [0.1.3] — 2026-05-05
+
+### Marketplace presentation
+
+- Updated manifest badges to higher-clarity `for-the-badge` PNG style to reduce blur in marketplace header rendering.
+
+### Documentation
+
+- Restyled README to match junai-vscode visual pattern (centered hero, premium framing, comparison section).
+- Added a polished agentic-development flowchart and mode guidance for real-world pipeline usage.
+
+---
+
 ## [0.1.2] — 2026-05-05
 
 ### Marketplace presentation

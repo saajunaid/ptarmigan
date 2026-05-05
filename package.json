@@ -2,7 +2,7 @@
     "name": "ptarmigan",
     "displayName": "ptarmigan - AI Agent Pipeline",
     "description": "Beautiful, deterministic agentic engineering for GitHub Copilot: orchestrated pipeline stages, specialist agents, and auditable delivery for open-source teams.",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "publisher": "junai-labs",
     "engines": {
         "vscode": "^1.101.0"
@@ -44,12 +44,12 @@
     "qna": "https://github.com/saajunaid/ptarmigan/issues",
     "badges": [
         {
-            "url": "https://img.shields.io/badge/Marketplace-junai--labs.ptarmigan-007ACC.png?style=flat-square",
+            "url": "https://img.shields.io/badge/Marketplace-junai--labs.ptarmigan-007ACC.png?style=for-the-badge",
             "href": "https://marketplace.visualstudio.com/items?itemName=junai-labs.ptarmigan",
             "description": "VS Code Marketplace listing"
         },
         {
-            "url": "https://img.shields.io/badge/Profile-lean%20public%20lane-22c55e.png?style=flat-square",
+            "url": "https://img.shields.io/badge/Profile-lean%20public%20lane-22c55e.png?style=for-the-badge",
             "href": "https://github.com/saajunaid/ptarmigan",
             "description": "Trimmed public lane profile"
         }
