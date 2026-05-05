@@ -2,7 +2,7 @@
 
 # ptarmigan — AI Agent Delivery System
 
-### Lean, deterministic agentic delivery for public/open-source teams
+### Lean, deterministic agentic delivery for Enterprise teams
 
 **A focused, auditable multi-agent delivery system for GitHub Copilot — optimized for the minimum resource set that still runs deterministic stage orchestration with confidence.**
 
@@ -43,9 +43,7 @@ It keeps the delivery system deterministic and production-disciplined while trim
 
 ## Agentic delivery map (TDD-aware)
 
-![junai delivery map reference](https://raw.githubusercontent.com/saajunaid/junai-vscode/main/media/pipeline-modes.png)
-
-> Visual note: this image is hosted from a public source so it renders reliably on Marketplace while ptarmigan repository assets are private.
+Flow diagram source: [`assets/ptarmigan-agentic-flow.svg`](./assets/ptarmigan-agentic-flow.svg)
 
 ```text
 Intent

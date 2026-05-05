@@ -4,6 +4,20 @@ All notable changes to the **ptarmigan** VS Code extension are documented here.
 
 ---
 
+## [0.1.8] — 2026-05-05
+
+### Documentation
+
+- Updated README subtitle to: **Lean, deterministic agentic delivery for Enterprise teams**.
+- Removed the external advisory-hub style card image from README.
+- README now references only the local `assets/ptarmigan-agentic-flow.svg` flow source.
+
+### Repository cleanup
+
+- Removed non-primary diagram image assets so the repository retains only the core flow diagram source (`ptarmigan-agentic-flow.svg`) for delivery-map documentation.
+
+---
+
 ## [0.1.7] — 2026-05-05
 
 ### Marketplace fixes
