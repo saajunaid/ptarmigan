@@ -1,43 +1,52 @@
 # ptarmigan - AI Agent Pipeline
 
-[![VS Code Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/junai-labs.ptarmigan?label=Marketplace&color=4c1)](https://marketplace.visualstudio.com/items?itemName=junai-labs.ptarmigan)
-[![VS Code Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/junai-labs.ptarmigan?label=Installs)](https://marketplace.visualstudio.com/items?itemName=junai-labs.ptarmigan)
-[![VS Code Marketplace Rating](https://img.shields.io/visual-studio-marketplace/r/junai-labs.ptarmigan?label=Rating)](https://marketplace.visualstudio.com/items?itemName=junai-labs.ptarmigan)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE.md)
+[![Marketplace](https://img.shields.io/badge/Marketplace-junai--labs.ptarmigan-007ACC.png?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=junai-labs.ptarmigan)
+[![Profile](https://img.shields.io/badge/Profile-lean%20public%20lane-22c55e.png?style=flat-square)](https://github.com/saajunaid/ptarmigan)
+[![License: MIT](https://img.shields.io/badge/License-MIT-2563eb.svg)](./LICENSE.md)
 
-Agentic engineering for GitHub Copilot with deterministic workflow orchestration.
+**Build software with agents like an engineering team, not a single chat tab.**
 
-ptarmigan provides:
-- 25 specialist agents
-- 9 MCP tools
-- deterministic pipeline routing (`supervised`, `assisted`, `autopilot`)
-- profile + recipe aware project setup for public/open-source workflows
+ptarmigan turns GitHub Copilot into a structured agentic delivery pipeline for public/open-source development, with deterministic stage routing, explicit quality gates, and auditable artefacts.
 
-## Why ptarmigan
+## What makes ptarmigan powerful
 
-ptarmigan helps teams move from ad-hoc prompting to repeatable delivery:
-- **Deterministic routing:** stage-aware flow instead of random context hopping.
-- **Clear safety model:** low/medium/high risk action tiers with approval boundaries.
-- **Portable project setup:** installs agent/runtime resources directly into your workspace.
-- **Public-profile defaults:** optimized for open-source and public repository work.
+- **Deterministic orchestration**: explicit stage transitions, no random agent drift.
+- **Specialist agent roles**: planning, implementation, testing, and review lanes.
+- **Mode-aware execution**: `supervised`, `assisted`, or `autopilot`.
+- **Portable workspace runtime**: pipeline context lives in your repo and travels with it.
+- **Lean profile by design**: minimal curated resources needed for pipeline reliability.
 
-## Requirements
+## Agentic development flow
 
-- VS Code `^1.101.0`
-- GitHub Copilot Chat enabled
-- `uv` available on PATH (for MCP server runtime)
+Use this flow to run feature delivery with repeatability and strong feedback loops:
+
+```mermaid
+flowchart TD
+	A[Define feature intent] --> B[Initialize pipeline in workspace]
+	B --> C[@Orchestrator reads context + routes stage]
+	C --> D[Planner creates scoped implementation plan]
+	D --> E{Plan approved?}
+	E -- No --> D
+	E -- Yes --> F[Implement executes feature slice]
+	F --> G[Tester validates behavior + regressions]
+	G --> H{Tests pass?}
+	H -- No --> F
+	H -- Yes --> I[Code Reviewer validates quality + risk]
+	I --> J{Review approved?}
+	J -- No --> F
+	J -- Yes --> K[Orchestrator closes stage chain]
+	K --> L[Done: merge-ready artefacts]
+```
 
 ## Quick start
 
 1. Install **ptarmigan** from VS Code Marketplace.
-2. Open your target workspace.
-3. Run command palette action: `ptarmigan: Initialize Agent Pipeline`.
-4. Choose your default mode (`supervised` recommended initially).
+2. Open your project workspace.
+3. Run: `ptarmigan: Initialize Agent Pipeline`
+4. Select pipeline mode (`supervised` is best for first run).
 5. Open Copilot Chat and start with `@Orchestrator`.
 
-## Commands
-
-ptarmigan contributes these commands:
+## Command palette actions
 
 - `ptarmigan: Initialize Agent Pipeline`
 - `ptarmigan: Initialize Agent Pool`
@@ -52,9 +61,7 @@ ptarmigan contributes these commands:
 - `ptarmigan: Run Coordinator Mode (experimental)`
 - `ptarmigan: Deep Plan: Build Structured Plan (experimental)`
 
-## Configuration
-
-Key settings:
+## Core configuration
 
 - `junai.defaultMode`
 - `junai.autoInitializeOnActivation`
@@ -66,12 +73,12 @@ Key settings:
 - `junai.experimental.deepPlan`
 - `junai.experimental.proactive`
 
-## Publishing note
+## Publishing and release
 
-- Marketplace publisher: `junai-labs`
+- Publisher: `junai-labs`
 - Extension ID: `junai-labs.ptarmigan`
-- Versioning follows `package.json`.
-- Release/publish runbook: see [`PUBLISHING.md`](./PUBLISHING.md)
+- Version source: `package.json`
+- Maintainer runbook: [`PUBLISHING.md`](./PUBLISHING.md)
 
 ## Support
 

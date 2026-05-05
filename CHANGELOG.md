@@ -4,6 +4,19 @@ All notable changes to the **ptarmigan** VS Code extension are documented here.
 
 ---
 
+## [0.1.2] — 2026-05-05
+
+### Marketplace presentation
+
+- Replaced retired-prone badge endpoints with VS Marketplace badge endpoints in manifest and README.
+- Enhanced marketplace description copy for clearer positioning.
+
+### Documentation
+
+- Expanded README with a richer agentic-development narrative and a Mermaid flowchart showing stage-by-stage usage.
+
+---
+
 ## [0.1.1] — 2026-05-05
 
 ### Documentation
