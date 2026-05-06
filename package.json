@@ -2,7 +2,7 @@
     "name": "ptarmigan",
     "displayName": "ptarmigan - AI Agent Delivery System",
     "description": "Beautiful, deterministic agentic engineering for GitHub Copilot: orchestrated delivery stages, resources pool, recipes, specialist agents, and auditable execution for open-source teams.",
-    "version": "0.1.14",
+    "version": "0.1.15",
     "publisher": "junai-labs",
     "engines": {
         "vscode": "^1.101.0"
