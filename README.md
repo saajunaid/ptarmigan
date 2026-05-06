@@ -43,7 +43,7 @@ It keeps the delivery system deterministic and production-disciplined while trim
 
 ## Agentic delivery map (TDD-aware)
 
-<img width="1497" height="636" alt="image" src="https://github.com/user-attachments/assets/1842d85a-2674-40a3-a961-3891c07c1b61" />
+![ptarmigan agentic delivery flow](./assets/ptarmigan-agentic-flow.png)
 
 Flow source (editable): [`assets/ptarmigan-agentic-flow.svg`](./assets/ptarmigan-agentic-flow.svg)
 

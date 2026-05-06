@@ -4,6 +4,16 @@ All notable changes to the **ptarmigan** VS Code extension are documented here.
 
 ---
 
+## [0.1.11] — 2026-05-06
+
+### Marketplace README fix
+
+- Replaced broken `github.com/user-attachments/...` image URL (404 for anonymous fetch) with packaged asset reference:
+  - `![ptarmigan agentic delivery flow](./assets/ptarmigan-agentic-flow.png)`
+- Kept `assets/ptarmigan-agentic-flow.png` in the VSIX so Marketplace can render the diagram from extension content.
+
+---
+
 ## [0.1.10] — 2026-05-05
 
 ### Marketplace refresh
