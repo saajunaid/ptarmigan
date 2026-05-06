@@ -16,7 +16,7 @@
 ---
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/saajunaid/junai-vscode/main/media/ptarmigan-agentic-flow.png" width="900" alt="ptarmigan agentic delivery flow"/>
+<img src="https://raw.githubusercontent.com/saajunaid/junai-vscode/main/media/ptarmigan-agentic-flow.svg" width="100%" alt="ptarmigan agentic delivery flow"/>
 </div>
 
 ---
