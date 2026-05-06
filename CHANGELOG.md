@@ -4,6 +4,15 @@ All notable changes to the **ptarmigan** VS Code extension are documented here.
 
 ---
 
+## [0.1.12] — 2026-05-06
+
+### Marketplace README image fix
+
+- Switched the flow diagram image to the same public hosting pattern used by junai-vscode (`raw.githubusercontent.com`) so Marketplace can fetch it without private-repo access issues.
+- Updated image reference under **Agentic delivery map (TDD-aware)** to a publicly reachable raw GitHub asset URL.
+
+---
+
 ## [0.1.11] — 2026-05-06
 
 ### Marketplace README fix
