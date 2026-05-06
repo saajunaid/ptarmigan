@@ -4,6 +4,18 @@ All notable changes to the **ptarmigan** VS Code extension are documented here.
 
 ---
 
+## [0.1.13] — 2026-05-06
+
+### Marketplace README image correction
+
+- Switched the overview diagram image source to the ptarmigan-owned asset path:
+  - `assets/ptarmigan-agentic-flow.png` (Marketplace-safe render target)
+  - raw URL: `https://raw.githubusercontent.com/saajunaid/ptarmigan/main/assets/ptarmigan-agentic-flow.png`
+- Keeps `assets/ptarmigan-agentic-flow.svg` as the editable source-of-truth while using PNG for reliable Marketplace rendering.
+- Removes dependency on junai-vscode media image content for ptarmigan marketplace rendering.
+
+---
+
 ## [0.1.12] — 2026-05-06
 
 ### Marketplace README image fix
