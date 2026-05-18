@@ -1,69 +1,2543 @@
-"use strict";var $n=Object.create;var fe=Object.defineProperty;var _n=Object.getOwnPropertyDescriptor;var Cn=Object.getOwnPropertyNames;var Rn=Object.getPrototypeOf,Dn=Object.prototype.hasOwnProperty;var S=(e,t)=>()=>(t||e((t={exports:{}}).exports,t),t.exports),On=(e,t)=>{for(var n in t)fe(e,n,{get:t[n],enumerable:!0})},pt=(e,t,n,i)=>{if(t&&typeof t=="object"||typeof t=="function")for(let s of Cn(t))!Dn.call(e,s)&&s!==n&&fe(e,s,{get:()=>t[s],enumerable:!(i=_n(t,s))||i.enumerable});return e};var P=(e,t,n)=>(n=e!=null?$n(Rn(e)):{},pt(t||!e||!e.__esModule?fe(n,"default",{value:e,enumerable:!0}):n,e)),In=e=>pt(fe({},"__esModule",{value:!0}),e);var Ie=S(he=>{"use strict";Object.defineProperty(he,"__esModule",{value:!0});he.JunaiEventBus=void 0;var Mn=require("events"),me=class e{constructor(){this.emitter=new Mn.EventEmitter,this.eventLog=[],this.maxLogSize=100,this.emitter.setMaxListeners(50)}static getInstance(){return e.instance||(e.instance=new e),e.instance}on(t,n){return this.emitter.on(t,n),()=>{this.emitter.off(t,n)}}onAny(t){let n=i=>t(i);return this.emitter.on("*",n),()=>{this.emitter.off("*",n)}}emit(t){this.eventLog.push(t),this.eventLog.length>this.maxLogSize&&this.eventLog.shift(),this.emitter.emit(t.type,t),this.emitter.emit("*",t)}getRecentEvents(t=10){return this.eventLog.slice(-t).reverse()}dispose(){this.emitter.removeAllListeners(),this.eventLog=[],e.instance=null}};he.JunaiEventBus=me;me.instance=null});var ft=S(ge=>{"use strict";Object.defineProperty(ge,"__esModule",{value:!0});ge.createProactivePolicyState=Wn;ge.evaluateProactiveEvent=Un;var xn=12e4,An=15e3,En=6e3,Tn=2500,Fn=new Set(["blocked","approval-needed"]);function Nn(e){switch(e.type){case"background-result":{let t=e.status==="success";return{id:`background-${e.taskId}-${e.status}-${e.timestamp}`,kind:"background-result",title:t?"Background step done":"Background step failed",detail:e.detail||e.summary,severity:t?"success":"warning",dedupeKey:`background:${e.taskId}:${e.status}:${e.summary}`,surface:t?"status":"popup",createdAt:e.timestamp}}case"approval-needed":return e.source==="deep-plan"&&e.stage==="plan"?{id:`deep-plan-ready-${e.timestamp}`,kind:"deep-plan-ready",title:"Next step ready",detail:e.detail||"Review the plan and choose what to do next.",severity:"info",dedupeKey:`deep-plan-ready:${e.source}:${e.stage}:${e.action}`,surface:"popup",createdAt:e.timestamp}:{id:`approval-needed-${e.source}-${e.stage}-${e.timestamp}`,kind:"approval-needed",title:e.title,detail:e.detail||`${e.agent} requested approval for ${e.action}.`,severity:e.riskTier==="high"?"warning":"info",dedupeKey:`approval-needed:${e.source}:${e.stage}:${e.action}:${e.riskTier}`,surface:e.riskTier==="high"?"popup":"status",createdAt:e.timestamp};case"task-blocked":return{id:`task-blocked-${e.source}-${e.stage}-${e.timestamp}`,kind:"blocked",title:e.title,detail:e.detail||e.reason,severity:"warning",dedupeKey:`task-blocked:${e.source}:${e.stage}:${e.reason}`,surface:"popup",createdAt:e.timestamp};case"task-completed":return e.source==="deep-plan"&&e.stage==="plan-approved"?{id:`deep-plan-approved-${e.timestamp}`,kind:"deep-plan-approved",title:"Plan approved",detail:e.detail||e.summary,severity:"success",dedupeKey:`deep-plan-approved:${e.source}:${e.stage}:${e.summary}`,surface:"status",createdAt:e.timestamp}:e.source==="coordinator"&&e.agent==="Coordinator"&&e.stage==="coordinate"?{id:`coordinator-complete-${e.timestamp}`,kind:"coordinator-complete",title:"Coordinator review complete",detail:e.detail||e.summary,severity:"success",dedupeKey:`coordinator-complete:${e.summary}`,surface:"status",createdAt:e.timestamp}:null;case"memory-consolidated":return{id:`dream-memory-consolidated-${e.timestamp}`,kind:"dream-memory-consolidated",title:"Memory updated",detail:e.detail||`+${e.itemsPromoted} promoted, ${e.itemsPruned} pruned.`,severity:"info",dedupeKey:`dream-memory:${e.itemsPromoted}:${e.itemsPruned}`,surface:"log",createdAt:e.timestamp};default:return null}}function Ln(e){return{dedupeWindowMs:e?.dedupeWindowMs??xn,popupCooldownMs:e?.popupCooldownMs??An,statusDurationMs:e?.statusDurationMs??En,statusCooldownMs:e?.statusCooldownMs??Tn}}function Bn(e,t,n){for(let[i,s]of e.dedupeSeenAt.entries())n-s>t&&e.dedupeSeenAt.delete(i)}function Wn(){return{dedupeSeenAt:new Map,lastPopupAtMs:0,lastStatusAtMs:0}}function Un(e,t,n,i=Date.now()){let s=Ln(n),o=Nn(e);if(!o)return{notice:null,surface:null,suppressedReason:"filtered"};if(Bn(t,s.dedupeWindowMs,i),o.dedupeKey){let l=t.dedupeSeenAt.get(o.dedupeKey);if(typeof l=="number"&&i-l<=s.dedupeWindowMs)return{notice:o,surface:null,suppressedReason:"deduped"}}let r=o.surface,a=!1,d=!1;return r==="popup"&&i-t.lastPopupAtMs<=s.popupCooldownMs&&!Fn.has(o.kind)&&(r="status",a=!0),r==="status"&&(o.severity==="info"||o.severity==="success")&&i-t.lastStatusAtMs<=s.statusCooldownMs&&(r="log",d=!0),o.dedupeKey&&t.dedupeSeenAt.set(o.dedupeKey,i),r==="popup"&&(t.lastPopupAtMs=i),r==="status"&&(t.lastStatusAtMs=i),{notice:o,surface:r,downgradedFromPopup:a,downgradedFromStatus:d}}});var mt=S(Me=>{"use strict";Object.defineProperty(Me,"__esModule",{value:!0});Me.runBackgroundTask=zn;async function zn(e,t){try{let n=await t.run(),i=t.summarizeSuccess?.(n)??"Background task completed successfully";return e.emit({type:"background-result",timestamp:new Date().toISOString(),source:t.source,severity:"success",title:"Background step done",detail:i,taskId:t.taskId,status:"success",summary:i}),{status:"success",result:n}}catch(n){let i=t.summarizeFailure?.(n)??(n instanceof Error?n.message:String(n));return e.emit({type:"background-result",timestamp:new Date().toISOString(),source:t.source,severity:"warning",title:"Background step failed",detail:i,taskId:t.taskId,status:"failure",summary:i}),{status:"failure",error:i}}}});var ht=S(I=>{"use strict";var qn=I&&I.__createBinding||(Object.create?(function(e,t,n,i){i===void 0&&(i=n);var s=Object.getOwnPropertyDescriptor(t,n);(!s||("get"in s?!t.__esModule:s.writable||s.configurable))&&(s={enumerable:!0,get:function(){return t[n]}}),Object.defineProperty(e,i,s)}):(function(e,t,n,i){i===void 0&&(i=n),e[i]=t[n]})),xe=I&&I.__exportStar||function(e,t){for(var n in e)n!=="default"&&!Object.prototype.hasOwnProperty.call(t,n)&&qn(t,e,n)};Object.defineProperty(I,"__esModule",{value:!0});xe(Ie(),I);xe(ft(),I);xe(mt(),I)});var Ee=S(ye=>{"use strict";Object.defineProperty(ye,"__esModule",{value:!0});ye.TaskGraph=void 0;var Ae=class{constructor(){this.nodes=new Map}addWorker(t){if(this.nodes.has(t.id))throw new Error(`Worker ID "${t.id}" already exists in task graph`);this.nodes.set(t.id,{worker:t,status:"pending"})}getNode(t){return this.nodes.get(t)}getAllNodes(){return Array.from(this.nodes.values())}getPendingWorkers(){return this.getAllNodes().filter(t=>t.status==="pending").map(t=>t.worker)}markRunning(t){let n=this.nodes.get(t);if(!n)throw new Error(`Unknown worker: ${t}`);n.status="running",n.startedAt=new Date().toISOString()}markCompleted(t,n){let i=this.nodes.get(t);if(!i)throw new Error(`Unknown worker: ${t}`);i.status=n.status==="success"?"completed":"failed",i.result=n,i.completedAt=new Date().toISOString()}isComplete(){return this.getAllNodes().every(t=>t.status==="completed"||t.status==="failed")}getSummary(){let t=this.getAllNodes();return{total:t.length,completed:t.filter(n=>n.status==="completed").length,failed:t.filter(n=>n.status==="failed").length,pending:t.filter(n=>n.status==="pending").length,running:t.filter(n=>n.status==="running").length}}};ye.TaskGraph=Ae});var Te=S(M=>{"use strict";var Hn=M&&M.__createBinding||(Object.create?(function(e,t,n,i){i===void 0&&(i=n);var s=Object.getOwnPropertyDescriptor(t,n);(!s||("get"in s?!t.__esModule:s.writable||s.configurable))&&(s={enumerable:!0,get:function(){return t[n]}}),Object.defineProperty(e,i,s)}):(function(e,t,n,i){i===void 0&&(i=n),e[i]=t[n]})),Kn=M&&M.__setModuleDefault||(Object.create?(function(e,t){Object.defineProperty(e,"default",{enumerable:!0,value:t})}):function(e,t){e.default=t}),gt=M&&M.__importStar||(function(){var e=function(t){return e=Object.getOwnPropertyNames||function(n){var i=[];for(var s in n)Object.prototype.hasOwnProperty.call(n,s)&&(i[i.length]=s);return i},e(t)};return function(t){if(t&&t.__esModule)return t;var n={};if(t!=null)for(var i=e(t),s=0;s<i.length;s++)i[s]!=="default"&&Hn(n,t,i[s]);return Kn(n,t),n}})();Object.defineProperty(M,"__esModule",{value:!0});M.executeWorker=Vn;var D=gt(require("fs")),J=gt(require("path"));async function Vn(e,t){let n=Date.now();try{let i;switch(e.type){case"explore":i=await Jn(e,t);break;case"verify":i=await Gn(e,t);break;case"review":i=await Qn(e,t);break;default:throw new Error(`Unknown worker type: ${e.type}`)}return{workerId:e.id,workerType:e.type,label:e.label,status:"success",output:i,durationMs:Date.now()-n}}catch(i){let s=i instanceof Error?i.message:String(i);return{workerId:e.id,workerType:e.type,label:e.label,status:"failure",output:"",durationMs:Date.now()-n,error:s}}}async function Jn(e,t){let n=[],i=e.scopePaths??["."];for(let s of i){let o=J.resolve(t,s);if(!D.existsSync(o)){n.push(`Path not found: ${s}`);continue}let r=D.statSync(o);if(r.isFile()){let a=D.readFileSync(o,"utf8"),d=a.split(`
-`).length;n.push(`**${s}** (${d} lines):
-\`\`\`
-${a.slice(0,2e3)}${a.length>2e3?`
-... (truncated)`:""}
-\`\`\``)}else if(r.isDirectory()){let a=yt(o,t,2);n.push(`**${s}/** contents:
-${a}`)}}return n.length===0&&n.push("No results found for the given scope."),`### Explore: ${e.label}
+"use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-**Prompt:** ${e.prompt}
+// src/extension.ts
+var extension_exports = {};
+__export(extension_exports, {
+  activate: () => activate,
+  deactivate: () => deactivate
+});
+module.exports = __toCommonJS(extension_exports);
+var vscode4 = __toESM(require("vscode"));
+var fs4 = __toESM(require("fs"));
+var path4 = __toESM(require("path"));
+var os = __toESM(require("os"));
+var import_child_process = require("child_process");
 
-${n.join(`
+// src/featureFlags.ts
+var vscode = __toESM(require("vscode"));
+var CONFIG_SECTION = "ptarmigan.experimental";
+var FEATURE_MANIFEST = [
+  {
+    flag: "coordinator",
+    label: "Coordinator Mode",
+    statusLabel: "Coordinator Mode",
+    description: "Fan out structured read-only investigation tasks and synthesize the findings.",
+    implemented: true,
+    commandId: "ptarmigan.coordinate"
+  },
+  {
+    flag: "dream",
+    label: "Dream Memory",
+    statusLabel: "Dream Memory",
+    description: "Consolidate durable insights from coordinator runs into lightweight workspace memory.",
+    implemented: true
+  },
+  {
+    flag: "deepPlan",
+    label: "Deep Plan",
+    statusLabel: "Deep Plan",
+    description: "Generate a structured, approval-ready implementation plan from task inputs and workspace signals.",
+    implemented: true,
+    commandId: "ptarmigan.deepPlan"
+  },
+  {
+    flag: "proactive",
+    label: "Proactive Assistant",
+    statusLabel: "Proactive Assistant",
+    description: "Surface low-noise notices for important runtime events using popup, status-bar, or log output.",
+    implemented: true
+  }
+];
+function isFeatureEnabled(flag) {
+  const config = vscode.workspace.getConfiguration(CONFIG_SECTION);
+  return config.get(flag, false);
+}
+function getAllFlags() {
+  const config = vscode.workspace.getConfiguration(CONFIG_SECTION);
+  return {
+    coordinator: config.get("coordinator", false),
+    dream: config.get("dream", false),
+    deepPlan: config.get("deepPlan", false),
+    proactive: config.get("proactive", false)
+  };
+}
+function getExperimentalFeatureManifest() {
+  return FEATURE_MANIFEST;
+}
+function getExperimentalFeatureStatus() {
+  const flags = getAllFlags();
+  return FEATURE_MANIFEST.map((feature) => ({
+    ...feature,
+    enabled: flags[feature.flag]
+  }));
+}
+function requireFeature(flag) {
+  if (!isFeatureEnabled(flag)) {
+    const msg = `This feature requires enabling "ptarmigan.experimental.${flag}" in settings.`;
+    vscode.window.showWarningMessage(msg);
+    throw new Error(msg);
+  }
+}
 
-`)}`}async function Gn(e,t){let n=[],i=e.scopePaths??[];if(i.length===0)return`### Verify: ${e.label}
+// src/permissions.ts
+var ACTION_CLASSIFICATIONS = [
+  { action: "init", tier: "medium", description: "Writes project scaffolding and MCP configuration into the workspace." },
+  { action: "selectProfile", tier: "low", description: "Updates the active project profile in project-config.md." },
+  { action: "status", tier: "low", description: "Reads pipeline state and reports current status." },
+  { action: "setMode", tier: "medium", description: "Modifies pipeline execution mode in pipeline-state.json." },
+  { action: "remove", tier: "high", description: "Deletes ptarmigan-managed runtime files from the workspace." },
+  { action: "cleanupDuplicateRuntimes", tier: "high", description: "Archives duplicate runtime folders to prevent duplicated agents." },
+  { action: "update", tier: "medium", description: "Refreshes bundled runtime resources in the workspace." },
+  { action: "initPool", tier: "medium", description: "Deploys the agent pool without pipeline state." },
+  { action: "setRecipe", tier: "low", description: "Updates the recipe selection in project-config.md." },
+  { action: "probeAutopilot", tier: "low", description: "Enumerates chat commands for diagnostic purposes." },
+  { action: "coordinate", tier: "low", description: "Runs a read-only coordinator investigation over the workspace." },
+  { action: "deepPlan", tier: "low", description: "Generates a structured implementation plan from workspace context." }
+];
+function getAllClassifications() {
+  return [...ACTION_CLASSIFICATIONS];
+}
 
-**Prompt:** ${e.prompt}
+// src/eventBus.ts
+var _JunaiEventBus = class _JunaiEventBus {
+  constructor() {
+    this.listeners = /* @__PURE__ */ new Set();
+    this.recentEvents = [];
+    this.maxRecentEvents = 100;
+  }
+  static getInstance() {
+    if (!_JunaiEventBus.instance) {
+      _JunaiEventBus.instance = new _JunaiEventBus();
+    }
+    return _JunaiEventBus.instance;
+  }
+  emit(event) {
+    this.recentEvents.push(event);
+    if (this.recentEvents.length > this.maxRecentEvents) {
+      this.recentEvents.splice(0, this.recentEvents.length - this.maxRecentEvents);
+    }
+    for (const listener of this.listeners) {
+      try {
+        listener(event);
+      } catch {
+      }
+    }
+  }
+  onAny(listener) {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  }
+  getRecentEvents(limit = 20) {
+    return this.recentEvents.slice(-limit).reverse();
+  }
+  dispose() {
+    this.listeners.clear();
+    this.recentEvents.length = 0;
+    if (_JunaiEventBus.instance === this) {
+      _JunaiEventBus.instance = null;
+    }
+  }
+};
+_JunaiEventBus.instance = null;
+var JunaiEventBus = _JunaiEventBus;
 
-No scope paths specified \u2014 cannot verify.`;for(let s of i){let o=J.resolve(t,s),r=D.existsSync(o);if(n.push(`- \`${s}\`: ${r?"\u2705 exists":"\u274C not found"}`),r&&D.statSync(o).isFile()){let a=D.readFileSync(o,"utf8"),d=a.split(`
-`).length;n.push(`  - ${d} lines, ${a.length} bytes`)}}return`### Verify: ${e.label}
+// src/coordinator.ts
+var fs = __toESM(require("fs"));
+var path = __toESM(require("path"));
+function formatScope(workspaceRoot, scopePath) {
+  const absolutePath = path.join(workspaceRoot, scopePath);
+  if (!fs.existsSync(absolutePath)) {
+    return `- ${scopePath}: missing`;
+  }
+  const stat = fs.statSync(absolutePath);
+  if (stat.isDirectory()) {
+    const entries = fs.readdirSync(absolutePath).slice(0, 8);
+    return `- ${scopePath}: directory (${entries.length} sample entries: ${entries.join(", ") || "empty"})`;
+  }
+  return `- ${scopePath}: file (${stat.size} bytes)`;
+}
+async function executeWorker(worker, workspaceRoot) {
+  try {
+    const scopeSummary = worker.scopePaths.map((scopePath) => formatScope(workspaceRoot, scopePath)).join("\n");
+    const output = [
+      `Worker: ${worker.label}`,
+      `Type: ${worker.type}`,
+      `Prompt: ${worker.prompt}`,
+      "Scope review:",
+      scopeSummary || "- no scope paths supplied"
+    ].join("\n");
+    return {
+      workerId: worker.id,
+      workerType: worker.type,
+      label: worker.label,
+      status: "completed",
+      output
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return {
+      workerId: worker.id,
+      workerType: worker.type,
+      label: worker.label,
+      status: "failed",
+      output: "",
+      error: message
+    };
+  }
+}
+function synthesizeResults(workerResults) {
+  return workerResults.map((result) => {
+    if (result.status === "failed") {
+      return `## ${result.label}
 
-**Prompt:** ${e.prompt}
+- Status: failed
+- Error: ${result.error ?? "unknown error"}`;
+    }
+    return `## ${result.label}
 
-${n.join(`
-`)}`}async function Qn(e,t){let n=[],i=e.scopePaths??[];if(i.length===0)return`### Review: ${e.label}
+- Status: completed
 
-**Prompt:** ${e.prompt}
+${result.output}`;
+  }).join("\n\n");
+}
+async function coordinateCore(request, workspaceRoot) {
+  const startedAt = Date.now();
+  const workerResults = [];
+  for (const worker of request.workers) {
+    workerResults.push(await executeWorker(worker, workspaceRoot));
+  }
+  const completed = workerResults.filter((result) => result.status === "completed").length;
+  const failed = workerResults.length - completed;
+  const synthesizedOutput = [
+    `# ${request.title}`,
+    "",
+    `Goal: ${request.goal}`,
+    "",
+    synthesizeResults(workerResults)
+  ].join("\n");
+  return {
+    summary: {
+      total: workerResults.length,
+      completed,
+      failed
+    },
+    totalDurationMs: Date.now() - startedAt,
+    workerResults,
+    synthesizedOutput
+  };
+}
+async function coordinate(request, workspaceRoot) {
+  requireFeature("coordinator");
+  return coordinateCore(request, workspaceRoot);
+}
 
-No scope paths specified \u2014 cannot review.`;for(let s of i){let o=J.resolve(t,s);if(!D.existsSync(o)){n.push(`- \`${s}\`: \u274C not found \u2014 cannot review`);continue}if(D.statSync(o).isFile()){let r=D.readFileSync(o,"utf8"),a=r.split(`
-`);n.push(`- \`${s}\` (${a.length} lines): read for review`);let d=/^export\s/m.test(r),l=(r.match(/TODO|FIXME|HACK|XXX/gi)??[]).length,f=/(?:describe|it|test)\s*\(/m.test(r);n.push(`  - Exports: ${d?"yes":"no"}`),l>0&&n.push(`  - TODOs/FIXMEs: ${l}`),n.push(`  - Test patterns: ${f?"found":"none"}`)}}return`### Review: ${e.label}
+// src/dreamMemory.ts
+var fs2 = __toESM(require("fs"));
+var path2 = __toESM(require("path"));
+function dreamMemoryFile(workspaceRoot) {
+  return path2.join(workspaceRoot, ".github", ".ptarmigan-dream-memory.json");
+}
+function defaultStore() {
+  return {
+    summary: {
+      factCount: 0,
+      runs: 0,
+      lastUpdatedAt: (/* @__PURE__ */ new Date(0)).toISOString()
+    },
+    facts: []
+  };
+}
+function loadStore(workspaceRoot) {
+  const filePath = dreamMemoryFile(workspaceRoot);
+  if (!fs2.existsSync(filePath)) {
+    return defaultStore();
+  }
+  try {
+    return JSON.parse(fs2.readFileSync(filePath, "utf8"));
+  } catch {
+    return defaultStore();
+  }
+}
+function saveStore(workspaceRoot, store) {
+  const filePath = dreamMemoryFile(workspaceRoot);
+  fs2.mkdirSync(path2.dirname(filePath), { recursive: true });
+  fs2.writeFileSync(filePath, JSON.stringify(store, null, 2), "utf8");
+}
+var DreamMemoryService = class {
+  constructor(workspaceRoot, eventBus, outputChannel) {
+    this.eventBus = eventBus;
+    this.outputChannel = outputChannel;
+    this.workspaceRoot = workspaceRoot;
+  }
+  recordCoordinatorRun(run) {
+    const store = loadStore(this.workspaceRoot);
+    const now = (/* @__PURE__ */ new Date()).toISOString();
+    const fact = {
+      id: `run-${Date.now()}`,
+      signal: "summary",
+      summary: `${run.goal} (${run.summary.completed}/${run.summary.total} workers completed)`,
+      updatedAt: now
+    };
+    store.facts.push(fact);
+    store.summary = {
+      factCount: store.facts.length,
+      runs: store.summary.runs + 1,
+      lastUpdatedAt: now
+    };
+    saveStore(this.workspaceRoot, store);
+    this.outputChannel?.appendLine(`[${now}] Dream memory recorded coordinator run: ${run.goal}`);
+    this.eventBus.emit({
+      type: "memory-consolidated",
+      timestamp: now,
+      source: "dream-memory",
+      severity: "success",
+      title: "Dream memory updated",
+      detail: fact.summary
+    });
+    return {
+      factsAdded: [fact],
+      factsUpdated: [],
+      factsPruned: []
+    };
+  }
+  dispose() {
+  }
+};
+function createDreamMemoryService(workspaceRoot, eventBus, outputChannel) {
+  return new DreamMemoryService(workspaceRoot, eventBus, outputChannel);
+}
+function readDreamMemorySummary(workspaceRoot) {
+  const store = loadStore(workspaceRoot);
+  return store.summary.runs > 0 ? store.summary : null;
+}
 
-**Prompt:** ${e.prompt}
+// src/deepPlan.ts
+var fs3 = __toESM(require("fs"));
+var path3 = __toESM(require("path"));
+function splitList(value) {
+  if (!value) {
+    return [];
+  }
+  return value.split(/[\n,]+/).map((entry) => entry.trim()).filter(Boolean);
+}
+function detectTechnologies(fileNames) {
+  const technologies = /* @__PURE__ */ new Set();
+  for (const name of fileNames) {
+    const normalized = name.toLowerCase();
+    if (normalized.endsWith(".ts") || normalized.endsWith(".tsx")) {
+      technologies.add("TypeScript");
+    }
+    if (normalized.endsWith(".js") || normalized.endsWith(".jsx")) {
+      technologies.add("JavaScript");
+    }
+    if (normalized.endsWith(".py")) {
+      technologies.add("Python");
+    }
+    if (normalized.endsWith("package.json")) {
+      technologies.add("Node.js");
+      technologies.add("VS Code Extension");
+    }
+    if (normalized.endsWith("tsconfig.json")) {
+      technologies.add("TypeScript Toolchain");
+    }
+  }
+  return [...technologies];
+}
+function walkWorkspace(root, maxFiles = 60) {
+  const collected = [];
+  const queue = [""];
+  while (queue.length > 0 && collected.length < maxFiles) {
+    const current = queue.shift() ?? "";
+    const absolute = path3.join(root, current);
+    if (!fs3.existsSync(absolute)) {
+      continue;
+    }
+    const entries = fs3.readdirSync(absolute, { withFileTypes: true });
+    for (const entry of entries) {
+      if (entry.name === ".git" || entry.name === "node_modules" || entry.name === ".venv") {
+        continue;
+      }
+      const relative2 = path3.join(current, entry.name);
+      if (entry.isDirectory()) {
+        if (relative2.split(path3.sep).length <= 3) {
+          queue.push(relative2);
+        }
+        continue;
+      }
+      collected.push(relative2.replace(/\\/g, "/"));
+      if (collected.length >= maxFiles) {
+        break;
+      }
+    }
+  }
+  return collected;
+}
+function scanWorkspace(workspaceRoot) {
+  const topLevelEntries = fs3.existsSync(workspaceRoot) ? fs3.readdirSync(workspaceRoot).slice(0, 20) : [];
+  const detectedFiles = walkWorkspace(workspaceRoot);
+  const detectedTechnologies = detectTechnologies(detectedFiles);
+  return {
+    workspaceRoot,
+    topLevelEntries,
+    detectedFiles,
+    detectedTechnologies
+  };
+}
+function scanResultToContextLines(scan) {
+  return [
+    `Workspace root: ${scan.workspaceRoot}`,
+    `Top-level entries: ${scan.topLevelEntries.join(", ") || "none detected"}`,
+    `Detected technologies: ${scan.detectedTechnologies.join(", ") || "none detected"}`,
+    "Sample files:",
+    ...scan.detectedFiles.slice(0, 20).map((file) => `- ${file}`)
+  ];
+}
+function buildDeepPlanRequest(input) {
+  return {
+    taskSummary: input.taskSummary.trim(),
+    scope: splitList(input.scopeInput),
+    constraints: splitList(input.constraintsInput),
+    contextReferences: input.contextReferences?.filter(Boolean) ?? [],
+    requestedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+}
+function createDeepPlanResult(request, scan) {
+  const confidence = request.scope.length >= 2 || scan.detectedTechnologies.length >= 2 ? "high" : request.scope.length === 1 || scan.detectedTechnologies.length === 1 ? "medium" : "low";
+  const scopeLabel = request.scope.join(", ") || "the relevant workspace files";
+  const techLabel = scan.detectedTechnologies.join(", ") || "the detected project stack";
+  return {
+    confidence,
+    phases: [
+      {
+        title: "Validate the current implementation surface",
+        objective: `Confirm the files and entry points involved in ${request.taskSummary}.`,
+        steps: [
+          `Inspect ${scopeLabel} and verify how the current behavior is wired today.`,
+          `Confirm the surrounding project context using ${techLabel}.`
+        ]
+      },
+      {
+        title: "Implement the smallest safe change",
+        objective: "Make the targeted code change without broad refactors.",
+        steps: [
+          "Update the primary code path first, then adjust any supporting helpers that would otherwise drift out of sync.",
+          "Preserve existing user-facing behavior unless the task explicitly requires a behavior change."
+        ]
+      },
+      {
+        title: "Validate and ship with confidence",
+        objective: "Prove the change works before handing it off.",
+        steps: [
+          "Run compile, lint, or test validation relevant to the touched files.",
+          "Re-check the original request against the final implementation to catch any missed edge cases."
+        ]
+      }
+    ],
+    risks: [
+      request.scope.length === 0 ? "No explicit scope was provided, so adjacent files may still need verification before editing." : `Changes may need to stay aligned across: ${scopeLabel}.`,
+      scan.detectedTechnologies.length === 0 ? "Technology signals were sparse; verify tooling expectations before relying on automation." : `Validation should match the detected stack: ${techLabel}.`
+    ],
+    nextAction: `Start by validating the current behavior in ${request.scope[0] ?? "the primary implementation file"} before making any code changes.`
+  };
+}
+function renderDeepPlanMarkdown(request, result, scan) {
+  const lines = [
+    "# Deep Plan",
+    "",
+    `**Task**: ${request.taskSummary}`,
+    `**Requested at**: ${request.requestedAt}`,
+    `**Confidence**: ${result.confidence}`,
+    "",
+    "## Scope",
+    "",
+    ...request.scope.length > 0 ? request.scope.map((item) => `- ${item}`) : ["- Not explicitly provided"],
+    "",
+    "## Constraints",
+    "",
+    ...request.constraints.length > 0 ? request.constraints.map((item) => `- ${item}`) : ["- None provided"],
+    "",
+    "## Workspace signals",
+    "",
+    ...scanResultToContextLines(scan),
+    "",
+    "## Phases",
+    ""
+  ];
+  for (const phase of result.phases) {
+    lines.push(`### ${phase.title}`);
+    lines.push("");
+    lines.push(phase.objective);
+    lines.push("");
+    for (const step of phase.steps) {
+      lines.push(`- ${step}`);
+    }
+    lines.push("");
+  }
+  lines.push("## Risks");
+  lines.push("");
+  for (const risk of result.risks) {
+    lines.push(`- ${risk}`);
+  }
+  lines.push("");
+  lines.push("## Next action");
+  lines.push("");
+  lines.push(result.nextAction);
+  lines.push("");
+  return lines.join("\n");
+}
+function persistDeepPlanMarkdown(workspaceRoot, markdown) {
+  const plansDir = path3.join(workspaceRoot, ".github", "plans");
+  fs3.mkdirSync(plansDir, { recursive: true });
+  const timestamp = (/* @__PURE__ */ new Date()).toISOString().replace(/[:.]/g, "-");
+  const outputPath = path3.join(plansDir, `deep-plan-${timestamp}.md`);
+  fs3.writeFileSync(outputPath, markdown, "utf8");
+  return outputPath;
+}
 
-${n.join(`
-`)}`}function yt(e,t,n,i=0){if(i>=n)return`${"  ".repeat(i)}(max depth reached)
-`;let s=new Set([".git","node_modules","__pycache__",".DS_Store","out","dist",".venv"]),o="";try{let r=D.readdirSync(e,{withFileTypes:!0});for(let a of r){if(s.has(a.name))continue;let d="  ".repeat(i),l=J.relative(t,J.join(e,a.name));a.isDirectory()?(o+=`${d}- ${a.name}/
-`,o+=yt(J.join(e,a.name),t,n,i+1)):o+=`${d}- ${l}
-`}}catch{o+=`${"  ".repeat(i)}(access denied)
-`}return o}});var Fe=S(G=>{"use strict";Object.defineProperty(G,"__esModule",{value:!0});G.PROTECTED_ACTIONS=G.ACTION_CLASSIFICATIONS=void 0;G.ACTION_CLASSIFICATIONS=[{action:"read_file",tier:"low",description:"Read a file"},{action:"search_workspace",tier:"low",description:"Search workspace content"},{action:"git_status",tier:"low",description:"Check git status"},{action:"run_tests",tier:"low",description:"Execute test suite"},{action:"lint_check",tier:"low",description:"Run linter"},{action:"edit_file",tier:"medium",description:"Edit a file"},{action:"create_file",tier:"medium",description:"Create a new file"},{action:"git_commit",tier:"medium",description:"Commit staged changes"},{action:"install_dependency",tier:"medium",description:"Install a package dependency"},{action:"run_build",tier:"medium",description:"Run build command"},{action:"delete_file",tier:"high",description:"Delete a file"},{action:"git_push",tier:"high",description:"Push commits to remote"},{action:"git_force_push",tier:"high",description:"Force-push to remote"},{action:"git_reset_hard",tier:"high",description:"Hard reset git history"},{action:"drop_table",tier:"high",description:"Drop a database table"},{action:"run_destructive_cmd",tier:"high",description:"Run a potentially destructive shell command"},{action:"publish_package",tier:"high",description:"Publish a package to registry"},{action:"send_external_msg",tier:"high",description:"Send message to external service (PR comment, Slack, etc.)"}];G.PROTECTED_ACTIONS=new Set(["delete_file","git_push","git_force_push","git_reset_hard","drop_table","run_destructive_cmd","publish_package","send_external_msg"])});var Ne=S(L=>{"use strict";Object.defineProperty(L,"__esModule",{value:!0});L.DEFAULT_PROTECTED_PATH_PATTERNS=void 0;L.matchGlob=wt;L.isProtectedPath=Xn;L.DEFAULT_PROTECTED_PATH_PATTERNS=[".github/pipeline-state.json",".env",".env.*","**/secrets/**","**/credentials/**","package.json","package-lock.json","tsconfig.json",".github/project-config.md"];function wt(e,t){if(e===t)return!0;let n=t.replace(/\./g,"\\.").replace(/\*\*/g,"\u29BF").replace(/\*/g,"[^/]*").replace(/⦿/g,".*");return new RegExp(`^${n}$`).test(e)}function Xn(e,t=L.DEFAULT_PROTECTED_PATH_PATTERNS){let n=e.replace(/\\/g,"/");for(let i of t)if(wt(n,i))return!0;return!1}});var Be=S(Q=>{"use strict";Object.defineProperty(Q,"__esModule",{value:!0});Q.isProtectedAction=bt;Q.checkPermission=Yn;Q.getActionClassification=Zn;Q.getAllClassifications=ei;var Le=Fe(),vt=Ne(),St=new Map(Le.ACTION_CLASSIFICATIONS.map(e=>[e.action,e]));function bt(e){return Le.PROTECTED_ACTIONS.has(e)}function Yn(e,t,n,i=vt.DEFAULT_PROTECTED_PATH_PATTERNS){let o=St.get(e)?.tier??"medium";switch(bt(e)&&(o="high"),n&&(0,vt.isProtectedPath)(n,i)&&(o="high"),t){case"supervised":return{allowed:o==="low",tier:o,reason:o==="low"?"Low-risk action \u2014 proceeding":`Supervised mode \u2014 ${o}-risk action requires manual approval`,requiresApproval:o!=="low"};case"assisted":case"autopilot":return{allowed:o!=="high",tier:o,reason:o==="high"?`High-risk action requires explicit approval even in ${t} mode`:`${o}-risk action \u2014 proceeding in ${t} mode`,requiresApproval:o==="high"};default:return{allowed:o==="low",tier:o,reason:`Unknown mode "${t}" \u2014 defaulting to supervised behaviour`,requiresApproval:o!=="low"}}}function Zn(e){return St.get(e)}function ei(){return Le.ACTION_CLASSIFICATIONS}});var _t=S(ie=>{"use strict";Object.defineProperty(ie,"__esModule",{value:!0});ie.synthesizeFindings=jt;ie.synthesizeResults=$t;ie.coordinate=ai;var ti=Ie(),ni=Be(),ii=Ee(),si=Te(),kt={error:3,warning:2,info:1},Pt={high:3,medium:2,low:1};function oi(e){return e.trim().toLowerCase().replace(/\s+/g," ")}function ri(e){return e.match(/`([^`]+)`/)?.[1]}function we(e){let t=[e.severity,e.file??"",e.title,e.evidence].join(":");return{id:oi(t),...e}}function jt(e){let t=new Map;for(let n of e){if(n.status==="failure"){let s=we({title:`Worker failed: ${n.label}`,severity:"error",evidence:n.error??"Unknown worker error",confidence:"high",recommendedAction:"Review worker scope and retry with narrower inputs."});t.set(s.id,s);continue}let i=n.output.split(`
-`).map(s=>s.trim()).filter(Boolean);for(let s of i){if(s.includes("\u274C")||/not found/i.test(s)){let r=ri(s),a=we({title:"Missing path or verification failure",severity:"warning",evidence:s,file:r,confidence:"high",recommendedAction:"Confirm path assumptions and adjust worker scope."});t.set(a.id,a);continue}let o=s.match(/TODOs\/FIXMEs:\s*(\d+)/i);if(o&&Number(o[1])>0){let r=we({title:"Outstanding TODO/FIXME markers",severity:"warning",evidence:s,confidence:"medium",recommendedAction:"Review TODO/FIXME markers before finalizing synthesis."});t.set(r.id,r);continue}if(/access denied/i.test(s)){let r=we({title:"Scope path access denied",severity:"warning",evidence:s,confidence:"medium",recommendedAction:"Adjust scope paths to readable directories."});t.set(r.id,r)}}}return[...t.values()].sort((n,i)=>{let s=kt[i.severity]-kt[n.severity];if(s!==0)return s;let o=Pt[i.confidence]-Pt[n.confidence];return o!==0?o:n.title.localeCompare(i.title)}).slice(0,12)}function $t(e,t){let n=[];n.push(`## Coordination Summary
-`),n.push(`**Goal:** ${e}
-`);let i=t.filter(o=>o.status==="success"),s=t.filter(o=>o.status==="failure");if(n.push(`**Workers:** ${t.length} total \u2014 ${i.length} succeeded, ${s.length} failed
-`),i.length>0){n.push(`---
-`);for(let o of i)n.push(o.output),n.push(`
-*Worker \`${o.workerId}\` completed in ${o.durationMs}ms*
-`)}if(s.length>0){n.push(`---
-
-### \u26A0 Failed Workers
-`);for(let o of s)n.push(`- **${o.label}** (\`${o.workerId}\`): ${o.error??"Unknown error"}`)}return n.join(`
-`)}async function ai(e,t){let n=ti.JunaiEventBus.getInstance(),i=new ii.TaskGraph,s=Date.now();for(let m of e.workers)i.addWorker(m);let r=(await Promise.allSettled(i.getPendingWorkers().map(async m=>{let h=m.type==="explore"?"search_workspace":"read_file",v=(0,ni.checkPermission)(h,"autopilot");if(!v.allowed){let w={workerId:m.id,workerType:m.type,label:m.label,status:"failure",output:"",durationMs:0,error:v.reason};return i.markCompleted(m.id,w),n.emit({type:"task-blocked",timestamp:new Date().toISOString(),source:"coordinator",severity:"warning",title:`Coordinator worker blocked: ${m.label}`,detail:v.reason,stage:"coordinate",agent:m.label,reason:v.reason}),w}i.markRunning(m.id);let y=await(0,si.executeWorker)(m,t);return i.markCompleted(m.id,y),y.status==="success"?n.emit({type:"task-completed",timestamp:new Date().toISOString(),source:"coordinator",severity:"success",title:`Coordinator worker complete: ${m.label}`,detail:`Worker ${m.id} completed successfully`,stage:"coordinate",agent:m.label,summary:`Worker ${m.id} completed successfully`}):n.emit({type:"task-blocked",timestamp:new Date().toISOString(),source:"coordinator",severity:"warning",title:`Coordinator worker failed: ${m.label}`,detail:y.error??"Worker failed",stage:"coordinate",agent:m.label,reason:y.error??"Worker failed"}),y}))).map((m,h)=>{if(m.status==="fulfilled")return m.value;let v=e.workers[h],y={workerId:v.id,workerType:v.type,label:v.label,status:"failure",output:"",durationMs:0,error:m.reason instanceof Error?m.reason.message:String(m.reason)};return i.markCompleted(v.id,y),n.emit({type:"task-blocked",timestamp:new Date().toISOString(),source:"coordinator",severity:"warning",title:`Coordinator worker failed: ${v.label}`,detail:y.error??"Worker failed",stage:"coordinate",agent:v.label,reason:y.error??"Worker failed"}),y}),a=$t(e.goal,r),d=jt(r),l={format:"markdown-v1",content:a,findings:d},f=Date.now()-s,g=i.getSummary();return n.emit({type:"task-completed",timestamp:new Date().toISOString(),source:"coordinator",severity:"success",title:"Coordinator run complete",detail:`${g.completed} completed, ${g.failed} failed`,stage:"coordinate",agent:"Coordinator",summary:`Coordination complete \u2014 ${g.completed} completed, ${g.failed} failed`}),{title:e.title,goal:e.goal,workerResults:r,synthesis:l,synthesizedOutput:a,totalDurationMs:f,summary:g}}});var Ct=S(x=>{"use strict";var ci=x&&x.__createBinding||(Object.create?(function(e,t,n,i){i===void 0&&(i=n);var s=Object.getOwnPropertyDescriptor(t,n);(!s||("get"in s?!t.__esModule:s.writable||s.configurable))&&(s={enumerable:!0,get:function(){return t[n]}}),Object.defineProperty(e,i,s)}):(function(e,t,n,i){i===void 0&&(i=n),e[i]=t[n]})),We=x&&x.__exportStar||function(e,t){for(var n in e)n!=="default"&&!Object.prototype.hasOwnProperty.call(t,n)&&ci(t,e,n)};Object.defineProperty(x,"__esModule",{value:!0});We(Ee(),x);We(Te(),x);We(_t(),x)});var Dt=S(Rt=>{"use strict";Object.defineProperty(Rt,"__esModule",{value:!0})});var Et=S(_=>{"use strict";var ui=_&&_.__createBinding||(Object.create?(function(e,t,n,i){i===void 0&&(i=n);var s=Object.getOwnPropertyDescriptor(t,n);(!s||("get"in s?!t.__esModule:s.writable||s.configurable))&&(s={enumerable:!0,get:function(){return t[n]}}),Object.defineProperty(e,i,s)}):(function(e,t,n,i){i===void 0&&(i=n),e[i]=t[n]})),li=_&&_.__setModuleDefault||(Object.create?(function(e,t){Object.defineProperty(e,"default",{enumerable:!0,value:t})}):function(e,t){e.default=t}),Mt=_&&_.__importStar||(function(){var e=function(t){return e=Object.getOwnPropertyNames||function(n){var i=[];for(var s in n)Object.prototype.hasOwnProperty.call(n,s)&&(i[i.length]=s);return i},e(t)};return function(t){if(t&&t.__esModule)return t;var n={};if(t!=null)for(var i=e(t),s=0;s<i.length;s++)i[s]!=="default"&&ui(n,t,i[s]);return li(n,t),n}})();Object.defineProperty(_,"__esModule",{value:!0});_.DreamMemoryEngine=void 0;_.createDreamMemoryEngine=ji;_.readDreamMemorySummary=$i;var X=Mt(require("fs")),Se=Mt(require("path")),xt=Se.join(".github","dream-memory.json"),At="dream-memory-v1",Ot=200,di=14,pi=3e4,fi=1e4,mi=10;function B(){return new Date().toISOString()}function se(e){return e.trim().toLowerCase().replace(/\s+/g," ")}function Ue(e){return`${e.kind}:${se(e.key||e.summary)}`}function It(){return{version:At,updatedAt:B(),runs:0,facts:[],dedupeIndex:{}}}function hi(e){return se(e).replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")||"fact"}function gi(e){let t=Math.random().toString(36).slice(2,8);return`${e.kind}-${Date.now()}-${hi(e.key).slice(0,40)}-${t}`}function yi(e){if(!X.existsSync(e))return It();try{let t=JSON.parse(X.readFileSync(e,"utf8")),n={version:t.version??At,updatedAt:t.updatedAt??B(),runs:typeof t.runs=="number"?t.runs:0,facts:Array.isArray(t.facts)?t.facts:[],dedupeIndex:t.dedupeIndex??{}},i=new Map(n.facts.map(s=>[s.id,s]));for(let[s,o]of Object.entries(n.dedupeIndex))i.has(o)||delete n.dedupeIndex[s];for(let s of n.facts){let o=`${s.kind}:${se(s.key)}`;n.dedupeIndex[o]||(n.dedupeIndex[o]=s.id)}return n}catch{return It()}}function wi(e,t){X.mkdirSync(Se.dirname(e),{recursive:!0}),X.writeFileSync(e,JSON.stringify(t,null,2),"utf8")}function vi(e){let t=new Set,n=[];for(let i of e){let s=Ue(i);t.has(s)||(t.add(s),n.push(i))}return n}function Si(e){let t=[],n=Date.now()-di*24*60*60*1e3,i=new Set(e.facts.filter(d=>d.hitCount<=1&&Date.parse(d.lastSeenAt)<n).map(d=>d.id)),s=[...e.facts].sort((d,l)=>Date.parse(d.lastSeenAt)-Date.parse(l.lastSeenAt)),o=new Set,r=e.facts.length-i.size;if(r>Ot){let d=r-Ot;for(let l of s)if(!i.has(l.id)&&(o.add(l.id),o.size>=d))break}let a=new Set([...i,...o]);if(a.size===0)return t;e.facts=e.facts.filter(d=>a.has(d.id)?(t.push(d),!1):!0);for(let[d,l]of Object.entries(e.dedupeIndex))a.has(l)&&delete e.dedupeIndex[d];return t}function bi(e){return e.replace(/`/g,"").replace(/^[-*]\s*/,"").trim()}function ki(e,t){return e.output.split(`
-`).map(s=>s.trim()).filter(Boolean).filter(s=>s.startsWith("- `")&&(s.includes("\u2705 exists")||s.includes("Exports:")||s.includes("TODOs/FIXMEs:")||s.includes("Test patterns:"))).slice(0,mi).map(s=>{let o=bi(s);return{kind:"repo-fact",key:`${e.workerId}:${o}`,summary:`Repo fact: ${o}`,detail:s,source:"coordinator",observedAt:t}})}function Pi(e){let t=e.timestamp||B();switch(e.type){case"task-completed":return{kind:"workflow-success",key:`${e.source}:${e.stage}:${e.agent}:${e.summary}`,summary:`${e.source} completed ${e.stage} (${e.agent}) \u2014 ${e.summary}`,source:e.source,observedAt:t};case"task-blocked":return{kind:"failure-mode",key:`${e.source}:${e.stage}:${e.agent}:${e.reason}`,summary:`${e.source} blocked ${e.stage} (${e.agent}) \u2014 ${e.reason}`,source:e.source,observedAt:t};case"approval-needed":return{kind:"rejected-approach",key:`${e.source}:${e.stage}:${e.action}:${e.riskTier}`,summary:`Approval required for ${e.action} (${e.riskTier}) at ${e.stage}`,detail:`Agent: ${e.agent}`,source:e.source,observedAt:t};case"background-result":return{kind:e.status==="success"?"workflow-success":"failure-mode",key:`${e.source}:${e.taskId}:${e.status}`,summary:`Background task ${e.taskId} ${e.status} \u2014 ${e.summary}`,source:e.source,observedAt:t};case"memory-consolidated":return null;default:return null}}var ve=class{constructor(t){this.options=t,this.pendingSignals=new Map,this.lastRunAtMs=0,this.unsubscribe=null,this.memoryFilePath=Se.join(t.workspaceRoot,xt),this.unsubscribe=t.eventBus.onAny(n=>this.onEvent(n))}recordCoordinatorRun(t){let n=B(),i=[];t.summary.failed===0?i.push({kind:"workflow-success",key:`coordinator-run:${t.goal}:${t.summary.total}`,summary:`Coordinator run succeeded for goal "${t.goal}" (${t.summary.completed}/${t.summary.total} workers)`,source:"coordinator",observedAt:n}):i.push({kind:"failure-mode",key:`coordinator-run:${t.goal}:failed=${t.summary.failed}`,summary:`Coordinator run had failures for goal "${t.goal}" (${t.summary.failed} failed workers)`,source:"coordinator",observedAt:n});for(let s of t.workerResults){if(s.status==="success"){i.push(...ki(s,n));continue}i.push({kind:"failure-mode",key:`worker-failure:${s.workerId}:${s.error??"unknown"}`,summary:`Worker ${s.workerId} failed \u2014 ${s.error??"Unknown error"}`,source:"coordinator",observedAt:n})}return i.length===0?null:this.applyConsolidation(i,"coordinator-run")}onEvent(t){let n=Pi(t);if(!n)return;if(this.pendingSignals.set(Ue(n),n),t.type==="task-blocked"||t.type==="background-result"&&t.status==="failure"||this.pendingSignals.size>=4){this.flushPending("significant-event");return}this.scheduleFlush()}scheduleFlush(){this.flushTimer||(this.flushTimer=setTimeout(()=>{this.flushTimer=void 0,this.flushPending("debounced-event")},fi))}flushPending(t){if(this.pendingSignals.size===0)return null;if(t!=="dispose"&&Date.now()-this.lastRunAtMs<pi)return this.scheduleFlush(),null;let n=Array.from(this.pendingSignals.values());return this.pendingSignals.clear(),this.applyConsolidation(n,t)}applyConsolidation(t,n){let i=vi(t),s=yi(this.memoryFilePath),o={factsAdded:[],factsUpdated:[],factsPruned:[],conflicts:[]};for(let a of i){let d=Ue(a),l=s.dedupeIndex[d],f=l?s.facts.find(m=>m.id===l):void 0;if(f){if(se(f.summary)!==se(a.summary)){let m={key:a.key,existingFactId:f.id,existingSummary:f.summary,incomingSummary:a.summary,reason:"conflicting-summary"};o.conflicts.push(m),a.summary.length>f.summary.length&&(f.summary=a.summary)}f.lastSeenAt=a.observedAt,f.hitCount+=1,a.detail&&(!f.detail||a.detail.length>f.detail.length)&&(f.detail=a.detail),f.sources.includes(a.source)||f.sources.push(a.source),o.factsUpdated.push({...f,sources:[...f.sources]});continue}let g={id:gi(a),kind:a.kind,key:a.key,summary:a.summary,detail:a.detail,sources:[a.source],firstSeenAt:a.observedAt,lastSeenAt:a.observedAt,hitCount:1};s.facts.push(g),s.dedupeIndex[d]=g.id,o.factsAdded.push({...g,sources:[...g.sources]})}o.factsPruned=Si(s),s.updatedAt=B(),s.runs+=1,s.facts.sort((a,d)=>Date.parse(d.lastSeenAt)-Date.parse(a.lastSeenAt)),wi(this.memoryFilePath,s),this.lastRunAtMs=Date.now();let r=o.factsAdded.length+o.factsUpdated.length;return(r>0||o.factsPruned.length>0||o.conflicts.length>0)&&this.options.eventBus.emit({type:"memory-consolidated",timestamp:B(),source:"dream",severity:"info",title:"Dream memory consolidated",detail:`+${r} promoted, ${o.factsPruned.length} pruned, ${o.conflicts.length} conflicts`,itemsPruned:o.factsPruned.length,itemsPromoted:r}),this.options.onLog&&(r>0||o.factsPruned.length>0)&&this.options.onLog(`[dream] ${n}: +${o.factsAdded.length} added, ${o.factsUpdated.length} updated, ${o.factsPruned.length} pruned, ${o.conflicts.length} conflicts`),o}dispose(){this.flushTimer&&(clearTimeout(this.flushTimer),this.flushTimer=void 0),this.flushPending("dispose"),this.unsubscribe&&(this.unsubscribe(),this.unsubscribe=null)}};_.DreamMemoryEngine=ve;function ji(e){return new ve(e)}function $i(e){let t=Se.join(e,xt);if(!X.existsSync(t))return null;try{let n=JSON.parse(X.readFileSync(t,"utf8"));return{factCount:(Array.isArray(n.facts)?n.facts:[]).length,runs:typeof n.runs=="number"?n.runs:0,lastUpdatedAt:typeof n.updatedAt=="string"?n.updatedAt:B()}}catch{return null}}});var Ft=S(F=>{"use strict";var _i=F&&F.__createBinding||(Object.create?(function(e,t,n,i){i===void 0&&(i=n);var s=Object.getOwnPropertyDescriptor(t,n);(!s||("get"in s?!t.__esModule:s.writable||s.configurable))&&(s={enumerable:!0,get:function(){return t[n]}}),Object.defineProperty(e,i,s)}):(function(e,t,n,i){i===void 0&&(i=n),e[i]=t[n]})),Tt=F&&F.__exportStar||function(e,t){for(var n in e)n!=="default"&&!Object.prototype.hasOwnProperty.call(t,n)&&_i(t,e,n)};Object.defineProperty(F,"__esModule",{value:!0});Tt(Dt(),F);Tt(Et(),F)});var Lt=S(Nt=>{"use strict";Object.defineProperty(Nt,"__esModule",{value:!0})});var zt=S(C=>{"use strict";var Ci=C&&C.__createBinding||(Object.create?(function(e,t,n,i){i===void 0&&(i=n);var s=Object.getOwnPropertyDescriptor(t,n);(!s||("get"in s?!t.__esModule:s.writable||s.configurable))&&(s={enumerable:!0,get:function(){return t[n]}}),Object.defineProperty(e,i,s)}):(function(e,t,n,i){i===void 0&&(i=n),e[i]=t[n]})),Ri=C&&C.__setModuleDefault||(Object.create?(function(e,t){Object.defineProperty(e,"default",{enumerable:!0,value:t})}):function(e,t){e.default=t}),Ut=C&&C.__importStar||(function(){var e=function(t){return e=Object.getOwnPropertyNames||function(n){var i=[];for(var s in n)Object.prototype.hasOwnProperty.call(n,s)&&(i[i.length]=s);return i},e(t)};return function(t){if(t&&t.__esModule)return t;var n={};if(t!=null)for(var i=e(t),s=0;s<i.length;s++)i[s]!=="default"&&Ci(n,t,i[s]);return Ri(n,t),n}})();Object.defineProperty(C,"__esModule",{value:!0});C.buildDeepPlanRequest=Ni;C.createDeepPlanResult=Li;C.renderDeepPlanMarkdown=Bi;C.persistDeepPlanMarkdown=Wi;var Bt=Ut(require("fs")),ze=Ut(require("path")),Di=ze.join(".github","plans");function qe(e){return e.trim().replace(/\s+/g," ")}function Wt(e){return e?e.split(/[\n,;]+/g).map(qe).filter(Boolean):[]}function W(e){return`phase-${e+1}`}function Oi(e){let t=e.scope.length>0?`in scope: ${e.scope.slice(0,4).join(", ")}`:"scope to be validated in discovery";return`${e.taskSummary} \u2014 ${t}`}function Ii(e){let t=[];return t.push("Deep Plan is advisory-first; implementation starts only after explicit user approval."),e.scope.length===0?t.push("Scope is currently broad; Phase 1 will lock the smallest viable delivery slice."):t.push(`Scope is limited to: ${e.scope.join(", ")}.`),e.constraints.length>0?t.push(`Constraints are treated as hard boundaries: ${e.constraints.join("; ")}.`):t.push("No explicit constraints provided; backward compatibility and minimal disruption are assumed."),e.contextReferences&&e.contextReferences.length>0&&t.push(`Context references available: ${e.contextReferences.join(", ")}.`),t}function Mi(e,t){let n=[],i=e.taskSummary.toLowerCase();return e.scope.length===0&&n.push("Scope ambiguity may cause rework unless bounded early."),e.constraints.length===0&&n.push("Missing explicit constraints can hide rollout or compatibility risks."),(!e.contextReferences||e.contextReferences.length===0)&&(t||n.push("Limited context references may miss dependency hotspots.")),/migrat|refactor|rewrite|replace/.test(i)&&n.push("Structural change risk: hidden coupling can expand implementation effort."),/security|auth|permission|compliance|privacy/.test(i)&&n.push("Security-sensitive scope requires explicit validation gates before rollout."),t&&(t.hasTests||n.push("No test infrastructure detected \u2014 changes cannot be regression-checked automatically."),t.hasCI||n.push("No CI pipeline detected \u2014 validate build and test gates manually before merge.")),n.length===0&&n.push("Execution drift risk: validate scope and acceptance criteria before implementation."),n}function xi(e,t,n){if(e.length===0)return[];let i=t.toLowerCase().split(/\W+/).filter(r=>r.length>3),s=e.map(r=>{let a=r.toLowerCase(),d=i.filter(l=>a.includes(l)).length;return{fact:r,matches:d}});s.sort((r,a)=>a.matches-r.matches);let o=s.filter(r=>r.matches>0).slice(0,n);return o.length>0?o.map(r=>r.fact):s.slice(0,n).map(r=>r.fact)}function Ai(e,t){let n=e.scope.length>0?e.scope.slice(0,5).map(r=>`Validate and map impact for ${r}.`):["Identify top impacted modules/files and lock the minimal viable scope.","Define explicit out-of-scope items to prevent plan expansion."],i=e.constraints.length>0?e.constraints.slice(0,5).map(r=>`Encode constraint guardrail: ${r}.`):["Define baseline quality constraints (compatibility, testability, rollback safety)."];if(t){let r=t.techStack.map(a=>a.name);r.length>0&&n.push(`Tech stack detected: ${r.slice(0,6).join(", ")} \u2014 verify compatibility with planned changes.`),t.entryPoint&&n.push(`Entry point: ${t.entryPoint} \u2014 trace impact from this module.`)}let s=e.taskSummary.toLowerCase(),o=[{id:W(0),title:"Scope & Constraints Alignment",objective:Ti(s),tasks:["Restate the problem in one sentence and define success criteria.",...n,...i,"Record open questions and explicit assumption ownership."]},{id:W(1),title:"Implementation Slicing",objective:"Break work into low-risk phased slices with clear dependencies.",dependencies:[W(0)],tasks:["Define phase-by-phase deliverables with acceptance checks.","Sequence work from safest foundation to higher-risk integration points.","Specify rollback and fallback strategy for each risky slice."]}];if(t?.hasTests&&o[1].tasks.push(`Update existing test suite (detected at: ${t.testPaths.join(", ")}).`),o.push({id:W(2),title:"Validation & Approval Gate",objective:"Ensure plan quality and obtain explicit approval before implementation.",dependencies:[W(1)],tasks:[t?.hasTests?`Run existing tests (${t.testPaths.join(", ")}) and verify no regressions.`:"Run compile/test/type-check expectations for each slice.",t?.hasCI?`Verify CI pipeline (${t.ciPaths.join(", ")}) passes with planned changes.`:"Confirm build and validation steps are defined.","Confirm risks and open questions are explicitly tracked.","Produce final approval summary with go/no-go recommendation."]}),/deploy|release|rollout|launch|production/.test(s)&&o.push({id:W(3),title:"Rollout & Post-Launch Follow-up",objective:"Plan safe delivery sequencing and post-implementation learning loop.",dependencies:[W(2)],tasks:["Define staged rollout checkpoints and monitoring expectations.","Define post-launch validation signals and fallback triggers.","Capture lessons learned for memory consolidation and future planning reuse."]}),t&&t.dreamMemoryFacts.length>0){let r=o[o.length-1],a=xi(t.dreamMemoryFacts,e.taskSummary,3);a.length>0&&r.tasks.push(`Incorporate relevant dream memory insights: ${a.join("; ")}.`)}return o}function Ei(e,t,n){let i=0;return e.taskSummary.length>=24&&(i+=1),e.scope.length>0&&(i+=1),e.constraints.length>0&&(i+=1),(e.contextReferences?.length??0)>0&&(i+=1),n&&(i+=1),n?.hasTests&&(i+=1),t.length>=4&&(i-=1),i>=5?"high":i>=2?"medium":"low"}function Ti(e){return/expense|budget|financ|payment|receipt|spend/.test(e)?"Confirm the expense data model and minimum required flows before any implementation begins.":/\bnote|notebook|journal|wiki|knowledge base/.test(e)?"Define the content model, search requirements, and desired UX before touching any code.":/\btask|\btodo|ticket|backlog|kanban/.test(e)?"Define the MVP feature set and lock the task lifecycle before any implementation begins.":/migrat|refactor|rewrite|replace/.test(e)?"Map the full impact surface and lock a safe, minimal change slice before writing any code.":/\bapi\b|\bservice\b|integrat|endpoint|webhook/.test(e)?"Confirm the integration contract and failure boundary before any implementation begins.":"Turn the rough idea into a bounded, approval-ready implementation target."}function Fi(e,t){let n=e.taskSummary.toLowerCase(),i=e.scope.slice(0,2).join(" and "),s=e.constraints[0]??"";if(/expense|budget|financ|payment|receipt|spend/.test(n))return`Lock the minimum expense entry and summary flows${s?`, keeping "${s}" as a hard boundary`:""}, then confirm the data model.`;if(/\bnote|notebook|journal|wiki|knowledge base/.test(n))return`Define the note model, tag structure, and simplest workable search experience${i?` in ${i}`:""}.`;if(/\btask|\btodo|ticket|backlog|kanban/.test(n))return`Define the MVP task model, status states, and the minimum create-and-view flow${s?` within the "${s}" constraint`:""}.`;if(/auth(?:entication|oriz)|login|sign[\s-]?in|permission|access control/.test(n))return"Confirm the authentication boundary, token strategy, and session lifecycle before writing any code.";if(/migrat|refactor|rewrite|replace/.test(n))return`Map the dependency footprint and identify hidden coupling${i?` starting from ${i}`:""} before slicing the work.`;if(/deploy|release|rollout|\bci\b|pipeline|launch/.test(n))return"Define the target environment, rollout checkpoints, and first health signal before any automation.";if(/\bapi\b|endpoint|integrat|service|webhook/.test(n))return`Confirm the API contract, error boundary, and retry expectations${i?` for ${i}`:""} before implementation.`;if(/\btest|\bspec\b|\bqa\b|quality|coverage/.test(n))return"Identify the highest-value coverage gaps and define the test boundary before writing any specs.";if(/performance|latency|speed|optimiz|cache|scale/.test(n))return"Establish a measurable baseline and isolate the single highest-impact bottleneck before optimizing.";let o=i?` scoped to ${i}`:"",r=s?`, with "${s}" as a hard boundary`:"";return`Define the success criteria and lock the smallest viable delivery slice${o}${r}.`}function Ni(e){return{taskSummary:qe(e.taskSummary),scope:Wt(e.scopeInput),constraints:Wt(e.constraintsInput),contextReferences:(e.contextReferences??[]).map(qe).filter(Boolean)}}function Li(e,t){let n=Mi(e,t),i=Oi(e),s=Ii(e),o=Ai(e,t),r=Ei(e,n,t),a=Fi(e,o);return{summary:i,assumptions:s,risks:n,phases:o,nextAction:a,confidence:r}}function Bi(e,t,n){let i=[];if(i.push("## Deep Plan Result"),i.push(""),i.push(`**Task Summary:** ${e.taskSummary}`),i.push(`**Confidence:** ${t.confidence}`),n&&i.push(`**Workspace:** ${n.packageName??n.detectedLanguage} project`),i.push(""),n){if(i.push("### Workspace Context"),i.push(`- **Language:** ${n.detectedLanguage}`),n.techStack.length>0){let s=new Map;for(let o of n.techStack){let r=s.get(o.category)??[];r.push(o.name),s.set(o.category,r)}for(let[o,r]of s)i.push(`- **${o}:** ${r.join(", ")}`)}n.hasTests&&i.push(`- **Tests:** ${n.testPaths.join(", ")}`),n.hasCI&&i.push(`- **CI:** ${n.ciPaths.join(", ")}`),n.dreamMemoryFacts.length>0&&i.push(`- **Dream memory:** ${n.dreamMemoryFacts.length} facts available`),i.push("")}if(i.push("### Summary"),i.push(t.summary),i.push(""),i.push("### Scope"),e.scope.length>0)for(let s of e.scope)i.push(`- ${s}`);else i.push("- Scope not explicitly provided (to be locked in Phase 1).");if(i.push(""),i.push("### Constraints"),e.constraints.length>0)for(let s of e.constraints)i.push(`- ${s}`);else i.push("- No explicit constraints provided.");i.push(""),i.push("### Assumptions");for(let s of t.assumptions)i.push(`- ${s}`);i.push(""),i.push("### Risks & Open Questions");for(let s of t.risks)i.push(`- ${s}`);i.push(""),i.push("### Phased Implementation Outline");for(let s of t.phases){i.push(`#### ${s.id}: ${s.title}`),i.push(`Objective: ${s.objective}`),s.dependencies&&s.dependencies.length>0&&i.push(`Depends on: ${s.dependencies.join(", ")}`);for(let o of s.tasks)i.push(`- ${o}`);i.push("")}return i.push("### Suggested Next Action"),i.push(t.nextAction),i.join(`
-`)}function Wi(e,t){let n=new Date().toISOString().replace(/[:.]/g,"-").slice(0,19),i=ze.join(e,Di);Bt.mkdirSync(i,{recursive:!0});let s=ze.join(i,`deep-plan-${n}.md`);return Bt.writeFileSync(s,t,"utf8"),s}});var Kt=S(O=>{"use strict";var Ui=O&&O.__createBinding||(Object.create?(function(e,t,n,i){i===void 0&&(i=n);var s=Object.getOwnPropertyDescriptor(t,n);(!s||("get"in s?!t.__esModule:s.writable||s.configurable))&&(s={enumerable:!0,get:function(){return t[n]}}),Object.defineProperty(e,i,s)}):(function(e,t,n,i){i===void 0&&(i=n),e[i]=t[n]})),zi=O&&O.__setModuleDefault||(Object.create?(function(e,t){Object.defineProperty(e,"default",{enumerable:!0,value:t})}):function(e,t){e.default=t}),qt=O&&O.__importStar||(function(){var e=function(t){return e=Object.getOwnPropertyNames||function(n){var i=[];for(var s in n)Object.prototype.hasOwnProperty.call(n,s)&&(i[i.length]=s);return i},e(t)};return function(t){if(t&&t.__esModule)return t;var n={};if(t!=null)for(var i=e(t),s=0;s<i.length;s++)i[s]!=="default"&&Ui(n,t,i[s]);return zi(n,t),n}})();Object.defineProperty(O,"__esModule",{value:!0});O.scanWorkspace=Gi;O.scanResultToContextLines=Qi;var re=qt(require("fs")),U=qt(require("path")),qi=new Set([".git","node_modules","__pycache__",".DS_Store","out","dist",".venv",".mypy_cache",".pytest_cache",".tox","coverage",".next","build"]),Hi=["tests/","test/","__tests__/","spec/","*.test.ts","*.spec.ts","*.test.js","*.spec.js","test_*.py","*_test.py","conftest.py","jest.config","vitest.config","pytest.ini","setup.cfg"],Ki=[".github/workflows/",".gitlab-ci.yml","Jenkinsfile",".circleci/","azure-pipelines.yml",".travis.yml"];function oe(e,t){return re.existsSync(U.resolve(e,t))}function Ke(e,t){let n=U.resolve(e,t);try{return re.readFileSync(n,"utf8")}catch{return null}}function Ht(e,t,n,i=0){if(i>=n)return[];let s=[];try{let o=re.readdirSync(e,{withFileTypes:!0});for(let r of o){if(qi.has(r.name))continue;let a=U.relative(t,U.join(e,r.name));r.isDirectory()?(s.push({relativePath:a,type:"directory",depth:i}),s.push(...Ht(U.join(e,r.name),t,n,i+1))):s.push({relativePath:a,type:"file",depth:i})}}catch{}return s}function Vi(e){let t=[],n="unknown",i,s,o=Ke(e,"package.json");if(o){n="typescript";try{let a=JSON.parse(o);if(i=a.name,s=a.main,s&&/^(dist|out|build)\//.test(s)){let f=s.replace(/^(dist|out|build)\//,"src/").replace(/\.js$/,".ts");oe(e,f)&&(s=f)}let d={...a.dependencies,...a.devDependencies},l={react:"framework",vue:"framework",angular:"framework",svelte:"framework",next:"framework",nuxt:"framework",express:"framework",fastify:"framework",jest:"test",vitest:"test",mocha:"test",playwright:"test",cypress:"test",typescript:"build",webpack:"build",vite:"build",esbuild:"build",rollup:"build",eslint:"lint",prettier:"lint",biome:"lint",prisma:"database",typeorm:"database",drizzle:"database",sequelize:"database"};for(let f of Object.keys(d??{})){if(f.startsWith("@types/"))continue;let g=f.replace(/^@[^/]+\//,"");for(let[m,h]of Object.entries(l))g.includes(m)&&t.push({name:f,source:"package.json",category:h})}(d?.typescript||oe(e,"tsconfig.json"))&&(n="typescript",t.some(f=>f.name==="typescript")||t.push({name:"typescript",source:"tsconfig.json",category:"build"}))}catch{}}let r=Ke(e,"pyproject.toml");if(r){n="python";let a=r.match(/^\s*"?([a-zA-Z0-9_-]+)"?\s*[>=<]/gm),d={fastapi:"framework",django:"framework",flask:"framework",streamlit:"framework",fastmcp:"framework",mcp:"framework",pytest:"test",unittest:"test",hypothesis:"test",sqlalchemy:"database",alembic:"database",ruff:"lint",mypy:"lint",black:"lint",flake8:"lint"};for(let[l,f]of Object.entries(d))r.toLowerCase().includes(l)&&t.push({name:l,source:"pyproject.toml",category:f})}else(oe(e,"requirements.txt")||oe(e,"setup.py"))&&(n="python");return{signals:t,language:n,packageName:i,entryPoint:s}}function He(e,t){let n=[];for(let i of t)if(i.endsWith("/")){let s=U.resolve(e,i.slice(0,-1));re.existsSync(s)&&re.statSync(s).isDirectory()&&n.push(i.slice(0,-1))}else{if(i.includes("*"))continue;oe(e,i)&&n.push(i)}return n}function Ji(e){let t=Ke(e,U.join(".github","dream-memory.json"));if(!t)return[];try{return(JSON.parse(t).facts??[]).slice(0,20).map(s=>typeof s=="string"?s:s.summary).filter(s=>typeof s=="string"&&s.length>0)}catch{return[]}}function Gi(e){let{signals:t,language:n,packageName:i,entryPoint:s}=Vi(e),o=Ht(e,e,2),r=He(e,Hi),a=He(e,Ki),d=He(e,[".github/plans/"]),l=Ji(e);return{techStack:t,structure:o,hasTests:r.length>0,testPaths:r,hasCI:a.length>0,ciPaths:a,hasExistingPlans:d.length>0,planPaths:d,dreamMemoryFacts:l,entryPoint:s,packageName:i,detectedLanguage:n}}function Qi(e){let t=[];if(e.packageName&&t.push(`Project: ${e.packageName}`),t.push(`Language: ${e.detectedLanguage}`),e.techStack.length>0){let o=e.techStack.filter(l=>l.category==="framework").map(l=>l.name),r=e.techStack.filter(l=>l.category==="test").map(l=>l.name),a=e.techStack.filter(l=>l.category==="build").map(l=>l.name),d=e.techStack.filter(l=>l.category==="database").map(l=>l.name);o.length>0&&t.push(`Frameworks: ${o.join(", ")}`),r.length>0&&t.push(`Test libraries: ${r.join(", ")}`),a.length>0&&t.push(`Build tools: ${a.join(", ")}`),d.length>0&&t.push(`Database tools: ${d.join(", ")}`)}e.hasTests&&t.push(`Test directories: ${e.testPaths.join(", ")}`),e.hasCI&&t.push(`CI config: ${e.ciPaths.join(", ")}`);let n=e.structure.filter(o=>o.type==="directory"&&o.depth===0).map(o=>o.relativePath);n.length>0&&t.push(`Top-level directories: ${n.join(", ")}`);let i=e.structure.filter(o=>o.type==="file"&&o.depth===0).map(o=>o.relativePath);i.length>0&&t.push(`Root files: ${i.join(", ")}`);let s=e.structure.filter(o=>o.type==="file"&&o.depth===1).map(o=>o.relativePath.replace(/\\/g,"/"));return s.length>0&&t.push(`Key source files: ${s.join(", ")}`),e.dreamMemoryFacts.length>0&&t.push(`Dream memory (${e.dreamMemoryFacts.length} facts): ${e.dreamMemoryFacts.slice(0,5).join("; ")}`),t}});var Vt=S(A=>{"use strict";var Xi=A&&A.__createBinding||(Object.create?(function(e,t,n,i){i===void 0&&(i=n);var s=Object.getOwnPropertyDescriptor(t,n);(!s||("get"in s?!t.__esModule:s.writable||s.configurable))&&(s={enumerable:!0,get:function(){return t[n]}}),Object.defineProperty(e,i,s)}):(function(e,t,n,i){i===void 0&&(i=n),e[i]=t[n]})),Ve=A&&A.__exportStar||function(e,t){for(var n in e)n!=="default"&&!Object.prototype.hasOwnProperty.call(t,n)&&Xi(t,e,n)};Object.defineProperty(A,"__esModule",{value:!0});Ve(Lt(),A);Ve(zt(),A);Ve(Kt(),A)});var Jt=S(E=>{"use strict";var Yi=E&&E.__createBinding||(Object.create?(function(e,t,n,i){i===void 0&&(i=n);var s=Object.getOwnPropertyDescriptor(t,n);(!s||("get"in s?!t.__esModule:s.writable||s.configurable))&&(s={enumerable:!0,get:function(){return t[n]}}),Object.defineProperty(e,i,s)}):(function(e,t,n,i){i===void 0&&(i=n),e[i]=t[n]})),Je=E&&E.__exportStar||function(e,t){for(var n in e)n!=="default"&&!Object.prototype.hasOwnProperty.call(t,n)&&Yi(t,e,n)};Object.defineProperty(E,"__esModule",{value:!0});Je(Fe(),E);Je(Ne(),E);Je(Be(),E)});var Qt=S(be=>{"use strict";Object.defineProperty(be,"__esModule",{value:!0});be.getExperimentalFeatureManifest=Zi;be.getExperimentalFeatureStatus=es;var Gt=[{flag:"coordinator",implemented:!0,commandId:"junai.coordinate",statusLabel:"Coordinator Mode"},{flag:"dream",implemented:!0,statusLabel:"Dream Memory Consolidation"},{flag:"deepPlan",implemented:!0,commandId:"junai.deepPlan",statusLabel:"Deep Plan Mode"},{flag:"proactive",implemented:!0,statusLabel:"KAIROS-lite Proactive Assistant"}];function Zi(){return Gt}function es(e){return Gt.map(t=>({...t,enabled:e[t.flag]}))}});var Xt=S(z=>{"use strict";var ts=z&&z.__createBinding||(Object.create?(function(e,t,n,i){i===void 0&&(i=n);var s=Object.getOwnPropertyDescriptor(t,n);(!s||("get"in s?!t.__esModule:s.writable||s.configurable))&&(s={enumerable:!0,get:function(){return t[n]}}),Object.defineProperty(e,i,s)}):(function(e,t,n,i){i===void 0&&(i=n),e[i]=t[n]})),ns=z&&z.__exportStar||function(e,t){for(var n in e)n!=="default"&&!Object.prototype.hasOwnProperty.call(t,n)&&ts(t,e,n)};Object.defineProperty(z,"__esModule",{value:!0});ns(Qt(),z)});var Zt=S(Yt=>{"use strict";Object.defineProperty(Yt,"__esModule",{value:!0})});var T=S($=>{"use strict";var is=$&&$.__createBinding||(Object.create?(function(e,t,n,i){i===void 0&&(i=n);var s=Object.getOwnPropertyDescriptor(t,n);(!s||("get"in s?!t.__esModule:s.writable||s.configurable))&&(s={enumerable:!0,get:function(){return t[n]}}),Object.defineProperty(e,i,s)}):(function(e,t,n,i){i===void 0&&(i=n),e[i]=t[n]})),q=$&&$.__exportStar||function(e,t){for(var n in e)n!=="default"&&!Object.prototype.hasOwnProperty.call(t,n)&&is(t,e,n)};Object.defineProperty($,"__esModule",{value:!0});q(ht(),$);q(Ct(),$);q(Ft(),$);q(Vt(),$);q(Jt(),$);q(Xt(),$);q(Zt(),$)});var Js={};On(Js,{activate:()=>ws,deactivate:()=>ks});module.exports=In(Js);var c=P(require("vscode")),u=P(require("fs")),p=P(require("path")),Ze=P(require("os")),mn=require("child_process");var ae=P(require("vscode")),ke=P(T()),en="junai.experimental";function Pe(e){return ae.workspace.getConfiguration(en).get(e,!1)}function ss(){let e=ae.workspace.getConfiguration(en);return{coordinator:e.get("coordinator",!1),dream:e.get("dream",!1),deepPlan:e.get("deepPlan",!1),proactive:e.get("proactive",!1)}}function tn(){return(0,ke.getExperimentalFeatureManifest)()}function nn(){return(0,ke.getExperimentalFeatureStatus)(ss())}function ce(e){if(!Pe(e)){let t=`This feature requires enabling "junai.experimental.${e}" in settings.`;throw ae.window.showWarningMessage(t),new Error(t)}}var R=P(T());var N=P(T());var Y=P(T());async function sn(e,t){return ce("coordinator"),(0,Y.coordinate)(e,t)}var je=P(T()),Ge=class{constructor(t,n,i){this.outputChannel=i;this.engine=(0,je.createDreamMemoryEngine)({workspaceRoot:t,eventBus:n,onLog:s=>{this.outputChannel&&this.outputChannel.appendLine(s)}})}recordCoordinatorRun(t){return this.engine.recordCoordinatorRun(t)}dispose(){this.engine.dispose()}};function on(e,t,n){return new Ge(e,t,n)}function rn(e){return(0,je.readDreamMemorySummary)(e)}var k=P(T());var H=P(require("vscode"));async function an(e,t,n,i){let s;try{s=await H.lm.selectChatModels({family:"gpt-4o"}),s.length===0&&(s=await H.lm.selectChatModels())}catch{return null}if(s.length===0)return null;let o=s[0],r=n?(0,k.scanResultToContextLines)(n).join(`
-`):"No workspace scan available.",a=["You are a senior software architect reviewing and enriching an implementation plan.","The plan was generated algorithmically from user inputs and a workspace scan.","Your job is to make the plan MORE SPECIFIC and ACTIONABLE for this particular codebase.","","Rules:","- Reference actual files, directories, and technologies detected in the workspace context.","- Add concrete implementation steps that reference the real project structure.","- Flag any risks specific to the detected tech stack.","- Keep the same markdown structure \u2014 add detail, do not reorganize.","- Do NOT add generic advice. Every sentence must be grounded in the workspace context.","- If the workspace context is too thin to add value, return the original plan unchanged.","- Keep output concise \u2014 enriched plan should be 1.5x original length at most."].join(`
-`),d=["## Workspace Context",r,"","## Task",`Task: ${e.taskSummary}`,`Scope: ${e.scope.join(", ")||"not specified"}`,`Constraints: ${e.constraints.join(", ")||"none"}`,"","## Algorithmic Plan (to enrich)",i].join(`
-`),l=[H.LanguageModelChatMessage.User(`${a}
+// src/lmEnrich.ts
+var vscode2 = __toESM(require("vscode"));
+async function enrichPlanWithLM(request, result, scan, baseMarkdown) {
+  let models;
+  try {
+    models = await vscode2.lm.selectChatModels({ family: "gpt-4o" });
+    if (models.length === 0) {
+      models = await vscode2.lm.selectChatModels();
+    }
+  } catch {
+    return null;
+  }
+  if (models.length === 0) {
+    return null;
+  }
+  const model = models[0];
+  const contextBlock = scan ? scanResultToContextLines(scan).join("\n") : "No workspace scan available.";
+  const systemPrompt = [
+    "You are a senior software architect reviewing and enriching an implementation plan.",
+    "The plan was generated algorithmically from user inputs and a workspace scan.",
+    "Your job is to make the plan MORE SPECIFIC and ACTIONABLE for this particular codebase.",
+    "",
+    "Rules:",
+    "- Reference actual files, directories, and technologies detected in the workspace context.",
+    "- Add concrete implementation steps that reference the real project structure.",
+    "- Flag any risks specific to the detected tech stack.",
+    "- Keep the same markdown structure \u2014 add detail, do not reorganize.",
+    "- Do NOT add generic advice. Every sentence must be grounded in the workspace context.",
+    "- If the workspace context is too thin to add value, return the original plan unchanged.",
+    "- Keep output concise \u2014 enriched plan should be 1.5x original length at most."
+  ].join("\n");
+  const userPrompt = [
+    "## Workspace Context",
+    contextBlock,
+    "",
+    "## Task",
+    `Task: ${request.taskSummary}`,
+    `Scope: ${request.scope.join(", ") || "not specified"}`,
+    `Constraints: ${request.constraints.join(", ") || "none"}`,
+    "",
+    "## Algorithmic Plan (to enrich)",
+    baseMarkdown
+  ].join("\n");
+  const messages = [
+    vscode2.LanguageModelChatMessage.User(`${systemPrompt}
 
 ---
 
-${d}`)];try{let f=await o.sendRequest(l,{},new H.CancellationTokenSource().token),g=[];for await(let h of f.text)g.push(h);let m=g.join("");return m.length>100?m:null}catch{return null}}var Z=P(require("vscode")),$e=P(T()),dn=P(T()),os=6e3,rs=220;function as(){return new Date().toISOString()}function un(e,t){return e.length<=t?e:`${e.slice(0,t-1)}\u2026`}function cn(e){let t=e.detail?`${e.title} \u2014 ${e.detail}`:e.title;return un(t,rs)}var Qe=class{constructor(t,n,i){this.eventBus=t;this.outputChannel=n;this.policyState=(0,$e.createProactivePolicyState)();this.unsubscribe=null;this.policyOptions=i,this.statusBarItem=Z.window.createStatusBarItem(Z.StatusBarAlignment.Left,10),this.statusBarItem.hide(),this.unsubscribe=this.eventBus.onAny(s=>{this.onEvent(s)}),this.log("KAIROS-lite proactive assistant enabled (low-noise mode).")}onEvent(t){let n=(0,$e.evaluateProactiveEvent)(t,this.policyState,this.policyOptions);if(!n.notice||!n.surface){n.suppressedReason==="deduped"&&this.log(`suppressed duplicate notice for event ${t.type}`);return}let i=n.notice,s=n.downgradedFromPopup?" (popup cooldown downgrade)":n.downgradedFromStatus?" (status cooldown downgrade)":"";if(this.log(`surface=${n.surface}${s} | ${i.title}`),n.surface==="popup"){this.showPopupNotice(i);return}if(n.surface==="status"){this.showStatusNotice(i);return}i.detail&&this.log(i.detail)}showPopupNotice(t){let n=cn(t);if(t.severity==="warning"||t.severity==="error"){Z.window.showWarningMessage(n);return}Z.window.showInformationMessage(n)}showStatusNotice(t){let n=cn(t);this.statusBarItem.text=`$(bell) ${un(t.title,80)}`,this.statusBarItem.tooltip=n,this.statusBarItem.show(),this.statusHideTimer&&clearTimeout(this.statusHideTimer);let i=this.policyOptions?.statusDurationMs??os;this.statusHideTimer=setTimeout(()=>{this.statusBarItem.hide(),this.statusHideTimer=void 0},i)}log(t){this.outputChannel&&this.outputChannel.appendLine(`[${as()}] ${t}`)}dispose(){this.statusHideTimer&&(clearTimeout(this.statusHideTimer),this.statusHideTimer=void 0),this.statusBarItem.dispose(),this.unsubscribe&&(this.unsubscribe(),this.unsubscribe=null)}};function ln(e,t,n){return new Qe(e,t,n)}var et="<!-- junai:start \u2014 managed by junai extension, do not edit this section -->",le="<!-- junai:end -->",V=".github",de=".claude",pe=".codex",K=null,ue=null,cs={claude:new Set(["skills","rules"]),codex:new Set(["skills"])};function tt(e){switch(e){case"copilot":return V;case"claude":return de;case"codex":return pe}}function us(e){let t=Ze.homedir();switch(e){case"copilot":return!1;case"claude":return pn(p.join(t,de,"agents"));case"codex":return pn(p.join(t,pe,"skills"))}}function pn(e){if(!u.existsSync(e))return!1;try{return u.readdirSync(e).some(t=>!t.startsWith("."))}catch{return!1}}function nt(){return c.workspace.getConfiguration("junai").get("avoidUserLevelRuntimeDuplication",!0)}function ls(){return c.workspace.getConfiguration("junai").get("avoidClaudeRuleDuplication",!0)}function ds(e,t){let n=p.join(t,V,"instructions"),i=p.join(e,V,"instructions");return u.existsSync(n)||u.existsSync(i)}function Ce(e,t){return ls()&&ds(e,t)}function hn(e,t){let n=nt(),i=s=>{let o=tt(s),r=p.join(t,o),a=p.join(e,o);if(s==="copilot")return{runtimeName:s,poolRoot:a,workspaceRoot:r,deploy:!0};let d=us(s),l=!(n&&d);return{runtimeName:s,poolRoot:a,workspaceRoot:r,deploy:l,skipReason:l?void 0:`matching user-level ${o} runtime detected`}};return[i("copilot"),i("claude"),i("codex")]}function it(e){return e.length===0?"":`Skipped workspace runtime deployment for ${e.map(n=>n.workspaceRoot).map(n=>`\`${p.basename(n)}\``).join(", ")} because matching user-level runtimes were detected. Run \`junai: Clean Up Duplicate Workspace Runtimes\` to archive existing workspace duplicates. Set \`junai.avoidUserLevelRuntimeDuplication\` to \`false\` to force workspace deployment.`}function st(e){return e?"Skipped workspace `.claude/rules` deployment because `.github/instructions` is present, to avoid duplicate instruction surfaces. Set `junai.avoidClaudeRuleDuplication` to `false` to deploy Claude rules as well.":""}function gn(e,t){return p.join(t,e==="claude"?"agents":"skills")}function ps(e){let t=p.join(Ze.homedir(),tt(e));return gn(e,t)}function ot(e){if(!nt())return[];let t=["claude","codex"],n=[];for(let i of t){let s=p.join(e,tt(i)),o=gn(i,s),r=ps(i);u.existsSync(o)&&u.existsSync(r)&&n.push({runtimeName:i,workspaceRoot:s,workspaceSignalPath:o,userSignalPath:r})}return n}function fs(e){if(!u.existsSync(e.workspaceRoot))return[];let t=cs[e.runtimeName];return u.readdirSync(e.workspaceRoot,{withFileTypes:!0}).map(n=>n.name).filter(n=>!De.has(n)).filter(n=>!t.has(n))}function ms(e){let t={archived:[],skipped:[]},n=ot(e);if(n.length===0)return t;let i;for(let s of n){let o=fs(s);if(o.length>0){t.skipped.push({target:s,reason:`contains non-junai entries (${o.join(", ")})`});continue}try{if(!i){let a=new Date().toISOString().replace(/[:.]/g,"-");i=p.join(e,".junai-backups",`duplicate-runtime-cleanup-${a}`),u.mkdirSync(i,{recursive:!0})}let r=p.join(i,p.basename(s.workspaceRoot));if(u.existsSync(r)){t.skipped.push({target:s,reason:`backup destination already exists (${r})`});continue}u.renameSync(s.workspaceRoot,r),t.archived.push(s)}catch(r){let a=r instanceof Error?r.message:String(r);t.skipped.push({target:s,reason:a})}}return t.backupRoot=i,t}function Xe(e){return e.map(t=>`\`${p.basename(t.workspaceRoot)}\``).join(", ")}async function yn(e,t){let n=t??await Re();if(!n)return;let i=ot(n);if(i.length===0){c.window.showInformationMessage("junai: No duplicate workspace runtimes detected.");return}let s=Xe(i);if(await c.window.showWarningMessage(`Archive duplicate workspace runtimes ${s}? This only archives junai-managed runtime folders and keeps a rollback copy in .junai-backups/.`,{modal:!0},"Archive Duplicates","Cancel")!=="Archive Duplicates")return;let r=ms(n),a=r.archived.length>0?Xe(r.archived):"",d=r.skipped.map(l=>`${p.basename(l.target.workspaceRoot)} (${l.reason})`).join("; ");if(r.archived.length>0){let l=`junai: Archived duplicate workspace runtimes ${a}.`;r.backupRoot&&(l+=` Backup: ${r.backupRoot}.`),r.skipped.length>0&&(l+=` Skipped: ${d}.`),c.window.showInformationMessage(l)}else c.window.showWarningMessage(`junai: No runtime folders were archived. ${d||"Nothing matched cleanup safety checks."}`);if(e){let l=`junai.duplicateRuntimeCleanupPrompted.${n}`;await e.workspaceState.update(l,!0)}}async function hs(e){if(!nt()||!c.workspace.getConfiguration("junai").get("promptDuplicateRuntimeCleanup",!0))return;let n=c.workspace.workspaceFolders;if(!n||n.length===0)return;let i=n[0].uri.fsPath,s=ot(i);if(s.length===0)return;let o=`junai.duplicateRuntimeCleanupPrompted.${i}`;if(e.workspaceState.get(o))return;let r=Xe(s),a=await c.window.showInformationMessage(`junai detected duplicate workspace runtimes (${r}) while matching user-level runtimes exist. Archive workspace duplicates now to avoid duplicate agent listings?`,"Archive Duplicates","Later","Never Ask Again");if(a==="Archive Duplicates"){await yn(e,i);return}(a==="Never Ask Again"||a==="Later")&&await e.workspaceState.update(o,!0)}function gs(){return[et,"","## junai Agent Pipeline","","> junai system documentation (agents, pipeline flow, MCP tools, routing conventions) is","> automatically provided by `.github/instructions/junai-system.instructions.md`.",">","> Project-specific config: `.github/project-config.md` | Pipeline state: `.github/pipeline-state.json`",">","> Start with `@Orchestrator` in Copilot Chat.","","## Recipe-Driven Delivery","","When working on **data-to-UI tasks** (new features, dashboards, data integrations \u2014 not bug fixes, refactors, or docs-only work):","","1. Read `.github/project-config.md` \u2014 check if a `recipe` field is set in Step 1","2. If set, read `.github/recipes/{recipe}.recipe.md`","3. Follow the recipe's **Delivery Pipeline** as your mandatory phase sequence","4. Load the recipe's **Mandatory Skills** for each phase you work on","5. Apply the recipe's **Cross-Skill Conventions** (naming chains, directory structure, chart styling)","","If no recipe is set, work normally using your built-in expertise and any skills loaded via other mechanisms.","","For complex, ambiguous, or risky tasks, run `junai.deepPlan` from the Command Palette to generate a phased plan before implementation.","",le].join(`
-`)}function rt(e){let t=p.join(e,"copilot-instructions.md"),n=gs();if(!u.existsSync(t)){let r=["# Project Instructions","","<!-- Add your project's context, conventions, and institutional knowledge below. -->","","---","",n,""].join(`
-`);u.writeFileSync(t,r,"utf8");return}let i=u.readFileSync(t,"utf8"),s=i.indexOf(et),o=i.indexOf(le);if(s!==-1&&o!==-1){let r=i.slice(0,s),a=i.slice(o+le.length);u.writeFileSync(t,r+n+a,"utf8")}else{let r=i.endsWith(`
-`)?`
-`:`
+${userPrompt}`)
+  ];
+  try {
+    const response = await model.sendRequest(messages, {}, new vscode2.CancellationTokenSource().token);
+    const chunks = [];
+    for await (const chunk of response.text) {
+      chunks.push(chunk);
+    }
+    const enriched = chunks.join("");
+    if (enriched.length > 100) {
+      return enriched;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
 
-`;u.writeFileSync(t,i+r+n+`
-`,"utf8")}}function ys(e){let t=p.join(e,"copilot-instructions.md");if(!u.existsSync(t))return;let n=u.readFileSync(t,"utf8"),i=n.indexOf(et),s=n.indexOf(le);if(i===-1||s===-1)return;let o=n.slice(0,i),r=n.slice(s+le.length),a=(o+r).replace(/\n{3,}/g,`
+// src/proactiveAssistant.ts
+var vscode3 = __toESM(require("vscode"));
 
-`).trimEnd()+`
-`;u.writeFileSync(t,a,"utf8")}function ws(e){e.subscriptions.push(c.commands.registerCommand("junai.init",()=>wn(e)),c.commands.registerCommand("junai.selectProfile",s=>vn(e,s)),c.commands.registerCommand("junai.status",()=>Ds()),c.commands.registerCommand("junai.setMode",()=>Os()),c.commands.registerCommand("junai.remove",()=>Is()),c.commands.registerCommand("junai.cleanupDuplicateRuntimes",()=>yn(e)),c.commands.registerCommand("junai.update",s=>Ms(e,s)),c.commands.registerCommand("junai.initPool",()=>xs(e)),c.commands.registerCommand("junai.setRecipe",()=>As()),c.commands.registerCommand("junai.probeAutopilot",()=>Ws())),Ss(e),Bs(e);let t=N.JunaiEventBus.getInstance(),n=c.window.createOutputChannel("junai Events");e.subscriptions.push({dispose:()=>{t.dispose(),n.dispose()}}),t.onAny(s=>{n.appendLine(`[${s.timestamp}] ${s.type} from ${s.source}: ${JSON.stringify(s)}`)});let i=c.workspace.workspaceFolders?.[0]?.uri.fsPath;if(i&&Pe("proactive")){let s=c.window.createOutputChannel("junai Proactive");ue=ln(t,s),e.subscriptions.push(ue,s)}else ue=null;if(i&&Pe("dream")){let s=c.window.createOutputChannel("junai Dream");K=on(i,t,s),e.subscriptions.push(K,s)}else K=null;bs(e),Hs(e),hs(e)}var vs={"junai.coordinate":()=>zs(),"junai.deepPlan":()=>Us()};function Ss(e){for(let t of tn()){if(!t.implemented||!t.commandId)continue;let n=vs[t.commandId];n&&e.subscriptions.push(c.commands.registerCommand(t.commandId,n))}}function bs(e){let t=c.workspace.workspaceFolders;if(!t||t.length===0)return;let n=p.join(t[0].uri.fsPath,".github","agents");if(u.existsSync(n))return;let i=c.workspace.getConfiguration("junai").get("autoInitializeOnActivation","prompt");if(i==="never")return;if(i==="always"){wn(e,{silent:!0});return}let s=`junai.welcomed.${t[0].uri.fsPath}`;e.workspaceState.get(s)||c.window.showInformationMessage("junai: Agent pipeline not yet set up in this project. Run Initialize to install 23 agents, skills, and MCP config.","Initialize Now","Not Now").then(o=>{o==="Initialize Now"?c.commands.executeCommand("junai.init"):e.workspaceState.update(s,!0)})}function ks(){ue?.dispose(),ue=null,K?.dispose(),K=null,N.JunaiEventBus.getInstance().dispose()}async function wn(e,t){let n=t?.silent??!1,i=c.workspace.workspaceFolders;if(!i||i.length===0){n||c.window.showErrorMessage("junai: No workspace folder open. Open a project folder first.");return}let s;if(i.length===1||n)s=i[0].uri.fsPath;else{let y=await c.window.showQuickPick(i.map(w=>({label:w.name,description:w.uri.fsPath,fsPath:w.uri.fsPath})),{placeHolder:"Select the workspace folder to initialize junai in"});if(!y)return;s=y.fsPath}let o=p.join(s,V),r=p.join(e.extensionPath,"pool"),a=p.join(o,"agents");if(u.existsSync(a)){if(n||await c.window.showWarningMessage("junai pipeline is already initialised in this project. Your project-config.md will be backed up before overwriting.",{modal:!0},"Overwrite","Cancel")!=="Overwrite")return;Rs(o)}let l=c.workspace.getConfiguration("junai").get("defaultMode","supervised"),f=await c.window.withProgress({location:c.ProgressLocation.Notification,title:"junai",cancellable:!1},async y=>{y.report({message:"Copying agent pool\u2026"});let w=Pn(r,s);return y.report({message:"Setting up copilot-instructions.md\u2026"}),rt(o),y.report({message:"Scaffolding pipeline state\u2026"}),Vs(o,l),y.report({message:"Configuring MCP server\u2026"}),at(s),ct(s),ut(e,o),lt(s),y.report({message:"Done."}),w}),g=it(f.skipped),m=st(Ce(r,s));if(await js(e,s),n){let y=`\u2705 junai agent pipeline auto-initialized (mode: ${l}).`,w=[g,m].filter(Boolean).join(" ");c.window.showInformationMessage(w?`${y} ${w}`:y);return}let h=[g,m].filter(Boolean).join(" ");if(await c.window.showInformationMessage(`\u2705 junai agent pipeline installed (mode: ${l}). MCP server configured in .vscode/mcp.json. Open ARTIFACTS.md to get started.${h?` ${h}`:""}`,"Open ARTIFACTS.md","Dismiss")==="Open ARTIFACTS.md"){let y=p.join(o,"agent-docs","ARTIFACTS.md");u.existsSync(y)&&c.commands.executeCommand("markdown.showPreview",c.Uri.file(y))}}var Ps={"streamlit-mssql-enterprise":"Streamlit dashboard + SQL Server \u2014 enterprise internal tools","streamlit-postgres-analytics":"Streamlit dashboard + PostgreSQL \u2014 analytics and BI apps","fastapi-postgres-service":"FastAPI REST service + PostgreSQL \u2014 cloud microservices","fastapi-mssql-internal-api":"FastAPI REST service + SQL Server \u2014 internal corporate APIs","react-node-saas":"React + Node.js \u2014 SaaS products and customer-facing apps","nextjs-postgres-saas":"Next.js + PostgreSQL \u2014 full-stack SaaS with SSR","data-pipeline-python-mssql":"Python ETL pipeline + SQL Server \u2014 data engineering","data-pipeline-python-snowflake":"Python data pipeline + Snowflake \u2014 cloud data warehouse","ml-training-python-pytorch":"PyTorch ML training \u2014 GPU workloads and model development","mcp-server-python":"Python MCP server \u2014 Model Context Protocol tooling","vscode-extension-typescript":"VS Code extension \u2014 TypeScript, vsce, activation events","telecom-appointment-intelligence":"FastAPI + React + MSSQL + Redis + Ollama \u2014 full-stack AI system","org1-telecom-ops":"Org1 \u2014 telecoms operations, full brand colour palette included","org2-finance-ops":"Org2 \u2014 finance operations team profile","org3-healthcare-ops":"Org3 \u2014 healthcare operations team profile"};async function vn(e,t){let n=t?.silent??!1,i=t?.targetFolder??await Re();if(!i)return;let s=p.join(i,".github","project-config.md");if(!u.existsSync(s)&&(await c.window.showInformationMessage("junai: project-config.md not found. Initialize pipeline resources first?","Initialize Now","Cancel")!=="Initialize Now"||(await c.commands.executeCommand("junai.init"),!u.existsSync(s))))return;let o=u.readFileSync(s,"utf8"),r=Sn(o);if(r.length===0){n||c.window.showWarningMessage("junai: No named profiles found in .github/project-config.md. Add profile definitions first.");return}let a=r.map(m=>({label:m,description:Ps[m]??`Set active profile to ${m}`}));a.push({label:"manual (blank profile)",description:"Clear profile \u2014 fill placeholder values manually in Step 2"});let d=await c.window.showQuickPick(a,{placeHolder:"Select a project profile for .github/project-config.md"});if(!d)return;let l=d.label==="manual (blank profile)"?"":d.label,f=_s(o,l);if(f===o){n||c.window.showWarningMessage("junai: Could not locate the profile row in project-config.md.");return}if(u.writeFileSync(s,f,"utf8"),!n){let m=l||"(blank/manual)";c.window.showInformationMessage(`junai: project profile set to ${m}.`)}await Cs(i,n);let g=`junai.profilePrompted.${i}`;await e.workspaceState.update(g,!0)}async function js(e,t){let n=`junai.profilePrompted.${t}`;if(e.workspaceState.get(n))return;let i=p.join(t,".github","project-config.md");if(!u.existsSync(i))return;let s=u.readFileSync(i,"utf8");if(Sn(s).length===0)return;if($s(s).length>0){await e.workspaceState.update(n,!0);return}await c.window.showInformationMessage("junai: Select a predefined profile now? This pre-fills project context for all agents.","Select Profile","Later")==="Select Profile"?await vn(e,{targetFolder:t}):await e.workspaceState.update(n,!0)}async function Re(){let e=c.workspace.workspaceFolders;if(!e||e.length===0)return c.window.showErrorMessage("junai: No workspace folder open. Open a project folder first."),null;if(e.length===1)return e[0].uri.fsPath;let t=await c.window.showQuickPick(e.map(n=>({label:n.name,description:n.uri.fsPath,fsPath:n.uri.fsPath})),{placeHolder:"Select workspace folder"});return t?t.fsPath:null}function Sn(e){let n=e.replace(/<!--[\s\S]*?-->/g,"").matchAll(/^###\s+([a-z0-9][a-z0-9-]*)\s*$/gim),i=Array.from(n,s=>s[1].trim());return[...new Set(i)]}function $s(e){let t=e.match(/^\|\s*\*\*profile\*\*\s*\|\s*(.*?)\s*\|\s*$/im);return!t||t.length<2?"":t[1].replace(/`/g,"").trim()}function _s(e,t){let n=t?`\`${t}\``:"``";return e.replace(/^\|\s*\*\*profile\*\*\s*\|\s*.*?\s*\|\s*$/im,`| **profile** | ${n} |`)}async function Cs(e,t){let n=p.join(e,".github","recipes");if(!u.existsSync(n))return;let i=u.readdirSync(n).filter(f=>f.endsWith(".recipe.md")).map(f=>f.replace(".recipe.md",""));if(i.length===0)return;let s=p.join(e,".github","project-config.md");if(!u.existsSync(s))return;let o=u.readFileSync(s,"utf8");if(bn(o).length>0||t)return;let a=i.map(f=>({label:f,description:`Use .github/recipes/${f}.recipe.md delivery workflow`}));a.push({label:"none",description:"No recipe \u2014 agents work with built-in expertise only"});let d=await c.window.showQuickPick(a,{placeHolder:"Select a delivery recipe (optional \u2014 defines mandatory skill pipeline for data-to-UI tasks)"});if(!d||d.label==="none")return;let l=kn(o,d.label);l!==o&&(u.writeFileSync(s,l,"utf8"),c.window.showInformationMessage(`junai: recipe set to ${d.label}.`))}function bn(e){let t=e.match(/^\|\s*\*\*recipe\*\*\s*\|\s*(.*?)\s*\|\s*$/im);return!t||t.length<2?"":t[1].replace(/`/g,"").trim()}function kn(e,t){let n=t?`\`${t}\``:"``";return e.replace(/^\|\s*\*\*recipe\*\*\s*\|\s*.*?\s*\|\s*$/im,`| **recipe** | ${n} |`)}function Rs(e){let t=p.join(e,"project-config.md");if(!u.existsSync(t))return!1;let n=new Date().toISOString().replace(/[:.]/g,"-").slice(0,19),i=p.join(e,`project-config.bak.${n}.md`);return u.copyFileSync(t,i),!0}async function Ds(){let e=c.workspace.workspaceFolders;if(!e||e.length===0){c.window.showErrorMessage("junai: No workspace folder open.");return}let t=p.join(e[0].uri.fsPath,".github"),n=p.join(t,"pipeline-state.json"),i=c.window.createOutputChannel("junai Pipeline");if(i.show(!0),!u.existsSync(n)){i.appendLine('\u26A0  No pipeline-state.json found. Run "junai: Initialize Agent Pipeline" first.');return}let s=JSON.parse(u.readFileSync(n,"utf8"));i.appendLine("\u2500\u2500\u2500 junai Pipeline Status \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500"),i.appendLine(`  Mode        : ${s.mode}`),i.appendLine(`  Initialized : ${s.initialized}`),i.appendLine(`  Version     : ${s.version}`);let o=nn();i.appendLine(`  Flags       : ${o.map(h=>`${h.flag}=${h.enabled}`).join(" ")}`),i.appendLine("  Experimental:");for(let h of o){let v=h.implemented?"live":"coming soon",y=h.commandId?` | command=${h.commandId}`:"",w=!h.implemented&&h.comingSoon?` | ${h.comingSoon}`:"";i.appendLine(`    \u2022 ${h.statusLabel}: ${h.enabled?"enabled":"disabled"} | ${v}${y}${w}`)}let r=o.find(h=>h.flag==="dream");if(r?.enabled){let h=rn(e[0].uri.fsPath);h?i.appendLine(`  Dream       : ${h.factCount} facts, ${h.runs} runs, last=${h.lastUpdatedAt}`):i.appendLine("  Dream       : enabled, awaiting first consolidation pass")}else r?.implemented&&i.appendLine("  Dream       : available (disabled)");let a=o.find(h=>h.flag==="proactive");a?.enabled?i.appendLine("  Proactive   : enabled (KAIROS-lite, low-noise notices)"):a?.implemented&&i.appendLine("  Proactive   : available (disabled)");let d=(0,R.getAllClassifications)(),l=d.filter(h=>h.tier==="high").length,f=d.filter(h=>h.tier==="medium").length,g=d.filter(h=>h.tier==="low").length;i.appendLine(`  Permissions : ${g} low / ${f} medium / ${l} high risk actions classified`);let m=N.JunaiEventBus.getInstance().getRecentEvents(5);if(i.appendLine(`  Events      : ${m.length} recent events in log`),m.length>0)for(let h of m)i.appendLine(`    \u2022 [${h.severity}] [${h.type}] ${h.title} \u2014 ${h.timestamp}`);i.appendLine("\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500")}async function Os(){let e=c.workspace.workspaceFolders;if(!e||e.length===0){c.window.showErrorMessage("junai: No workspace folder open.");return}let t=await c.window.showQuickPick([{label:"supervised",description:"All gates require manual approval \u2014 recommended for production teams"},{label:"assisted",description:"Manual gates with AI guidance hints"},{label:"autopilot",description:"All gates auto-satisfied except intent_approved \u2014 fully autonomous after kick-off"}],{placeHolder:"Select pipeline mode"});if(!t)return;let n=p.join(e[0].uri.fsPath,".github","pipeline-state.json");if(!u.existsSync(n)){c.window.showErrorMessage("junai: No pipeline-state.json found. Initialize the pipeline first.");return}let i=JSON.parse(u.readFileSync(n,"utf8"));i.mode=t.label,u.writeFileSync(n,JSON.stringify(i,null,2),"utf8"),c.window.showInformationMessage(`junai: Pipeline mode set to "${t.label}".`)}async function Is(){let e=c.workspace.workspaceFolders;if(!e||e.length===0){c.window.showErrorMessage("junai: No workspace folder open.");return}if(await c.window.showWarningMessage("This will delete the junai agent pool (.github runtime folders, .claude runtime folders, .codex runtime folders, pipeline-state.json) and remove the MCP entry from .vscode/mcp.json. Your own code and commits are NOT affected.",{modal:!0},"Remove junai from this project","Cancel")!=="Remove junai from this project")return;let n=e[0].uri.fsPath,i=p.join(n,V),s=p.join(n,de),o=p.join(n,pe),r=["agents","skills","prompts","instructions","agent-docs","plans","handoffs","tools","diagrams"];for(let l of r){let f=p.join(i,l);u.existsSync(f)&&u.rmSync(f,{recursive:!0,force:!0})}for(let l of["agents","skills","rules"]){let f=p.join(s,l);u.existsSync(f)&&u.rmSync(f,{recursive:!0,force:!0})}let a=p.join(o,"skills");u.existsSync(a)&&u.rmSync(a,{recursive:!0,force:!0});for(let l of["pipeline-state.json","project-config.md",".junai-pool-version"]){let f=p.join(i,l);u.existsSync(f)&&u.rmSync(f,{force:!0})}ys(i),fn(s),fn(o);let d=p.join(n,".vscode","mcp.json");if(u.existsSync(d))try{let l=JSON.parse(u.readFileSync(d,"utf8"));l.servers&&l.servers.junai&&delete l.servers.junai,l.servers&&l.servers["junai-pipeline"]&&delete l.servers["junai-pipeline"],u.writeFileSync(d,JSON.stringify(l,null,2),"utf8")}catch{}c.window.showInformationMessage("junai: Agent pool removed from this project. Re-run Initialize to restore it.")}async function Ms(e,t){let n=t?.silent??!1,i=c.workspace.workspaceFolders;if(!i||i.length===0){n||c.window.showErrorMessage("junai: No workspace folder open.");return}let s=p.join(i[0].uri.fsPath,V),o=p.join(i[0].uri.fsPath,de),r=p.join(i[0].uri.fsPath,pe),a=p.join(s,"agents");if(!u.existsSync(a)){n||c.window.showErrorMessage("junai: Pipeline not initialized in this project. Run Initialize first.");return}if(!n&&await c.window.showInformationMessage("Update agent pool with latest files from this extension version? Your copilot-instructions.md content is preserved (only the junai section is refreshed).",{modal:!0},"Update","Cancel")!=="Update")return;let d=p.join(e.extensionPath,"pool"),l=new Set(["pipeline-state.json","project-config.md"]),f=0,g=0,m="",h="",v={result:"skipped-no-repo"};await c.window.withProgress({location:c.ProgressLocation.Notification,title:"junai",cancellable:!1},async ee=>{ee.report({message:"Updating agent pool\u2026"});let b=Ce(d,i[0].uri.fsPath);h=st(b);let te={copilot:{cleanDirs:["agents","skills","prompts","instructions","tools","diagrams"],mergeDirs:["agent-docs","plans","handoffs"],rootFiles:["project-config.md"],userOwnedFiles:l},claude:{cleanDirs:b?["skills"]:["skills","rules"],mergeDirs:[],rootFiles:[],userOwnedFiles:new Set},codex:{cleanDirs:["skills"],mergeDirs:[],rootFiles:[],userOwnedFiles:new Set}},ne=hn(d,i[0].uri.fsPath);m=it(ne.filter(j=>!j.deploy));let Oe=ne.filter(j=>j.deploy).map(j=>({poolRoot:j.poolRoot,workspaceRoot:j.workspaceRoot,...te[j.runtimeName]}));for(let j of Oe){let dt=Es(j);f+=dt.updated,g+=dt.skipped}rt(s),ut(e,s),at(i[0].uri.fsPath),ct(i[0].uri.fsPath),lt(i[0].uri.fsPath),ee.report({message:"Committing pool update\u2026"}),v.result=Ks(i[0].uri.fsPath,_e(e)??void 0),ee.report({message:"Done."})});let y=_e(e)??"latest",w=n?`junai: Agent pool auto-updated to v${y} \u2014 ${f} files refreshed.`:`\u2705 junai pool updated \u2014 ${f} files refreshed, ${g} user-owned files preserved.`;v.result==="committed"?w+=" Pool changes committed to git.":v.result==="skipped-in-progress"?w+=" (git commit skipped \u2014 repo has an in-progress operation; commit manually)":v.result==="skipped-detached"?w+=" (git commit skipped \u2014 detached HEAD)":v.result==="error"&&(w+=" (git commit failed \u2014 commit manually if needed)"),m&&(w+=` ${m}`),h&&(w+=` ${h}`),c.window.showInformationMessage(w)}async function xs(e){let t=c.workspace.workspaceFolders;if(!t?.length){c.window.showErrorMessage("junai: No workspace folder open. Open a project folder first.");return}let n=t.length===1?t[0].uri.fsPath:await Re();if(!n)return;let i=p.join(n,".github"),s=p.join(e.extensionPath,"pool"),o=await c.window.withProgress({location:c.ProgressLocation.Notification,title:"junai: Deploying agent pool\u2026",cancellable:!1},async()=>{let f=Pn(s,n);return rt(i),at(n),ct(n),ut(e,i),lt(n),f}),r=it(o.skipped),a=st(Ce(s,n)),d=[r,a].filter(Boolean).join(" "),l=await c.window.showInformationMessage(`junai: Agent pool deployed. Agents and skills are ready \u2014 no pipeline-state.json created.${d?` ${d}`:""}`,"Select Profile","Set Recipe");l==="Select Profile"&&c.commands.executeCommand("junai.selectProfile"),l==="Set Recipe"&&c.commands.executeCommand("junai.setRecipe")}async function As(){let e=c.workspace.workspaceFolders;if(!e?.length){c.window.showErrorMessage("junai: No workspace folder open.");return}let t=e.length===1?e[0].uri.fsPath:await Re();if(!t)return;let n=p.join(t,".github","project-config.md");if(!u.existsSync(n)){c.window.showErrorMessage("junai: project-config.md not found. Run Initialize Agent Pipeline or Initialize Agent Pool first.");return}let i=p.join(t,".github","recipes");if(!u.existsSync(i)){c.window.showErrorMessage("junai: .github/recipes/ not found.");return}let s=u.readdirSync(i).filter(g=>g.endsWith(".recipe.md")).map(g=>g.replace(".recipe.md",""));if(s.length===0){c.window.showErrorMessage("junai: No .recipe.md files found in .github/recipes/");return}let o=u.readFileSync(n,"utf8"),r=bn(o),a=s.map(g=>({label:g,description:g===r?"(currently selected)":`Use .github/recipes/${g}.recipe.md`}));a.push({label:"none",description:"No recipe \u2014 agents work with built-in expertise only"});let d=await c.window.showQuickPick(a,{placeHolder:r?`Current recipe: ${r} \u2014 select to change`:"Select a delivery recipe"});if(!d)return;let l=d.label==="none"?"":d.label,f=kn(o,l);f!==o?(u.writeFileSync(n,f,"utf8"),c.window.showInformationMessage(`junai: recipe set to ${l||"none"}.`)):c.window.showInformationMessage(`junai: recipe unchanged (${r||"none"}).`)}var De=new Set([".git","node_modules","__pycache__",".DS_Store"]);function Pn(e,t){let n={installed:[],skipped:[]},i=hn(e,t),s=Ce(e,t);for(let o of i){if(!o.deploy){n.skipped.push(o);continue}if(!u.existsSync(o.poolRoot))continue;let r=new Set;o.runtimeName==="claude"&&(r.add("agents"),s&&r.add("rules")),Ts(o.poolRoot,o.workspaceRoot,r),n.installed.push(o.runtimeName)}return n}function Es(e){let t=0,n=0;if(!u.existsSync(e.poolRoot))return{updated:t,skipped:n};for(let i of[...e.cleanDirs,...e.mergeDirs]){let s=p.join(e.workspaceRoot,i,i);u.existsSync(s)&&u.rmSync(s,{recursive:!0,force:!0})}for(let i of e.cleanDirs){let s=p.join(e.poolRoot,i),o=p.join(e.workspaceRoot,i);if(!u.existsSync(s))continue;u.existsSync(o)&&u.rmSync(o,{recursive:!0,force:!0});let r=Ye(s,o,e.userOwnedFiles);t+=r.updated,n+=r.skipped}for(let i of e.mergeDirs){let s=p.join(e.poolRoot,i),o=p.join(e.workspaceRoot,i);if(!u.existsSync(s))continue;let r=Ye(s,o,e.userOwnedFiles);t+=r.updated,n+=r.skipped}for(let i of e.rootFiles){let s=p.join(e.poolRoot,i),o=p.join(e.workspaceRoot,i);if(u.existsSync(s)){if(u.mkdirSync(e.workspaceRoot,{recursive:!0}),e.userOwnedFiles.has(i)&&u.existsSync(o)){n++;continue}u.copyFileSync(s,o),t++}}return{updated:t,skipped:n}}function fn(e){u.existsSync(e)&&u.readdirSync(e).length===0&&u.rmSync(e,{recursive:!0,force:!0})}function Ts(e,t,n){if(u.existsSync(e)){u.mkdirSync(t,{recursive:!0});for(let i of u.readdirSync(e,{withFileTypes:!0})){if(De.has(i.name)||i.isDirectory()&&n.has(i.name))continue;let s=p.join(e,i.name),o=p.join(t,i.name);i.isDirectory()?jn(s,o):u.copyFileSync(s,o)}}}function jn(e,t){if(u.existsSync(e)){u.mkdirSync(t,{recursive:!0});for(let n of u.readdirSync(e,{withFileTypes:!0})){if(De.has(n.name))continue;let i=p.join(e,n.name),s=p.join(t,n.name);n.isDirectory()?jn(i,s):u.copyFileSync(i,s)}}}function Ye(e,t,n){let i=0,s=0;if(!u.existsSync(e))return{updated:i,skipped:s};u.mkdirSync(t,{recursive:!0});let o=p.basename(t);for(let r of u.readdirSync(e,{withFileTypes:!0})){if(De.has(r.name)||r.isDirectory()&&r.name===o)continue;let a=p.join(e,r.name),d=p.join(t,r.name);if(r.isDirectory()){let l=Ye(a,d,n);i+=l.updated,s+=l.skipped}else n.has(r.name)?s++:(u.copyFileSync(a,d),i++)}return{updated:i,skipped:s}}function at(e){let t=p.join(e,".vscode"),n=p.join(t,"mcp.json");u.mkdirSync(t,{recursive:!0});let i={};if(u.existsSync(n))try{i=JSON.parse(u.readFileSync(n,"utf8"))}catch{i={}}i.servers||(i.servers={}),i.servers["junai-pipeline"]&&delete i.servers["junai-pipeline"],i.servers.junai||(i.servers.junai={type:"stdio",command:"uv",args:["run","${workspaceFolder}/.github/tools/mcp-server/server.py"]},u.writeFileSync(n,JSON.stringify(i,null,2),"utf8"))}function ct(e){let t=p.join(e,".vscode"),n=p.join(t,"settings.json");u.mkdirSync(t,{recursive:!0});let i={};if(u.existsSync(n))try{i=JSON.parse(u.readFileSync(n,"utf8"))}catch{i={}}let s=i["files.exclude"]??{};s.NUL||(s.NUL=!0,i["files.exclude"]=s,u.writeFileSync(n,JSON.stringify(i,null,4),"utf8"))}var Fs={"UI/UX Designer":"ui-ux-designer","Mermaid Diagram Specialist":"mermaid-diagram-specialist"};function Ns(e){return`workbench.action.chat.open${Fs[e]??e}`}async function Ls(e,t,...n){try{return await c.commands.executeCommand(t,...n),!0}catch{return e.appendLine(`  \u26A0 Command unavailable: ${t}`),!1}}function Bs(e){let t=c.workspace.workspaceFolders;if(!t||t.length===0)return;let n=p.join(t[0].uri.fsPath,".github","pipeline-state.json"),i=c.workspace.createFileSystemWatcher(new c.RelativePattern(t[0],".github/pipeline-state.json")),s=c.window.createOutputChannel("junai Autopilot"),o="",r=async()=>{try{if(!u.existsSync(n))return;let a=JSON.parse(u.readFileSync(n,"utf8")),d=a.pipeline_mode,l=a._notes?._routing_decision;if(d!=="autopilot"||!l||l.blocked)return;let f=`${l.next_stage??""}:${a.last_updated??""}`;if(f===o)return;o=f;let g=l.next_stage??"?",m=l.target_agent??"None",h=l.handoff_prompt??l.prompt??"";if(s.show(!1),s.appendLine(`
-[junai autopilot] \u{1F680} ${new Date().toISOString()}`),s.appendLine(`  stage        : ${g}`),s.appendLine(`  target_agent : ${m}`),s.appendLine(`  prompt       : ${h.length} chars`),!m||m==="None"){s.appendLine("  \u2705 Pipeline reached closed state \u2014 no further routing needed."),N.JunaiEventBus.getInstance().emit({type:"task-completed",timestamp:new Date().toISOString(),source:"autopilot-watcher",severity:"success",title:"Pipeline closed",detail:`${a.feature??"feature"} complete`,stage:"pipeline-closed",agent:"none",summary:`Pipeline closed \u2014 ${a.feature??"feature"} complete`}),c.window.showInformationMessage(`junai autopilot: \u2705 Pipeline closed \u2014 ${a.feature??"feature"} complete.`,"View Log").then(w=>{w==="View Log"&&s.show(!0)});return}let v=Ns(m),y=await Ls(s,v,{query:h});if(await c.env.clipboard.writeText(h),!y){s.appendLine(`  \u2717 Could not open @${m} via: ${v}`),s.appendLine(`  \u2192 Manual fallback: open @${m} and paste the routing prompt (Ctrl+V).`),c.window.showWarningMessage(`junai autopilot: could not auto-open @${m}. Routing prompt copied to clipboard.`,"View Log").then(w=>{w==="View Log"&&s.show(!0)});return}s.appendLine(`  \u2713 Opened @${m} \u2014 routing prompt sent as query (also in clipboard)`),N.JunaiEventBus.getInstance().emit({type:"task-completed",timestamp:new Date().toISOString(),source:"autopilot-watcher",severity:"success",title:`Autopilot routed to @${m}`,detail:`Stage ${g}`,stage:g,agent:m,summary:`Routed to @${m} for stage: ${g}`}),c.window.showInformationMessage(`junai autopilot: \u2705 @${m} invoked \u2014 stage: ${g}`,"View Log").then(w=>{w==="View Log"&&s.show(!0)})}catch{}};i.onDidChange(()=>{r()}),i.onDidCreate(()=>{r()}),e.subscriptions.push(i,s)}async function Ws(){let e=c.window.createOutputChannel("junai Autopilot Probe");e.show(!0),e.appendLine("=== junai Autopilot Command Probe ==="),e.appendLine(`VS Code version : ${c.version}`),e.appendLine("");let n=(await c.commands.getCommands(!0)).filter(i=>/chat|copilot|agent|handoff|send|message/i.test(i)).sort();e.appendLine(`Found ${n.length} chat/copilot/agent commands:`),e.appendLine("");for(let i of n)e.appendLine(`  ${i}`);e.appendLine(""),e.appendLine("--- lm API surface (1.102 probe) ---");try{let i=c.lm,s=Object.keys(i).filter(o=>/chat|agent|send|request|mcp/i.test(o));for(let o of s)e.appendLine(`  vscode.lm.${o} : ${typeof i[o]}`);s.length===0&&e.appendLine("  (no matching keys found on vscode.lm)")}catch(i){e.appendLine(`  \u26A0 Could not enumerate vscode.lm: ${i?.message??i}`),e.appendLine('  Add enabledApiProposals=["mcpServerDefinitions"] to package.json and use --enable-proposed-api flag,'),e.appendLine("  or run via F5 (Extension Development Host) to access proposed APIs.")}e.appendLine(""),e.appendLine("Paste this output as context when implementing the real autopilot invoker."),c.window.showInformationMessage(`junai probe: found ${n.length} chat commands. See "junai Autopilot Probe" output channel.`)}async function Us(){let e=c.workspace.workspaceFolders;if(!e||e.length===0){c.window.showErrorMessage("junai: No workspace folder open.");return}try{ce("deepPlan")}catch{return}let t=await c.window.showInputBox({prompt:"What complex task should Deep Plan break down?",placeHolder:"e.g. add staged rollout for Dream memory with rollback safety and metrics",ignoreFocusOut:!0});if(!t)return;let n=await c.window.showInputBox({prompt:"Scope (optional, comma/newline separated)",placeHolder:"e.g. src/dreamMemory.ts, src/extension.ts, package.json settings",ignoreFocusOut:!0}),i=await c.window.showInputBox({prompt:"Constraints (optional, comma/newline separated)",placeHolder:"e.g. no pipeline-state edits, backward compatible, no new dependencies",ignoreFocusOut:!0}),s=e[0].uri.fsPath,o=c.window.activeTextEditor?.document.uri.fsPath,r=o?[p.relative(s,o)]:[],a=(0,k.scanWorkspace)(s),d=(0,k.buildDeepPlanRequest)({taskSummary:t,scopeInput:n,constraintsInput:i,contextReferences:r}),l=(0,k.createDeepPlanResult)(d,a),f=(0,k.renderDeepPlanMarkdown)(d,l,a),g=await an(d,l,a,f);g&&(f=g);let m=(0,k.persistDeepPlanMarkdown)(s,f),h=c.window.createOutputChannel("junai Deep Plan");h.show(!0),h.appendLine("=== junai Deep Plan ==="),h.appendLine(`Saved: ${m}`),h.appendLine(""),h.appendLine(f);let v=N.JunaiEventBus.getInstance();v.emit({type:"approval-needed",timestamp:new Date().toISOString(),source:"deep-plan",severity:"info",title:"Deep Plan ready",detail:`Confidence ${l.confidence}. Review plan and choose your next step.`,stage:"plan",agent:"Deep Plan",action:"use_deep_plan",riskTier:"medium"});let y=await c.window.showInformationMessage(`junai deep plan ready (${l.confidence} confidence). Choose your next step.`,"Use This Plan","Copy Next Step","Open Plan File");if(y==="Use This Plan"){await c.env.clipboard.writeText(l.nextAction),v.emit({type:"task-completed",timestamp:new Date().toISOString(),source:"deep-plan",severity:"success",title:"Deep Plan selected",detail:"Next step copied to clipboard",stage:"plan-approved",agent:"Deep Plan",summary:"User selected deep plan and copied the next step to clipboard"}),c.window.showInformationMessage("junai deep plan selected. Next step copied to clipboard.");return}if(y==="Copy Next Step"){await c.env.clipboard.writeText(l.nextAction),c.window.showInformationMessage("junai deep plan next step copied to clipboard.");return}if(y==="Open Plan File"){let w=await c.workspace.openTextDocument(c.Uri.file(m));await c.window.showTextDocument(w,{preview:!1})}}async function zs(){let e=c.workspace.workspaceFolders;if(!e||e.length===0){c.window.showErrorMessage("junai: No workspace folder open.");return}try{ce("coordinator")}catch{return}let t=await c.window.showInputBox({prompt:"What should Coordinator Mode investigate?",placeHolder:"e.g. review the extension architecture and verify coordinator-related files",ignoreFocusOut:!0});if(!t)return;let n=e[0].uri.fsPath,i=c.window.createOutputChannel("junai Coordinator");i.show(!0),i.appendLine("=== junai Coordinator ==="),i.appendLine(`Goal: ${t}`),i.appendLine("Launching 3 read-only workers..."),i.appendLine("");let s={title:"Coordinator Mode Run",goal:t,workers:[{id:"explore-1",type:"explore",label:"Explore workspace structure",prompt:`Explore the workspace areas most relevant to: ${t}`,scopePaths:["src","package.json"]},{id:"verify-1",type:"verify",label:"Verify coordinator targets",prompt:`Verify that the main coordinator-related files for this goal exist and are readable: ${t}`,scopePaths:["src/extension.ts","src/coordinator.ts","package.json"]},{id:"review-1",type:"review",label:"Review implementation signals",prompt:`Review the current implementation for patterns, exports, and TODOs related to: ${t}`,scopePaths:["src/extension.ts","src/coordinator.ts"]}]};try{let o=await c.window.withProgress({location:c.ProgressLocation.Notification,title:"junai Coordinator",cancellable:!1},async()=>sn(s,n));if(i.appendLine(`Completed in ${o.totalDurationMs}ms`),i.appendLine(`Summary: ${o.summary.completed} completed / ${o.summary.failed} failed / ${o.summary.total} total`),i.appendLine(""),i.appendLine(o.synthesizedOutput),K){let r=K.recordCoordinatorRun({goal:t,summary:o.summary,workerResults:o.workerResults.map(a=>({workerId:a.workerId,workerType:a.workerType,label:a.label,status:a.status,output:a.output,error:a.error}))});r&&(r.factsAdded.length+r.factsUpdated.length>0||r.factsPruned.length>0)&&(i.appendLine(""),i.appendLine(`Dream consolidation: +${r.factsAdded.length} added / ${r.factsUpdated.length} updated / ${r.factsPruned.length} pruned`))}c.window.showInformationMessage(`junai coordinator: completed ${o.summary.total} workers in ${o.totalDurationMs}ms.`,"View Output").then(r=>{r==="View Output"&&i.show(!0)})}catch(o){let r=o instanceof Error?o.message:String(o);i.appendLine(`Error: ${r}`),c.window.showWarningMessage(r)}}function _e(e){let t=p.join(e.extensionPath,"pool","POOL_VERSION");try{return u.readFileSync(t,"utf8").trim()}catch{return null}}function qs(e){let t=p.join(e,".junai-pool-version");try{return u.readFileSync(t,"utf8").trim()}catch{return null}}function ut(e,t){let n=_e(e);n&&u.writeFileSync(p.join(t,".junai-pool-version"),n,"utf8")}function Hs(e){let t=c.workspace.workspaceFolders;if(!t||t.length===0)return;let n=p.join(t[0].uri.fsPath,".github"),i=p.join(n,"agents");if(!u.existsSync(i))return;let s=_e(e),o=qs(n);s&&s!==o&&c.commands.executeCommand("junai.update",{silent:!0})}function Ks(e,t){let n=t?`v${t}`:"latest";function i(b,te,ne){let Oe=ne?{...process.env,...ne}:void 0,j=(0,mn.spawnSync)("git",b,{cwd:te,encoding:"utf8",env:Oe});return{ok:j.status===0&&!j.error,out:(j.stdout??"").trim()}}if(!i(["rev-parse","--git-dir"],e).ok)return"skipped-no-repo";let s=i(["rev-parse","--git-dir"],e),o=p.isAbsolute(s.out)?s.out:p.join(e,s.out);if(["rebase-merge","rebase-apply","MERGE_HEAD","CHERRY_PICK_HEAD","BISECT_LOG"].some(b=>u.existsSync(p.join(o,b))))return"skipped-in-progress";if(!i(["symbolic-ref","HEAD"],e).ok)return"skipped-detached";let a=i(["rev-parse","--show-toplevel"],e);if(!a.ok)return"skipped-no-repo";let d=a.out,l=p.join(e,V),f=p.join(e,de),g=p.join(e,pe),m=p.relative(d,l).split(p.sep).join("/"),h=[...["agents","tools","skills","instructions","prompts","diagrams","handoffs","agent-docs","plans"].map(b=>`${m}/${b}`),`${m}/copilot-instructions.md`,`${m}/.junai-pool-version`];if(u.existsSync(f)){let b=p.relative(d,f).split(p.sep).join("/");u.existsSync(p.join(f,"agents"))&&h.push(`${b}/agents`),u.existsSync(p.join(f,"skills"))&&h.push(`${b}/skills`),u.existsSync(p.join(f,"rules"))&&h.push(`${b}/rules`)}if(u.existsSync(g)){let b=p.relative(d,g).split(p.sep).join("/");u.existsSync(p.join(g,"skills"))&&h.push(`${b}/skills`)}let v=h.filter(b=>{let te=p.isAbsolute(b)?b:p.join(d,b);return u.existsSync(te)});if(v.length>0&&i(["add","--",...v],d),i(["diff","--cached","--quiet"],d).ok)return"nothing-to-commit";let w=["commit","-m",`chore(junai): update pool to ${n}`];return i(w,d).ok||i(w,d,{GIT_AUTHOR_NAME:"junai",GIT_AUTHOR_EMAIL:"junai-bot@localhost",GIT_COMMITTER_NAME:"junai",GIT_COMMITTER_EMAIL:"junai-bot@localhost"}).ok?"committed":"error"}function lt(e){let t="# \u2500\u2500 junai: selective .github tracking \u2500\u2500",n=p.join(e,".gitignore");if(u.existsSync(n)&&u.readFileSync(n,"utf8").includes(t))return;let i=["",t,".github/*","!.github/agent-docs/","!.github/agent-docs/**","!.github/plans/","!.github/plans/**","!.github/handoffs/","!.github/handoffs/**","!.github/copilot-instructions.md","!.github/project-config.md","!.github/pipeline-state.json",".claude/",""].join(`
-`);u.appendFileSync(n,i,"utf8")}function Vs(e,t){let n=p.join(e,"pipeline-state.json");if(!u.existsSync(n)){let i={version:"1.0.0",initialized:new Date().toISOString(),mode:t,stages:{},artefacts:{}};u.writeFileSync(n,JSON.stringify(i,null,2),"utf8")}}0&&(module.exports={activate,deactivate});
+// src/proactivePolicy.ts
+var DEFAULT_OPTIONS = {
+  popupCooldownMs: 3e4,
+  statusCooldownMs: 1e4,
+  statusDurationMs: 6e3
+};
+function createProactivePolicyState() {
+  return {};
+}
+function evaluateProactiveEvent(event, state, options) {
+  const merged = { ...DEFAULT_OPTIONS, ...options };
+  const now = Date.now();
+  const noticeKey = `${event.type}:${event.title}`;
+  if (state.lastNoticeKey === noticeKey) {
+    return { suppressedReason: "deduped" };
+  }
+  let surface = event.severity === "error" || event.severity === "warning" ? "popup" : event.severity === "success" ? "status" : "log";
+  let downgradedFromPopup = false;
+  let downgradedFromStatus = false;
+  if (surface === "popup" && state.lastPopupAt && now - state.lastPopupAt < merged.popupCooldownMs) {
+    surface = "status";
+    downgradedFromPopup = true;
+  }
+  if (surface === "status" && state.lastStatusAt && now - state.lastStatusAt < merged.statusCooldownMs) {
+    surface = "log";
+    downgradedFromStatus = true;
+  }
+  state.lastNoticeKey = noticeKey;
+  if (surface === "popup") {
+    state.lastPopupAt = now;
+  }
+  if (surface === "status") {
+    state.lastStatusAt = now;
+  }
+  return {
+    notice: {
+      kind: "event",
+      title: event.title,
+      detail: event.detail,
+      severity: event.severity
+    },
+    surface,
+    downgradedFromPopup,
+    downgradedFromStatus
+  };
+}
+
+// src/proactiveAssistant.ts
+var DEFAULT_STATUS_DURATION_MS = 6e3;
+var MAX_NOTICE_MESSAGE_CHARS = 220;
+function nowIso() {
+  return (/* @__PURE__ */ new Date()).toISOString();
+}
+function truncateMessage(value, maxChars) {
+  if (value.length <= maxChars) {
+    return value;
+  }
+  return `${value.slice(0, maxChars - 1)}\u2026`;
+}
+function formatSurfaceMessage(notice) {
+  const composed = notice.detail ? `${notice.title} \u2014 ${notice.detail}` : notice.title;
+  return truncateMessage(composed, MAX_NOTICE_MESSAGE_CHARS);
+}
+var ProactiveAssistantService = class {
+  constructor(eventBus, outputChannel, options) {
+    this.eventBus = eventBus;
+    this.outputChannel = outputChannel;
+    this.policyState = createProactivePolicyState();
+    this.unsubscribe = null;
+    this.policyOptions = options;
+    this.statusBarItem = vscode3.window.createStatusBarItem(vscode3.StatusBarAlignment.Left, 10);
+    this.statusBarItem.hide();
+    this.unsubscribe = this.eventBus.onAny((event) => {
+      this.onEvent(event);
+    });
+    this.log("KAIROS-lite proactive assistant enabled (low-noise mode).");
+  }
+  onEvent(event) {
+    const decision = evaluateProactiveEvent(event, this.policyState, this.policyOptions);
+    if (!decision.notice || !decision.surface) {
+      if (decision.suppressedReason === "deduped") {
+        this.log(`suppressed duplicate notice for event ${event.type}`);
+      }
+      return;
+    }
+    const notice = decision.notice;
+    const downgradeLabel = decision.downgradedFromPopup ? " (popup cooldown downgrade)" : decision.downgradedFromStatus ? " (status cooldown downgrade)" : "";
+    this.log(`surface=${decision.surface}${downgradeLabel} | ${notice.title}`);
+    if (decision.surface === "popup") {
+      this.showPopupNotice(notice);
+      return;
+    }
+    if (decision.surface === "status") {
+      this.showStatusNotice(notice);
+      return;
+    }
+    if (notice.detail) {
+      this.log(notice.detail);
+    }
+  }
+  showPopupNotice(notice) {
+    const message = formatSurfaceMessage(notice);
+    if (notice.severity === "warning" || notice.severity === "error") {
+      void vscode3.window.showWarningMessage(message);
+      return;
+    }
+    void vscode3.window.showInformationMessage(message);
+  }
+  showStatusNotice(notice) {
+    const message = formatSurfaceMessage(notice);
+    this.statusBarItem.text = `$(bell) ${truncateMessage(notice.title, 80)}`;
+    this.statusBarItem.tooltip = message;
+    this.statusBarItem.show();
+    if (this.statusHideTimer) {
+      clearTimeout(this.statusHideTimer);
+    }
+    const statusDurationMs = this.policyOptions?.statusDurationMs ?? DEFAULT_STATUS_DURATION_MS;
+    this.statusHideTimer = setTimeout(() => {
+      this.statusBarItem.hide();
+      this.statusHideTimer = void 0;
+    }, statusDurationMs);
+  }
+  log(message) {
+    if (!this.outputChannel) {
+      return;
+    }
+    this.outputChannel.appendLine(`[${nowIso()}] ${message}`);
+  }
+  dispose() {
+    if (this.statusHideTimer) {
+      clearTimeout(this.statusHideTimer);
+      this.statusHideTimer = void 0;
+    }
+    this.statusBarItem.dispose();
+    if (this.unsubscribe) {
+      this.unsubscribe();
+      this.unsubscribe = null;
+    }
+  }
+};
+function createProactiveAssistantService(eventBus, outputChannel, options) {
+  return new ProactiveAssistantService(eventBus, outputChannel, options);
+}
+
+// src/extension.ts
+var JUNAI_SECTION_START = "<!-- junai:start \u2014 managed by junai extension, do not edit this section -->";
+var JUNAI_SECTION_END = "<!-- junai:end -->";
+var COPILOT_RUNTIME_DIR = ".github";
+var CLAUDE_RUNTIME_DIR = ".claude";
+var CODEX_RUNTIME_DIR = ".codex";
+var dreamMemoryService = null;
+var proactiveAssistantService = null;
+var ALLOWED_WORKSPACE_RUNTIME_ENTRIES = {
+  claude: /* @__PURE__ */ new Set(["skills", "rules"]),
+  codex: /* @__PURE__ */ new Set(["skills"])
+};
+function getRuntimeDirName(runtimeName) {
+  switch (runtimeName) {
+    case "copilot":
+      return COPILOT_RUNTIME_DIR;
+    case "claude":
+      return CLAUDE_RUNTIME_DIR;
+    case "codex":
+      return CODEX_RUNTIME_DIR;
+  }
+}
+function hasUserLevelRuntimeTarget(runtimeName) {
+  const home = os.homedir();
+  switch (runtimeName) {
+    case "copilot":
+      return false;
+    case "claude":
+      return dirHasNonDotEntries(path4.join(home, CLAUDE_RUNTIME_DIR, "agents"));
+    case "codex":
+      return dirHasNonDotEntries(path4.join(home, CODEX_RUNTIME_DIR, "skills"));
+  }
+}
+function dirHasNonDotEntries(dir) {
+  if (!fs4.existsSync(dir)) {
+    return false;
+  }
+  try {
+    return fs4.readdirSync(dir).some((e) => !e.startsWith("."));
+  } catch {
+    return false;
+  }
+}
+function shouldAvoidUserLevelRuntimeDuplication() {
+  return vscode4.workspace.getConfiguration("ptarmigan").get("avoidUserLevelRuntimeDuplication", true);
+}
+function shouldAvoidClaudeRuleDuplication() {
+  return vscode4.workspace.getConfiguration("ptarmigan").get("avoidClaudeRuleDuplication", true);
+}
+function hasGithubInstructionSurface(poolDir, targetFolder) {
+  const workspaceInstructions = path4.join(targetFolder, COPILOT_RUNTIME_DIR, "instructions");
+  const pooledInstructions = path4.join(poolDir, COPILOT_RUNTIME_DIR, "instructions");
+  return fs4.existsSync(workspaceInstructions) || fs4.existsSync(pooledInstructions);
+}
+function shouldSkipClaudeRulesDeployment(poolDir, targetFolder) {
+  return shouldAvoidClaudeRuleDuplication() && hasGithubInstructionSurface(poolDir, targetFolder);
+}
+function buildRuntimeBundleTargets(poolDir, targetFolder) {
+  const avoidDuplication = shouldAvoidUserLevelRuntimeDuplication();
+  const makeTarget = (runtimeName) => {
+    const runtimeDir = getRuntimeDirName(runtimeName);
+    const workspaceRoot = path4.join(targetFolder, runtimeDir);
+    const poolRoot = path4.join(poolDir, runtimeDir);
+    if (runtimeName === "copilot") {
+      return { runtimeName, poolRoot, workspaceRoot, deploy: true };
+    }
+    const hasUserLevelRuntime = hasUserLevelRuntimeTarget(runtimeName);
+    const deploy = !(avoidDuplication && hasUserLevelRuntime);
+    return {
+      runtimeName,
+      poolRoot,
+      workspaceRoot,
+      deploy,
+      skipReason: deploy ? void 0 : `matching user-level ${runtimeDir} runtime detected`
+    };
+  };
+  return [
+    makeTarget("copilot"),
+    makeTarget("claude"),
+    makeTarget("codex")
+  ];
+}
+function formatRuntimeSkipNotice(skippedTargets) {
+  if (skippedTargets.length === 0) {
+    return "";
+  }
+  const runtimeList = skippedTargets.map((target) => target.workspaceRoot).map((workspacePath) => `\`${path4.basename(workspacePath)}\``).join(", ");
+  return `Skipped workspace runtime deployment for ${runtimeList} because matching user-level runtimes were detected. Run \`ptarmigan: Clean Up Duplicate Workspace Runtimes\` to archive existing workspace duplicates. Set \`ptarmigan.avoidUserLevelRuntimeDuplication\` to \`false\` to force workspace deployment.`;
+}
+function formatClaudeRulesSkipNotice(skipClaudeRules) {
+  if (!skipClaudeRules) {
+    return "";
+  }
+  return "Skipped workspace `.claude/rules` deployment because `.github/instructions` is present, to avoid duplicate instruction surfaces. Set `ptarmigan.avoidClaudeRuleDuplication` to `false` to deploy Claude rules as well.";
+}
+function getRuntimeSignalPath(runtimeName, runtimeRoot) {
+  const signalDir = runtimeName === "claude" ? "agents" : "skills";
+  return path4.join(runtimeRoot, signalDir);
+}
+function getUserRuntimeSignalPath(runtimeName) {
+  const runtimeRoot = path4.join(os.homedir(), getRuntimeDirName(runtimeName));
+  return getRuntimeSignalPath(runtimeName, runtimeRoot);
+}
+function getDuplicateWorkspaceRuntimeTargets(targetFolder) {
+  if (!shouldAvoidUserLevelRuntimeDuplication()) {
+    return [];
+  }
+  const runtimeNames = ["claude", "codex"];
+  const targets = [];
+  for (const runtimeName of runtimeNames) {
+    const workspaceRoot = path4.join(targetFolder, getRuntimeDirName(runtimeName));
+    const workspaceSignalPath = getRuntimeSignalPath(runtimeName, workspaceRoot);
+    const userSignalPath = getUserRuntimeSignalPath(runtimeName);
+    if (!fs4.existsSync(workspaceSignalPath)) {
+      continue;
+    }
+    if (!fs4.existsSync(userSignalPath)) {
+      continue;
+    }
+    targets.push({ runtimeName, workspaceRoot, workspaceSignalPath, userSignalPath });
+  }
+  return targets;
+}
+function listUnsafeWorkspaceRuntimeEntries(target) {
+  if (!fs4.existsSync(target.workspaceRoot)) {
+    return [];
+  }
+  const allowedEntries = ALLOWED_WORKSPACE_RUNTIME_ENTRIES[target.runtimeName];
+  return fs4.readdirSync(target.workspaceRoot, { withFileTypes: true }).map((entry) => entry.name).filter((name) => !SKIP.has(name)).filter((name) => !allowedEntries.has(name));
+}
+function cleanupDuplicateWorkspaceRuntimes(targetFolder) {
+  const summary = { archived: [], skipped: [] };
+  const targets = getDuplicateWorkspaceRuntimeTargets(targetFolder);
+  if (targets.length === 0) {
+    return summary;
+  }
+  let backupRoot;
+  for (const target of targets) {
+    const unsafeEntries = listUnsafeWorkspaceRuntimeEntries(target);
+    if (unsafeEntries.length > 0) {
+      summary.skipped.push({
+        target,
+        reason: `contains non-junai entries (${unsafeEntries.join(", ")})`
+      });
+      continue;
+    }
+    try {
+      if (!backupRoot) {
+        const stamp = (/* @__PURE__ */ new Date()).toISOString().replace(/[:.]/g, "-");
+        backupRoot = path4.join(targetFolder, ".junai-backups", `duplicate-runtime-cleanup-${stamp}`);
+        fs4.mkdirSync(backupRoot, { recursive: true });
+      }
+      const backupDest = path4.join(backupRoot, path4.basename(target.workspaceRoot));
+      if (fs4.existsSync(backupDest)) {
+        summary.skipped.push({
+          target,
+          reason: `backup destination already exists (${backupDest})`
+        });
+        continue;
+      }
+      fs4.renameSync(target.workspaceRoot, backupDest);
+      summary.archived.push(target);
+    } catch (err) {
+      const reason = err instanceof Error ? err.message : String(err);
+      summary.skipped.push({ target, reason });
+    }
+  }
+  summary.backupRoot = backupRoot;
+  return summary;
+}
+function formatRuntimeTargetNames(targets) {
+  return targets.map((target) => `\`${path4.basename(target.workspaceRoot)}\``).join(", ");
+}
+async function cmdCleanupDuplicateRuntimes(context, targetFolderOverride) {
+  const targetFolder = targetFolderOverride ?? await pickTargetFolder();
+  if (!targetFolder) {
+    return;
+  }
+  const duplicateTargets = getDuplicateWorkspaceRuntimeTargets(targetFolder);
+  if (duplicateTargets.length === 0) {
+    vscode4.window.showInformationMessage("junai: No duplicate workspace runtimes detected.");
+    return;
+  }
+  const runtimeList = formatRuntimeTargetNames(duplicateTargets);
+  const confirm = await vscode4.window.showWarningMessage(
+    `Archive duplicate workspace runtimes ${runtimeList}? This only archives junai-managed runtime folders and keeps a rollback copy in .junai-backups/.`,
+    { modal: true },
+    "Archive Duplicates",
+    "Cancel"
+  );
+  if (confirm !== "Archive Duplicates") {
+    return;
+  }
+  const summary = cleanupDuplicateWorkspaceRuntimes(targetFolder);
+  const archivedList = summary.archived.length > 0 ? formatRuntimeTargetNames(summary.archived) : "";
+  const skippedDetail = summary.skipped.map((item) => `${path4.basename(item.target.workspaceRoot)} (${item.reason})`).join("; ");
+  if (summary.archived.length > 0) {
+    let message = `junai: Archived duplicate workspace runtimes ${archivedList}.`;
+    if (summary.backupRoot) {
+      message += ` Backup: ${summary.backupRoot}.`;
+    }
+    if (summary.skipped.length > 0) {
+      message += ` Skipped: ${skippedDetail}.`;
+    }
+    vscode4.window.showInformationMessage(message);
+  } else {
+    vscode4.window.showWarningMessage(`junai: No runtime folders were archived. ${skippedDetail || "Nothing matched cleanup safety checks."}`);
+  }
+  if (context) {
+    const promptKey = `ptarmigan.duplicateRuntimeCleanupPrompted.${targetFolder}`;
+    await context.workspaceState.update(promptKey, true);
+  }
+}
+async function promptDuplicateRuntimeCleanupIfNeeded(context) {
+  if (!shouldAvoidUserLevelRuntimeDuplication()) {
+    return;
+  }
+  const promptEnabled = vscode4.workspace.getConfiguration("ptarmigan").get("promptDuplicateRuntimeCleanup", true);
+  if (!promptEnabled) {
+    return;
+  }
+  const workspaceFolders = vscode4.workspace.workspaceFolders;
+  if (!workspaceFolders || workspaceFolders.length === 0) {
+    return;
+  }
+  const targetFolder = workspaceFolders[0].uri.fsPath;
+  const duplicateTargets = getDuplicateWorkspaceRuntimeTargets(targetFolder);
+  if (duplicateTargets.length === 0) {
+    return;
+  }
+  const promptKey = `ptarmigan.duplicateRuntimeCleanupPrompted.${targetFolder}`;
+  if (context.workspaceState.get(promptKey)) {
+    return;
+  }
+  const runtimeList = formatRuntimeTargetNames(duplicateTargets);
+  const choice = await vscode4.window.showInformationMessage(
+    `ptarmigan detected duplicate workspace runtimes (${runtimeList}) while matching user-level runtimes exist. Archive workspace duplicates now to avoid duplicate agent listings?`,
+    "Archive Duplicates",
+    "Later",
+    "Never Ask Again"
+  );
+  if (choice === "Archive Duplicates") {
+    await cmdCleanupDuplicateRuntimes(context, targetFolder);
+    return;
+  }
+  if (choice === "Never Ask Again" || choice === "Later") {
+    await context.workspaceState.update(promptKey, true);
+  }
+}
+function junaiManagedSection() {
+  return [
+    JUNAI_SECTION_START,
+    "",
+    "## junai Agent Pipeline",
+    "",
+    "> junai system documentation (agents, pipeline flow, MCP tools, routing conventions) is",
+    "> automatically provided by `.github/instructions/junai-system.instructions.md`.",
+    ">",
+    "> Project-specific config: `.github/project-config.md` | Pipeline state: `.github/pipeline-state.json`",
+    ">",
+    "> Start with `@Orchestrator` in Copilot Chat.",
+    "",
+    "## Recipe-Driven Delivery",
+    "",
+    "When working on **data-to-UI tasks** (new features, dashboards, data integrations \u2014 not bug fixes, refactors, or docs-only work):",
+    "",
+    "1. Read `.github/project-config.md` \u2014 check if a `recipe` field is set in Step 1",
+    "2. If set, read `.github/recipes/{recipe}.recipe.md`",
+    "3. Follow the recipe's **Delivery Pipeline** as your mandatory phase sequence",
+    "4. Load the recipe's **Mandatory Skills** for each phase you work on",
+    "5. Apply the recipe's **Cross-Skill Conventions** (naming chains, directory structure, chart styling)",
+    "",
+    "If no recipe is set, work normally using your built-in expertise and any skills loaded via other mechanisms.",
+    "",
+    "For complex, ambiguous, or risky tasks, run `ptarmigan.deepPlan` from the Command Palette to generate a phased plan before implementation.",
+    "",
+    JUNAI_SECTION_END
+  ].join("\n");
+}
+function ensureCopilotInstructionsSection(githubDir) {
+  const filePath = path4.join(githubDir, "copilot-instructions.md");
+  const section = junaiManagedSection();
+  if (!fs4.existsSync(filePath)) {
+    const template = [
+      "# Project Instructions",
+      "",
+      "<!-- Add your project's context, conventions, and institutional knowledge below. -->",
+      "",
+      "---",
+      "",
+      section,
+      ""
+    ].join("\n");
+    fs4.writeFileSync(filePath, template, "utf8");
+    return;
+  }
+  const content = fs4.readFileSync(filePath, "utf8");
+  const startIdx = content.indexOf(JUNAI_SECTION_START);
+  const endIdx = content.indexOf(JUNAI_SECTION_END);
+  if (startIdx !== -1 && endIdx !== -1) {
+    const before = content.slice(0, startIdx);
+    const after = content.slice(endIdx + JUNAI_SECTION_END.length);
+    fs4.writeFileSync(filePath, before + section + after, "utf8");
+  } else {
+    const separator = content.endsWith("\n") ? "\n" : "\n\n";
+    fs4.writeFileSync(filePath, content + separator + section + "\n", "utf8");
+  }
+}
+function removeCopilotInstructionsSection(githubDir) {
+  const filePath = path4.join(githubDir, "copilot-instructions.md");
+  if (!fs4.existsSync(filePath)) {
+    return;
+  }
+  const content = fs4.readFileSync(filePath, "utf8");
+  const startIdx = content.indexOf(JUNAI_SECTION_START);
+  const endIdx = content.indexOf(JUNAI_SECTION_END);
+  if (startIdx === -1 || endIdx === -1) {
+    return;
+  }
+  const before = content.slice(0, startIdx);
+  const after = content.slice(endIdx + JUNAI_SECTION_END.length);
+  const cleaned = (before + after).replace(/\n{3,}/g, "\n\n").trimEnd() + "\n";
+  fs4.writeFileSync(filePath, cleaned, "utf8");
+}
+function activate(context) {
+  context.subscriptions.push(
+    vscode4.commands.registerCommand("ptarmigan.init", () => cmdInit(context)),
+    vscode4.commands.registerCommand("ptarmigan.selectProfile", (opts) => cmdSelectProfile(context, opts)),
+    vscode4.commands.registerCommand("ptarmigan.status", () => cmdStatus()),
+    vscode4.commands.registerCommand("ptarmigan.setMode", () => cmdSetMode()),
+    vscode4.commands.registerCommand("ptarmigan.remove", () => cmdRemove()),
+    vscode4.commands.registerCommand("ptarmigan.cleanupDuplicateRuntimes", () => cmdCleanupDuplicateRuntimes(context)),
+    vscode4.commands.registerCommand("ptarmigan.update", (opts) => cmdUpdate(context, opts)),
+    vscode4.commands.registerCommand("ptarmigan.initPool", () => cmdInitPool(context)),
+    vscode4.commands.registerCommand("ptarmigan.setRecipe", () => cmdSetRecipe()),
+    vscode4.commands.registerCommand("ptarmigan.probeAutopilot", () => cmdProbeAutopilot())
+  );
+  registerExperimentalCommands(context);
+  startAutopilotWatcher(context);
+  const eventBus = JunaiEventBus.getInstance();
+  const outputChannel = vscode4.window.createOutputChannel("junai Events");
+  context.subscriptions.push({ dispose: () => {
+    eventBus.dispose();
+    outputChannel.dispose();
+  } });
+  eventBus.onAny((event) => {
+    outputChannel.appendLine(`[${event.timestamp}] ${event.type} from ${event.source}: ${JSON.stringify(event)}`);
+  });
+  const workspaceRoot = vscode4.workspace.workspaceFolders?.[0]?.uri.fsPath;
+  if (workspaceRoot && isFeatureEnabled("proactive")) {
+    const proactiveChannel = vscode4.window.createOutputChannel("junai Proactive");
+    proactiveAssistantService = createProactiveAssistantService(eventBus, proactiveChannel);
+    context.subscriptions.push(proactiveAssistantService, proactiveChannel);
+  } else {
+    proactiveAssistantService = null;
+  }
+  if (workspaceRoot && isFeatureEnabled("dream")) {
+    const dreamChannel = vscode4.window.createOutputChannel("junai Dream");
+    dreamMemoryService = createDreamMemoryService(workspaceRoot, eventBus, dreamChannel);
+    context.subscriptions.push(dreamMemoryService, dreamChannel);
+  } else {
+    dreamMemoryService = null;
+  }
+  promptWelcomeIfNeeded(context);
+  checkPoolUpdate(context);
+  void promptDuplicateRuntimeCleanupIfNeeded(context);
+}
+var experimentalCommandHandlers = {
+  "ptarmigan.coordinate": () => cmdCoordinate(),
+  "ptarmigan.deepPlan": () => cmdDeepPlan()
+};
+function registerExperimentalCommands(context) {
+  for (const feature of getExperimentalFeatureManifest()) {
+    if (!feature.implemented || !feature.commandId) {
+      continue;
+    }
+    const handler = experimentalCommandHandlers[feature.commandId];
+    if (!handler) {
+      continue;
+    }
+    context.subscriptions.push(vscode4.commands.registerCommand(feature.commandId, handler));
+  }
+}
+function promptWelcomeIfNeeded(context) {
+  const workspaceFolders = vscode4.workspace.workspaceFolders;
+  if (!workspaceFolders || workspaceFolders.length === 0) {
+    return;
+  }
+  const agentsDir = path4.join(workspaceFolders[0].uri.fsPath, ".github", "agents");
+  if (fs4.existsSync(agentsDir)) {
+    return;
+  }
+  const autoMode = vscode4.workspace.getConfiguration("ptarmigan").get("autoInitializeOnActivation", "prompt");
+  if (autoMode === "never") {
+    return;
+  }
+  if (autoMode === "always") {
+    void cmdInit(context, { silent: true });
+    return;
+  }
+  const storageKey = `ptarmigan.welcomed.${workspaceFolders[0].uri.fsPath}`;
+  if (context.workspaceState.get(storageKey)) {
+    return;
+  }
+  vscode4.window.showInformationMessage(
+    "ptarmigan: Agent pipeline not yet set up in this project. Run Initialize to install 23 agents, skills, and MCP config.",
+    "Initialize Now",
+    "Not Now"
+  ).then((choice) => {
+    if (choice === "Initialize Now") {
+      void vscode4.commands.executeCommand("ptarmigan.init");
+    } else {
+      context.workspaceState.update(storageKey, true);
+    }
+  });
+}
+function deactivate() {
+  proactiveAssistantService?.dispose();
+  proactiveAssistantService = null;
+  dreamMemoryService?.dispose();
+  dreamMemoryService = null;
+  JunaiEventBus.getInstance().dispose();
+}
+async function cmdInit(context, opts) {
+  const silent = opts?.silent ?? false;
+  const workspaceFolders = vscode4.workspace.workspaceFolders;
+  if (!workspaceFolders || workspaceFolders.length === 0) {
+    if (!silent) {
+      vscode4.window.showErrorMessage("junai: No workspace folder open. Open a project folder first.");
+    }
+    return;
+  }
+  let targetFolder;
+  if (workspaceFolders.length === 1 || silent) {
+    targetFolder = workspaceFolders[0].uri.fsPath;
+  } else {
+    const picked = await vscode4.window.showQuickPick(
+      workspaceFolders.map((f) => ({
+        label: f.name,
+        description: f.uri.fsPath,
+        fsPath: f.uri.fsPath
+      })),
+      { placeHolder: "Select the workspace folder to initialize junai in" }
+    );
+    if (!picked) {
+      return;
+    }
+    targetFolder = picked.fsPath;
+  }
+  const githubDir = path4.join(targetFolder, COPILOT_RUNTIME_DIR);
+  const poolDir = path4.join(context.extensionPath, "pool");
+  const agentsDir = path4.join(githubDir, "agents");
+  if (fs4.existsSync(agentsDir)) {
+    if (silent) {
+      return;
+    }
+    const choice = await vscode4.window.showWarningMessage(
+      "junai pipeline is already initialised in this project. Your project-config.md will be backed up before overwriting.",
+      { modal: true },
+      "Overwrite",
+      "Cancel"
+    );
+    if (choice !== "Overwrite") {
+      return;
+    }
+    backupProjectConfig(githubDir);
+  }
+  const cfg = vscode4.workspace.getConfiguration("ptarmigan");
+  const mode = cfg.get("defaultMode", "supervised");
+  const runtimeSummary = await vscode4.window.withProgress(
+    {
+      location: vscode4.ProgressLocation.Notification,
+      title: "junai",
+      cancellable: false
+    },
+    async (progress) => {
+      progress.report({ message: "Copying agent pool\u2026" });
+      const summary = installRuntimeBundles(poolDir, targetFolder);
+      progress.report({ message: "Setting up copilot-instructions.md\u2026" });
+      ensureCopilotInstructionsSection(githubDir);
+      progress.report({ message: "Scaffolding pipeline state\u2026" });
+      scaffoldPipelineState(githubDir, mode);
+      progress.report({ message: "Configuring MCP server\u2026" });
+      scaffoldMcpConfig(targetFolder);
+      scaffoldVscodeSettings(targetFolder);
+      writeWorkspacePoolVersion(context, githubDir);
+      scaffoldSelectiveGithubGitignore(targetFolder);
+      progress.report({ message: "Done." });
+      return summary;
+    }
+  );
+  const runtimeSkipNotice = formatRuntimeSkipNotice(runtimeSummary.skipped);
+  const claudeRulesSkipNotice = formatClaudeRulesSkipNotice(shouldSkipClaudeRulesDeployment(poolDir, targetFolder));
+  await promptProfileSelectionAfterInit(context, targetFolder);
+  if (silent) {
+    const autoMsg = `\u2705 junai agent pipeline auto-initialized (mode: ${mode}).`;
+    const notices = [runtimeSkipNotice, claudeRulesSkipNotice].filter(Boolean).join(" ");
+    vscode4.window.showInformationMessage(notices ? `${autoMsg} ${notices}` : autoMsg);
+    return;
+  }
+  const initNotices = [runtimeSkipNotice, claudeRulesSkipNotice].filter(Boolean).join(" ");
+  const open = await vscode4.window.showInformationMessage(
+    `\u2705 junai agent pipeline installed (mode: ${mode}). MCP server configured in .vscode/mcp.json. Open ARTIFACTS.md to get started.${initNotices ? ` ${initNotices}` : ""}`,
+    "Open ARTIFACTS.md",
+    "Dismiss"
+  );
+  if (open === "Open ARTIFACTS.md") {
+    const artifactsPath = path4.join(githubDir, "agent-docs", "ARTIFACTS.md");
+    if (fs4.existsSync(artifactsPath)) {
+      vscode4.commands.executeCommand("markdown.showPreview", vscode4.Uri.file(artifactsPath));
+    }
+  }
+}
+var PROFILE_DESCRIPTIONS = {
+  "streamlit-mssql-enterprise": "Streamlit dashboard + SQL Server \u2014 enterprise internal tools",
+  "streamlit-postgres-analytics": "Streamlit dashboard + PostgreSQL \u2014 analytics and BI apps",
+  "fastapi-postgres-service": "FastAPI REST service + PostgreSQL \u2014 cloud microservices",
+  "fastapi-mssql-internal-api": "FastAPI REST service + SQL Server \u2014 internal corporate APIs",
+  "react-node-saas": "React + Node.js \u2014 SaaS products and customer-facing apps",
+  "nextjs-postgres-saas": "Next.js + PostgreSQL \u2014 full-stack SaaS with SSR",
+  "data-pipeline-python-mssql": "Python ETL pipeline + SQL Server \u2014 data engineering",
+  "data-pipeline-python-snowflake": "Python data pipeline + Snowflake \u2014 cloud data warehouse",
+  "ml-training-python-pytorch": "PyTorch ML training \u2014 GPU workloads and model development",
+  "mcp-server-python": "Python MCP server \u2014 Model Context Protocol tooling",
+  "vscode-extension-typescript": "VS Code extension \u2014 TypeScript, vsce, activation events",
+  "telecom-appointment-intelligence": "FastAPI + React + MSSQL + Redis + Ollama \u2014 full-stack AI system",
+  "org1-telecom-ops": "Org1 \u2014 telecoms operations, full brand colour palette included",
+  "org2-finance-ops": "Org2 \u2014 finance operations team profile",
+  "org3-healthcare-ops": "Org3 \u2014 healthcare operations team profile"
+};
+async function cmdSelectProfile(context, opts) {
+  const silent = opts?.silent ?? false;
+  const targetFolder = opts?.targetFolder ?? await pickTargetFolder();
+  if (!targetFolder) {
+    return;
+  }
+  const projectConfigPath = path4.join(targetFolder, ".github", "project-config.md");
+  if (!fs4.existsSync(projectConfigPath)) {
+    const initialize = await vscode4.window.showInformationMessage(
+      "junai: project-config.md not found. Initialize pipeline resources first?",
+      "Initialize Now",
+      "Cancel"
+    );
+    if (initialize !== "Initialize Now") {
+      return;
+    }
+    await vscode4.commands.executeCommand("ptarmigan.init");
+    if (!fs4.existsSync(projectConfigPath)) {
+      return;
+    }
+  }
+  const raw = fs4.readFileSync(projectConfigPath, "utf8");
+  const profiles = extractProfileNames(raw);
+  if (profiles.length === 0) {
+    if (!silent) {
+      vscode4.window.showWarningMessage(
+        "junai: No named profiles found in .github/project-config.md. Add profile definitions first."
+      );
+    }
+    return;
+  }
+  const options = profiles.map((name) => ({
+    label: name,
+    description: PROFILE_DESCRIPTIONS[name] ?? `Set active profile to ${name}`
+  }));
+  options.push({
+    label: "manual (blank profile)",
+    description: "Clear profile \u2014 fill placeholder values manually in Step 2"
+  });
+  const picked = await vscode4.window.showQuickPick(options, {
+    placeHolder: "Select a project profile for .github/project-config.md"
+  });
+  if (!picked) {
+    return;
+  }
+  const selectedProfile = picked.label === "manual (blank profile)" ? "" : picked.label;
+  const updated = setProfileValue(raw, selectedProfile);
+  if (updated === raw) {
+    if (!silent) {
+      vscode4.window.showWarningMessage("junai: Could not locate the profile row in project-config.md.");
+    }
+    return;
+  }
+  fs4.writeFileSync(projectConfigPath, updated, "utf8");
+  if (!silent) {
+    const finalLabel = selectedProfile || "(blank/manual)";
+    vscode4.window.showInformationMessage(`ptarmigan: project profile set to ${finalLabel}.`);
+  }
+  await promptRecipeSelection(targetFolder, silent);
+  const storageKey = `ptarmigan.profilePrompted.${targetFolder}`;
+  await context.workspaceState.update(storageKey, true);
+}
+async function promptProfileSelectionAfterInit(context, targetFolder) {
+  const storageKey = `ptarmigan.profilePrompted.${targetFolder}`;
+  if (context.workspaceState.get(storageKey)) {
+    return;
+  }
+  const projectConfigPath = path4.join(targetFolder, ".github", "project-config.md");
+  if (!fs4.existsSync(projectConfigPath)) {
+    return;
+  }
+  const raw = fs4.readFileSync(projectConfigPath, "utf8");
+  const profiles = extractProfileNames(raw);
+  if (profiles.length === 0) {
+    return;
+  }
+  if (currentProfileValue(raw).length > 0) {
+    await context.workspaceState.update(storageKey, true);
+    return;
+  }
+  const choice = await vscode4.window.showInformationMessage(
+    "junai: Select a predefined profile now? This pre-fills project context for all agents.",
+    "Select Profile",
+    "Later"
+  );
+  if (choice === "Select Profile") {
+    await cmdSelectProfile(context, { targetFolder });
+  } else {
+    await context.workspaceState.update(storageKey, true);
+  }
+}
+async function pickTargetFolder() {
+  const workspaceFolders = vscode4.workspace.workspaceFolders;
+  if (!workspaceFolders || workspaceFolders.length === 0) {
+    vscode4.window.showErrorMessage("junai: No workspace folder open. Open a project folder first.");
+    return null;
+  }
+  if (workspaceFolders.length === 1) {
+    return workspaceFolders[0].uri.fsPath;
+  }
+  const picked = await vscode4.window.showQuickPick(
+    workspaceFolders.map((f) => ({
+      label: f.name,
+      description: f.uri.fsPath,
+      fsPath: f.uri.fsPath
+    })),
+    { placeHolder: "Select workspace folder" }
+  );
+  if (!picked) {
+    return null;
+  }
+  return picked.fsPath;
+}
+function extractProfileNames(markdown) {
+  const sanitized = markdown.replace(/<!--[\s\S]*?-->/g, "");
+  const matches = sanitized.matchAll(/^###\s+([a-z0-9][a-z0-9-]*)\s*$/gim);
+  const names = Array.from(matches, (m) => m[1].trim());
+  return [...new Set(names)];
+}
+function currentProfileValue(markdown) {
+  const row = markdown.match(/^\|\s*\*\*profile\*\*\s*\|\s*(.*?)\s*\|\s*$/im);
+  if (!row || row.length < 2) {
+    return "";
+  }
+  return row[1].replace(/`/g, "").trim();
+}
+function setProfileValue(markdown, profile) {
+  const formatted = profile ? `\`${profile}\`` : "``";
+  return markdown.replace(
+    /^\|\s*\*\*profile\*\*\s*\|\s*.*?\s*\|\s*$/im,
+    `| **profile** | ${formatted} |`
+  );
+}
+async function promptRecipeSelection(targetFolder, silent) {
+  const recipesDir = path4.join(targetFolder, ".github", "recipes");
+  if (!fs4.existsSync(recipesDir)) {
+    return;
+  }
+  const recipeFiles = fs4.readdirSync(recipesDir).filter((f) => f.endsWith(".recipe.md")).map((f) => f.replace(".recipe.md", ""));
+  if (recipeFiles.length === 0) {
+    return;
+  }
+  const projectConfigPath = path4.join(targetFolder, ".github", "project-config.md");
+  if (!fs4.existsSync(projectConfigPath)) {
+    return;
+  }
+  const raw = fs4.readFileSync(projectConfigPath, "utf8");
+  const currentRecipe = currentRecipeValue(raw);
+  if (currentRecipe.length > 0) {
+    return;
+  }
+  if (silent) {
+    return;
+  }
+  const options = recipeFiles.map((name) => ({
+    label: name,
+    description: `Use .github/recipes/${name}.recipe.md delivery workflow`
+  }));
+  options.push({
+    label: "none",
+    description: "No recipe \u2014 agents work with built-in expertise only"
+  });
+  const picked = await vscode4.window.showQuickPick(options, {
+    placeHolder: "Select a delivery recipe (optional \u2014 defines mandatory skill pipeline for data-to-UI tasks)"
+  });
+  if (!picked || picked.label === "none") {
+    return;
+  }
+  const updatedConfig = setRecipeValue(raw, picked.label);
+  if (updatedConfig !== raw) {
+    fs4.writeFileSync(projectConfigPath, updatedConfig, "utf8");
+    vscode4.window.showInformationMessage(`junai: recipe set to ${picked.label}.`);
+  }
+}
+function currentRecipeValue(markdown) {
+  const row = markdown.match(/^\|\s*\*\*recipe\*\*\s*\|\s*(.*?)\s*\|\s*$/im);
+  if (!row || row.length < 2) {
+    return "";
+  }
+  return row[1].replace(/`/g, "").trim();
+}
+function setRecipeValue(markdown, recipe) {
+  const formatted = recipe ? `\`${recipe}\`` : "``";
+  return markdown.replace(
+    /^\|\s*\*\*recipe\*\*\s*\|\s*.*?\s*\|\s*$/im,
+    `| **recipe** | ${formatted} |`
+  );
+}
+function backupProjectConfig(githubDir) {
+  const src = path4.join(githubDir, "project-config.md");
+  if (!fs4.existsSync(src)) {
+    return false;
+  }
+  const ts = (/* @__PURE__ */ new Date()).toISOString().replace(/[:.]/g, "-").slice(0, 19);
+  const dest = path4.join(githubDir, `project-config.bak.${ts}.md`);
+  fs4.copyFileSync(src, dest);
+  return true;
+}
+async function cmdStatus() {
+  const workspaceFolders = vscode4.workspace.workspaceFolders;
+  if (!workspaceFolders || workspaceFolders.length === 0) {
+    vscode4.window.showErrorMessage("junai: No workspace folder open.");
+    return;
+  }
+  const githubDir = path4.join(workspaceFolders[0].uri.fsPath, ".github");
+  const stateFile = path4.join(githubDir, "pipeline-state.json");
+  const channel = vscode4.window.createOutputChannel("junai Pipeline");
+  channel.show(true);
+  if (!fs4.existsSync(stateFile)) {
+    channel.appendLine('\u26A0  No pipeline-state.json found. Run "junai: Initialize Agent Pipeline" first.');
+    return;
+  }
+  const state = JSON.parse(fs4.readFileSync(stateFile, "utf8"));
+  channel.appendLine("\u2500\u2500\u2500 junai Pipeline Status \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500");
+  channel.appendLine(`  Mode        : ${state.mode}`);
+  channel.appendLine(`  Initialized : ${state.initialized}`);
+  channel.appendLine(`  Version     : ${state.version}`);
+  const featureStatuses = getExperimentalFeatureStatus();
+  channel.appendLine(`  Flags       : ${featureStatuses.map((feature) => `${feature.flag}=${feature.enabled}`).join(" ")}`);
+  channel.appendLine("  Experimental:");
+  for (const feature of featureStatuses) {
+    const liveState = feature.implemented ? "live" : "coming soon";
+    const commandInfo = feature.commandId ? ` | command=${feature.commandId}` : "";
+    const comingSoonNote = !feature.implemented && feature.comingSoon ? ` | ${feature.comingSoon}` : "";
+    channel.appendLine(`    \u2022 ${feature.statusLabel}: ${feature.enabled ? "enabled" : "disabled"} | ${liveState}${commandInfo}${comingSoonNote}`);
+  }
+  const dreamFeature = featureStatuses.find((feature) => feature.flag === "dream");
+  if (dreamFeature?.enabled) {
+    const dreamSummary = readDreamMemorySummary(workspaceFolders[0].uri.fsPath);
+    if (dreamSummary) {
+      channel.appendLine(`  Dream       : ${dreamSummary.factCount} facts, ${dreamSummary.runs} runs, last=${dreamSummary.lastUpdatedAt}`);
+    } else {
+      channel.appendLine("  Dream       : enabled, awaiting first consolidation pass");
+    }
+  } else if (dreamFeature?.implemented) {
+    channel.appendLine("  Dream       : available (disabled)");
+  }
+  const proactiveFeature = featureStatuses.find((feature) => feature.flag === "proactive");
+  if (proactiveFeature?.enabled) {
+    channel.appendLine("  Proactive   : enabled (KAIROS-lite, low-noise notices)");
+  } else if (proactiveFeature?.implemented) {
+    channel.appendLine("  Proactive   : available (disabled)");
+  }
+  const classifications = getAllClassifications();
+  const highCount = classifications.filter((c) => c.tier === "high").length;
+  const medCount = classifications.filter((c) => c.tier === "medium").length;
+  const lowCount = classifications.filter((c) => c.tier === "low").length;
+  channel.appendLine(`  Permissions : ${lowCount} low / ${medCount} medium / ${highCount} high risk actions classified`);
+  const recentEvents = JunaiEventBus.getInstance().getRecentEvents(5);
+  channel.appendLine(`  Events      : ${recentEvents.length} recent events in log`);
+  if (recentEvents.length > 0) {
+    for (const evt of recentEvents) {
+      channel.appendLine(`    \u2022 [${evt.severity}] [${evt.type}] ${evt.title} \u2014 ${evt.timestamp}`);
+    }
+  }
+  channel.appendLine("\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500");
+}
+async function cmdSetMode() {
+  const workspaceFolders = vscode4.workspace.workspaceFolders;
+  if (!workspaceFolders || workspaceFolders.length === 0) {
+    vscode4.window.showErrorMessage("junai: No workspace folder open.");
+    return;
+  }
+  const picked = await vscode4.window.showQuickPick(
+    [
+      {
+        label: "supervised",
+        description: "All gates require manual approval \u2014 recommended for production teams"
+      },
+      {
+        label: "assisted",
+        description: "Manual gates with AI guidance hints"
+      },
+      {
+        label: "autopilot",
+        description: "All gates auto-satisfied except intent_approved \u2014 fully autonomous after kick-off"
+      }
+    ],
+    { placeHolder: "Select pipeline mode" }
+  );
+  if (!picked) {
+    return;
+  }
+  const stateFile = path4.join(
+    workspaceFolders[0].uri.fsPath,
+    ".github",
+    "pipeline-state.json"
+  );
+  if (!fs4.existsSync(stateFile)) {
+    vscode4.window.showErrorMessage("junai: No pipeline-state.json found. Initialize the pipeline first.");
+    return;
+  }
+  const state = JSON.parse(fs4.readFileSync(stateFile, "utf8"));
+  state.mode = picked.label;
+  fs4.writeFileSync(stateFile, JSON.stringify(state, null, 2), "utf8");
+  vscode4.window.showInformationMessage(`junai: Pipeline mode set to "${picked.label}".`);
+}
+async function cmdRemove() {
+  const workspaceFolders = vscode4.workspace.workspaceFolders;
+  if (!workspaceFolders || workspaceFolders.length === 0) {
+    vscode4.window.showErrorMessage("junai: No workspace folder open.");
+    return;
+  }
+  const confirmed = await vscode4.window.showWarningMessage(
+    "This will delete the junai agent pool (.github runtime folders, .claude runtime folders, .codex runtime folders, pipeline-state.json) and remove the MCP entry from .vscode/mcp.json. Your own code and commits are NOT affected.",
+    { modal: true },
+    "Remove junai from this project",
+    "Cancel"
+  );
+  if (confirmed !== "Remove junai from this project") {
+    return;
+  }
+  const targetFolder = workspaceFolders[0].uri.fsPath;
+  const githubDir = path4.join(targetFolder, COPILOT_RUNTIME_DIR);
+  const claudeDir = path4.join(targetFolder, CLAUDE_RUNTIME_DIR);
+  const codexDir = path4.join(targetFolder, CODEX_RUNTIME_DIR);
+  const poolDirs = [
+    "agents",
+    "skills",
+    "prompts",
+    "instructions",
+    "agent-docs",
+    "plans",
+    "handoffs",
+    "tools",
+    "diagrams"
+  ];
+  for (const dir of poolDirs) {
+    const p = path4.join(githubDir, dir);
+    if (fs4.existsSync(p)) {
+      fs4.rmSync(p, { recursive: true, force: true });
+    }
+  }
+  for (const dir of ["agents", "skills", "rules"]) {
+    const p = path4.join(claudeDir, dir);
+    if (fs4.existsSync(p)) {
+      fs4.rmSync(p, { recursive: true, force: true });
+    }
+  }
+  const codexSkills = path4.join(codexDir, "skills");
+  if (fs4.existsSync(codexSkills)) {
+    fs4.rmSync(codexSkills, { recursive: true, force: true });
+  }
+  for (const file of ["pipeline-state.json", "project-config.md", ".junai-pool-version"]) {
+    const p = path4.join(githubDir, file);
+    if (fs4.existsSync(p)) {
+      fs4.rmSync(p, { force: true });
+    }
+  }
+  removeCopilotInstructionsSection(githubDir);
+  removeDirIfEmpty(claudeDir);
+  removeDirIfEmpty(codexDir);
+  const mcpFile = path4.join(targetFolder, ".vscode", "mcp.json");
+  if (fs4.existsSync(mcpFile)) {
+    try {
+      const cfg = JSON.parse(fs4.readFileSync(mcpFile, "utf8"));
+      if (cfg.servers && cfg.servers["junai"]) {
+        delete cfg.servers["junai"];
+      }
+      if (cfg.servers && cfg.servers["junai-pipeline"]) {
+        delete cfg.servers["junai-pipeline"];
+      }
+      fs4.writeFileSync(mcpFile, JSON.stringify(cfg, null, 2), "utf8");
+    } catch {
+    }
+  }
+  vscode4.window.showInformationMessage("junai: Agent pool removed from this project. Re-run Initialize to restore it.");
+}
+async function cmdUpdate(context, opts) {
+  const silent = opts?.silent ?? false;
+  const workspaceFolders = vscode4.workspace.workspaceFolders;
+  if (!workspaceFolders || workspaceFolders.length === 0) {
+    if (!silent) {
+      vscode4.window.showErrorMessage("junai: No workspace folder open.");
+    }
+    return;
+  }
+  const githubDir = path4.join(workspaceFolders[0].uri.fsPath, COPILOT_RUNTIME_DIR);
+  const claudeDir = path4.join(workspaceFolders[0].uri.fsPath, CLAUDE_RUNTIME_DIR);
+  const codexDir = path4.join(workspaceFolders[0].uri.fsPath, CODEX_RUNTIME_DIR);
+  const agentsDir = path4.join(githubDir, "agents");
+  if (!fs4.existsSync(agentsDir)) {
+    if (!silent) {
+      vscode4.window.showErrorMessage("junai: Pipeline not initialized in this project. Run Initialize first.");
+    }
+    return;
+  }
+  if (!silent) {
+    const confirmed = await vscode4.window.showInformationMessage(
+      "Update agent pool with latest files from this extension version? Your copilot-instructions.md content is preserved (only the junai section is refreshed).",
+      { modal: true },
+      "Update",
+      "Cancel"
+    );
+    if (confirmed !== "Update") {
+      return;
+    }
+  }
+  const poolDir = path4.join(context.extensionPath, "pool");
+  const USER_OWNED = /* @__PURE__ */ new Set(["pipeline-state.json", "project-config.md"]);
+  let updated = 0;
+  let skipped = 0;
+  let runtimeSkipNotice = "";
+  let claudeRulesSkipNotice = "";
+  const git = { result: "skipped-no-repo" };
+  await vscode4.window.withProgress(
+    { location: vscode4.ProgressLocation.Notification, title: "junai", cancellable: false },
+    async (progress) => {
+      progress.report({ message: "Updating agent pool\u2026" });
+      const skipClaudeRules = shouldSkipClaudeRulesDeployment(poolDir, workspaceFolders[0].uri.fsPath);
+      claudeRulesSkipNotice = formatClaudeRulesSkipNotice(skipClaudeRules);
+      const runtimeTemplates = {
+        copilot: {
+          cleanDirs: ["agents", "skills", "prompts", "instructions", "tools", "diagrams"],
+          mergeDirs: ["agent-docs", "plans", "handoffs"],
+          rootFiles: ["project-config.md"],
+          userOwnedFiles: USER_OWNED
+        },
+        claude: {
+          cleanDirs: skipClaudeRules ? ["skills"] : ["skills", "rules"],
+          mergeDirs: [],
+          rootFiles: [],
+          userOwnedFiles: /* @__PURE__ */ new Set()
+        },
+        codex: {
+          cleanDirs: ["skills"],
+          mergeDirs: [],
+          rootFiles: [],
+          userOwnedFiles: /* @__PURE__ */ new Set()
+        }
+      };
+      const runtimeTargets = buildRuntimeBundleTargets(poolDir, workspaceFolders[0].uri.fsPath);
+      runtimeSkipNotice = formatRuntimeSkipNotice(runtimeTargets.filter((target) => !target.deploy));
+      const runtimes = runtimeTargets.filter((target) => target.deploy).map((target) => ({
+        poolRoot: target.poolRoot,
+        workspaceRoot: target.workspaceRoot,
+        ...runtimeTemplates[target.runtimeName]
+      }));
+      for (const runtime of runtimes) {
+        const counts = updateRuntimeBundle(runtime);
+        updated += counts.updated;
+        skipped += counts.skipped;
+      }
+      ensureCopilotInstructionsSection(githubDir);
+      writeWorkspacePoolVersion(context, githubDir);
+      scaffoldMcpConfig(workspaceFolders[0].uri.fsPath);
+      scaffoldVscodeSettings(workspaceFolders[0].uri.fsPath);
+      scaffoldSelectiveGithubGitignore(workspaceFolders[0].uri.fsPath);
+      progress.report({ message: "Committing pool update\u2026" });
+      git.result = gitCommitPoolUpdate(workspaceFolders[0].uri.fsPath, readBundledPoolVersion(context) ?? void 0);
+      progress.report({ message: "Done." });
+    }
+  );
+  const poolVer = readBundledPoolVersion(context) ?? "latest";
+  let msg = silent ? `junai: Agent pool auto-updated to v${poolVer} \u2014 ${updated} files refreshed.` : `\u2705 junai pool updated \u2014 ${updated} files refreshed, ${skipped} user-owned files preserved.`;
+  if (git.result === "committed") {
+    msg += " Pool changes committed to git.";
+  } else if (git.result === "skipped-in-progress") {
+    msg += " (git commit skipped \u2014 repo has an in-progress operation; commit manually)";
+  } else if (git.result === "skipped-detached") {
+    msg += " (git commit skipped \u2014 detached HEAD)";
+  } else if (git.result === "error") {
+    msg += " (git commit failed \u2014 commit manually if needed)";
+  }
+  if (runtimeSkipNotice) {
+    msg += ` ${runtimeSkipNotice}`;
+  }
+  if (claudeRulesSkipNotice) {
+    msg += ` ${claudeRulesSkipNotice}`;
+  }
+  vscode4.window.showInformationMessage(msg);
+}
+async function cmdInitPool(context) {
+  const workspaceFolders = vscode4.workspace.workspaceFolders;
+  if (!workspaceFolders?.length) {
+    vscode4.window.showErrorMessage("junai: No workspace folder open. Open a project folder first.");
+    return;
+  }
+  const targetFolder = workspaceFolders.length === 1 ? workspaceFolders[0].uri.fsPath : await pickTargetFolder();
+  if (!targetFolder) {
+    return;
+  }
+  const githubDir = path4.join(targetFolder, ".github");
+  const poolDir = path4.join(context.extensionPath, "pool");
+  const runtimeSummary = await vscode4.window.withProgress(
+    { location: vscode4.ProgressLocation.Notification, title: "junai: Deploying agent pool\u2026", cancellable: false },
+    async () => {
+      const summary = installRuntimeBundles(poolDir, targetFolder);
+      ensureCopilotInstructionsSection(githubDir);
+      scaffoldMcpConfig(targetFolder);
+      scaffoldVscodeSettings(targetFolder);
+      writeWorkspacePoolVersion(context, githubDir);
+      scaffoldSelectiveGithubGitignore(targetFolder);
+      return summary;
+    }
+  );
+  const runtimeSkipNotice = formatRuntimeSkipNotice(runtimeSummary.skipped);
+  const claudeRulesSkipNotice = formatClaudeRulesSkipNotice(shouldSkipClaudeRulesDeployment(poolDir, targetFolder));
+  const initPoolNotices = [runtimeSkipNotice, claudeRulesSkipNotice].filter(Boolean).join(" ");
+  const sel = await vscode4.window.showInformationMessage(
+    `junai: Agent pool deployed. Agents and skills are ready \u2014 no pipeline-state.json created.${initPoolNotices ? ` ${initPoolNotices}` : ""}`,
+    "Select Profile",
+    "Set Recipe"
+  );
+  if (sel === "Select Profile") {
+    vscode4.commands.executeCommand("ptarmigan.selectProfile");
+  }
+  if (sel === "Set Recipe") {
+    vscode4.commands.executeCommand("ptarmigan.setRecipe");
+  }
+}
+async function cmdSetRecipe() {
+  const workspaceFolders = vscode4.workspace.workspaceFolders;
+  if (!workspaceFolders?.length) {
+    vscode4.window.showErrorMessage("junai: No workspace folder open.");
+    return;
+  }
+  const targetFolder = workspaceFolders.length === 1 ? workspaceFolders[0].uri.fsPath : await pickTargetFolder();
+  if (!targetFolder) {
+    return;
+  }
+  const projectConfigPath = path4.join(targetFolder, ".github", "project-config.md");
+  if (!fs4.existsSync(projectConfigPath)) {
+    vscode4.window.showErrorMessage("junai: project-config.md not found. Run Initialize Agent Pipeline or Initialize Agent Pool first.");
+    return;
+  }
+  const recipesDir = path4.join(targetFolder, ".github", "recipes");
+  if (!fs4.existsSync(recipesDir)) {
+    vscode4.window.showErrorMessage("junai: .github/recipes/ not found.");
+    return;
+  }
+  const recipeFiles = fs4.readdirSync(recipesDir).filter((f) => f.endsWith(".recipe.md")).map((f) => f.replace(".recipe.md", ""));
+  if (recipeFiles.length === 0) {
+    vscode4.window.showErrorMessage("junai: No .recipe.md files found in .github/recipes/");
+    return;
+  }
+  const raw = fs4.readFileSync(projectConfigPath, "utf8");
+  const current = currentRecipeValue(raw);
+  const options = recipeFiles.map((name) => ({
+    label: name,
+    description: name === current ? "(currently selected)" : `Use .github/recipes/${name}.recipe.md`
+  }));
+  options.push({ label: "none", description: "No recipe \u2014 agents work with built-in expertise only" });
+  const picked = await vscode4.window.showQuickPick(options, {
+    placeHolder: current ? `Current recipe: ${current} \u2014 select to change` : "Select a delivery recipe"
+  });
+  if (!picked) {
+    return;
+  }
+  const newRecipe = picked.label === "none" ? "" : picked.label;
+  const updatedConfig = setRecipeValue(raw, newRecipe);
+  if (updatedConfig !== raw) {
+    fs4.writeFileSync(projectConfigPath, updatedConfig, "utf8");
+    vscode4.window.showInformationMessage(`junai: recipe set to ${newRecipe || "none"}.`);
+  } else {
+    vscode4.window.showInformationMessage(`junai: recipe unchanged (${current || "none"}).`);
+  }
+}
+var SKIP = /* @__PURE__ */ new Set([".git", "node_modules", "__pycache__", ".DS_Store"]);
+function installRuntimeBundles(poolDir, targetFolder) {
+  const summary = { installed: [], skipped: [] };
+  const runtimes = buildRuntimeBundleTargets(poolDir, targetFolder);
+  const skipClaudeRules = shouldSkipClaudeRulesDeployment(poolDir, targetFolder);
+  for (const runtime of runtimes) {
+    if (!runtime.deploy) {
+      summary.skipped.push(runtime);
+      continue;
+    }
+    if (!fs4.existsSync(runtime.poolRoot)) {
+      continue;
+    }
+    const excludedTopLevelDirs = /* @__PURE__ */ new Set();
+    if (runtime.runtimeName === "claude") {
+      excludedTopLevelDirs.add("agents");
+      if (skipClaudeRules) {
+        excludedTopLevelDirs.add("rules");
+      }
+    }
+    copyRuntimeBundleRoot(runtime.poolRoot, runtime.workspaceRoot, excludedTopLevelDirs);
+    summary.installed.push(runtime.runtimeName);
+  }
+  return summary;
+}
+function updateRuntimeBundle(spec) {
+  let updated = 0;
+  let skipped = 0;
+  if (!fs4.existsSync(spec.poolRoot)) {
+    return { updated, skipped };
+  }
+  for (const dir of [...spec.cleanDirs, ...spec.mergeDirs]) {
+    const nested = path4.join(spec.workspaceRoot, dir, dir);
+    if (fs4.existsSync(nested)) {
+      fs4.rmSync(nested, { recursive: true, force: true });
+    }
+  }
+  for (const dir of spec.cleanDirs) {
+    const src = path4.join(spec.poolRoot, dir);
+    const dest = path4.join(spec.workspaceRoot, dir);
+    if (!fs4.existsSync(src)) {
+      continue;
+    }
+    if (fs4.existsSync(dest)) {
+      fs4.rmSync(dest, { recursive: true, force: true });
+    }
+    const counts = mergeDirSync(src, dest, spec.userOwnedFiles);
+    updated += counts.updated;
+    skipped += counts.skipped;
+  }
+  for (const dir of spec.mergeDirs) {
+    const src = path4.join(spec.poolRoot, dir);
+    const dest = path4.join(spec.workspaceRoot, dir);
+    if (!fs4.existsSync(src)) {
+      continue;
+    }
+    const counts = mergeDirSync(src, dest, spec.userOwnedFiles);
+    updated += counts.updated;
+    skipped += counts.skipped;
+  }
+  for (const file of spec.rootFiles) {
+    const src = path4.join(spec.poolRoot, file);
+    const dest = path4.join(spec.workspaceRoot, file);
+    if (!fs4.existsSync(src)) {
+      continue;
+    }
+    fs4.mkdirSync(spec.workspaceRoot, { recursive: true });
+    if (spec.userOwnedFiles.has(file) && fs4.existsSync(dest)) {
+      skipped++;
+      continue;
+    }
+    fs4.copyFileSync(src, dest);
+    updated++;
+  }
+  return { updated, skipped };
+}
+function removeDirIfEmpty(dirPath) {
+  if (!fs4.existsSync(dirPath)) {
+    return;
+  }
+  if (fs4.readdirSync(dirPath).length === 0) {
+    fs4.rmSync(dirPath, { recursive: true, force: true });
+  }
+}
+function copyRuntimeBundleRoot(src, dest, excludedTopLevelDirs) {
+  if (!fs4.existsSync(src)) {
+    return;
+  }
+  fs4.mkdirSync(dest, { recursive: true });
+  for (const entry of fs4.readdirSync(src, { withFileTypes: true })) {
+    if (SKIP.has(entry.name)) {
+      continue;
+    }
+    if (entry.isDirectory() && excludedTopLevelDirs.has(entry.name)) {
+      continue;
+    }
+    const srcPath = path4.join(src, entry.name);
+    const destPath = path4.join(dest, entry.name);
+    if (entry.isDirectory()) {
+      copyDirSync(srcPath, destPath);
+    } else {
+      fs4.copyFileSync(srcPath, destPath);
+    }
+  }
+}
+function copyDirSync(src, dest) {
+  if (!fs4.existsSync(src)) {
+    return;
+  }
+  fs4.mkdirSync(dest, { recursive: true });
+  for (const entry of fs4.readdirSync(src, { withFileTypes: true })) {
+    if (SKIP.has(entry.name)) {
+      continue;
+    }
+    const srcPath = path4.join(src, entry.name);
+    const destPath = path4.join(dest, entry.name);
+    if (entry.isDirectory()) {
+      copyDirSync(srcPath, destPath);
+    } else {
+      fs4.copyFileSync(srcPath, destPath);
+    }
+  }
+}
+function mergeDirSync(src, dest, userOwned) {
+  let updated = 0;
+  let skipped = 0;
+  if (!fs4.existsSync(src)) {
+    return { updated, skipped };
+  }
+  fs4.mkdirSync(dest, { recursive: true });
+  const parentName = path4.basename(dest);
+  for (const entry of fs4.readdirSync(src, { withFileTypes: true })) {
+    if (SKIP.has(entry.name)) {
+      continue;
+    }
+    if (entry.isDirectory() && entry.name === parentName) {
+      continue;
+    }
+    const srcPath = path4.join(src, entry.name);
+    const destPath = path4.join(dest, entry.name);
+    if (entry.isDirectory()) {
+      const sub = mergeDirSync(srcPath, destPath, userOwned);
+      updated += sub.updated;
+      skipped += sub.skipped;
+    } else if (userOwned.has(entry.name)) {
+      skipped++;
+    } else {
+      fs4.copyFileSync(srcPath, destPath);
+      updated++;
+    }
+  }
+  return { updated, skipped };
+}
+function scaffoldMcpConfig(targetFolder) {
+  const vscodedir = path4.join(targetFolder, ".vscode");
+  const mcpFile = path4.join(vscodedir, "mcp.json");
+  fs4.mkdirSync(vscodedir, { recursive: true });
+  let config = {};
+  if (fs4.existsSync(mcpFile)) {
+    try {
+      config = JSON.parse(fs4.readFileSync(mcpFile, "utf8"));
+    } catch {
+      config = {};
+    }
+  }
+  if (!config.servers) {
+    config.servers = {};
+  }
+  if (config.servers["junai-pipeline"]) {
+    delete config.servers["junai-pipeline"];
+  }
+  if (!config.servers["junai"]) {
+    config.servers["junai"] = {
+      type: "stdio",
+      command: "uv",
+      args: ["run", "${workspaceFolder}/.github/tools/mcp-server/server.py"]
+    };
+    fs4.writeFileSync(mcpFile, JSON.stringify(config, null, 2), "utf8");
+  }
+}
+function scaffoldVscodeSettings(targetFolder) {
+  const vscodedir = path4.join(targetFolder, ".vscode");
+  const settingsFile = path4.join(vscodedir, "settings.json");
+  fs4.mkdirSync(vscodedir, { recursive: true });
+  let settings = {};
+  if (fs4.existsSync(settingsFile)) {
+    try {
+      settings = JSON.parse(fs4.readFileSync(settingsFile, "utf8"));
+    } catch {
+      settings = {};
+    }
+  }
+  const exclude = settings["files.exclude"] ?? {};
+  if (!exclude["NUL"]) {
+    exclude["NUL"] = true;
+    settings["files.exclude"] = exclude;
+    fs4.writeFileSync(settingsFile, JSON.stringify(settings, null, 4), "utf8");
+  }
+}
+var AGENT_OPEN_OVERRIDES = {
+  "UI/UX Designer": "ui-ux-designer",
+  "Mermaid Diagram Specialist": "mermaid-diagram-specialist"
+};
+function agentOpenCommand(agentName) {
+  const suffix = AGENT_OPEN_OVERRIDES[agentName] ?? agentName;
+  return `workbench.action.chat.open${suffix}`;
+}
+async function tryExecuteCommand(channel, command, ...args) {
+  try {
+    await vscode4.commands.executeCommand(command, ...args);
+    return true;
+  } catch {
+    channel.appendLine(`  \u26A0 Command unavailable: ${command}`);
+    return false;
+  }
+}
+function startAutopilotWatcher(context) {
+  const workspaceFolders = vscode4.workspace.workspaceFolders;
+  if (!workspaceFolders || workspaceFolders.length === 0) {
+    return;
+  }
+  const stateFilePath = path4.join(
+    workspaceFolders[0].uri.fsPath,
+    ".github",
+    "pipeline-state.json"
+  );
+  const watcher = vscode4.workspace.createFileSystemWatcher(
+    new vscode4.RelativePattern(workspaceFolders[0], ".github/pipeline-state.json")
+  );
+  const channel = vscode4.window.createOutputChannel("junai Autopilot");
+  let lastDispatchedKey = "";
+  const checkState = async () => {
+    try {
+      if (!fs4.existsSync(stateFilePath)) {
+        return;
+      }
+      const state = JSON.parse(fs4.readFileSync(stateFilePath, "utf8"));
+      const mode = state.pipeline_mode;
+      const decision = state._notes?._routing_decision;
+      if (mode !== "autopilot" || !decision || decision.blocked) {
+        return;
+      }
+      const dispatchKey = `${decision.next_stage ?? ""}:${state.last_updated ?? ""}`;
+      if (dispatchKey === lastDispatchedKey) {
+        return;
+      }
+      lastDispatchedKey = dispatchKey;
+      const stage = decision.next_stage ?? "?";
+      const targetAgent = decision.target_agent ?? "None";
+      const prompt = decision.handoff_prompt ?? decision.prompt ?? "";
+      channel.show(false);
+      channel.appendLine(`
+[junai autopilot] \u{1F680} ${(/* @__PURE__ */ new Date()).toISOString()}`);
+      channel.appendLine(`  stage        : ${stage}`);
+      channel.appendLine(`  target_agent : ${targetAgent}`);
+      channel.appendLine(`  prompt       : ${prompt.length} chars`);
+      if (!targetAgent || targetAgent === "None") {
+        channel.appendLine(`  \u2705 Pipeline reached closed state \u2014 no further routing needed.`);
+        JunaiEventBus.getInstance().emit({
+          type: "task-completed",
+          timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+          source: "autopilot-watcher",
+          severity: "success",
+          title: "Pipeline closed",
+          detail: `${state.feature ?? "feature"} complete`,
+          stage: "pipeline-closed",
+          agent: "none",
+          summary: `Pipeline closed \u2014 ${state.feature ?? "feature"} complete`
+        });
+        vscode4.window.showInformationMessage(
+          `junai autopilot: \u2705 Pipeline closed \u2014 ${state.feature ?? "feature"} complete.`,
+          "View Log"
+        ).then((c) => {
+          if (c === "View Log") {
+            channel.show(true);
+          }
+        });
+        return;
+      }
+      const openCmd = agentOpenCommand(targetAgent);
+      const openOk = await tryExecuteCommand(channel, openCmd, { query: prompt });
+      await vscode4.env.clipboard.writeText(prompt);
+      if (!openOk) {
+        channel.appendLine(`  \u2717 Could not open @${targetAgent} via: ${openCmd}`);
+        channel.appendLine(`  \u2192 Manual fallback: open @${targetAgent} and paste the routing prompt (Ctrl+V).`);
+        vscode4.window.showWarningMessage(
+          `junai autopilot: could not auto-open @${targetAgent}. Routing prompt copied to clipboard.`,
+          "View Log"
+        ).then((c) => {
+          if (c === "View Log") {
+            channel.show(true);
+          }
+        });
+        return;
+      }
+      channel.appendLine(`  \u2713 Opened @${targetAgent} \u2014 routing prompt sent as query (also in clipboard)`);
+      JunaiEventBus.getInstance().emit({
+        type: "task-completed",
+        timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+        source: "autopilot-watcher",
+        severity: "success",
+        title: `Autopilot routed to @${targetAgent}`,
+        detail: `Stage ${stage}`,
+        stage,
+        agent: targetAgent,
+        summary: `Routed to @${targetAgent} for stage: ${stage}`
+      });
+      vscode4.window.showInformationMessage(
+        `junai autopilot: \u2705 @${targetAgent} invoked \u2014 stage: ${stage}`,
+        "View Log"
+      ).then((c) => {
+        if (c === "View Log") {
+          channel.show(true);
+        }
+      });
+    } catch {
+    }
+  };
+  watcher.onDidChange(() => {
+    void checkState();
+  });
+  watcher.onDidCreate(() => {
+    void checkState();
+  });
+  context.subscriptions.push(watcher, channel);
+}
+async function cmdProbeAutopilot() {
+  const channel = vscode4.window.createOutputChannel("junai Autopilot Probe");
+  channel.show(true);
+  channel.appendLine("=== junai Autopilot Command Probe ===");
+  channel.appendLine(`VS Code version : ${vscode4.version}`);
+  channel.appendLine("");
+  const allCommands = await vscode4.commands.getCommands(true);
+  const relevant = allCommands.filter((c) => /chat|copilot|agent|handoff|send|message/i.test(c)).sort();
+  channel.appendLine(`Found ${relevant.length} chat/copilot/agent commands:`);
+  channel.appendLine("");
+  for (const cmd of relevant) {
+    channel.appendLine(`  ${cmd}`);
+  }
+  channel.appendLine("");
+  channel.appendLine("--- lm API surface (1.102 probe) ---");
+  try {
+    const lm3 = vscode4.lm;
+    const lmKeys = Object.keys(lm3).filter((k) => /chat|agent|send|request|mcp/i.test(k));
+    for (const k of lmKeys) {
+      channel.appendLine(`  vscode.lm.${k} : ${typeof lm3[k]}`);
+    }
+    if (lmKeys.length === 0) {
+      channel.appendLine("  (no matching keys found on vscode.lm)");
+    }
+  } catch (e) {
+    channel.appendLine(`  \u26A0 Could not enumerate vscode.lm: ${e?.message ?? e}`);
+    channel.appendLine('  Add enabledApiProposals=["mcpServerDefinitions"] to package.json and use --enable-proposed-api flag,');
+    channel.appendLine("  or run via F5 (Extension Development Host) to access proposed APIs.");
+  }
+  channel.appendLine("");
+  channel.appendLine("Paste this output as context when implementing the real autopilot invoker.");
+  vscode4.window.showInformationMessage(`junai probe: found ${relevant.length} chat commands. See "junai Autopilot Probe" output channel.`);
+}
+async function cmdDeepPlan() {
+  const workspaceFolders = vscode4.workspace.workspaceFolders;
+  if (!workspaceFolders || workspaceFolders.length === 0) {
+    vscode4.window.showErrorMessage("junai: No workspace folder open.");
+    return;
+  }
+  try {
+    requireFeature("deepPlan");
+  } catch {
+    return;
+  }
+  const taskSummary = await vscode4.window.showInputBox({
+    prompt: "What complex task should Deep Plan break down?",
+    placeHolder: "e.g. add staged rollout for Dream memory with rollback safety and metrics",
+    ignoreFocusOut: true
+  });
+  if (!taskSummary) {
+    return;
+  }
+  const scopeInput = await vscode4.window.showInputBox({
+    prompt: "Scope (optional, comma/newline separated)",
+    placeHolder: "e.g. src/dreamMemory.ts, src/extension.ts, package.json settings",
+    ignoreFocusOut: true
+  });
+  const constraintsInput = await vscode4.window.showInputBox({
+    prompt: "Constraints (optional, comma/newline separated)",
+    placeHolder: "e.g. no pipeline-state edits, backward compatible, no new dependencies",
+    ignoreFocusOut: true
+  });
+  const workspaceRoot = workspaceFolders[0].uri.fsPath;
+  const activeEditorPath = vscode4.window.activeTextEditor?.document.uri.fsPath;
+  const contextReferences = activeEditorPath ? [path4.relative(workspaceRoot, activeEditorPath)] : [];
+  const scan = scanWorkspace(workspaceRoot);
+  const request = buildDeepPlanRequest({
+    taskSummary,
+    scopeInput,
+    constraintsInput,
+    contextReferences
+  });
+  const result = createDeepPlanResult(request, scan);
+  let markdown = renderDeepPlanMarkdown(request, result, scan);
+  const enriched = await enrichPlanWithLM(request, result, scan, markdown);
+  if (enriched) {
+    markdown = enriched;
+  }
+  const outputPath = persistDeepPlanMarkdown(workspaceRoot, markdown);
+  const channel = vscode4.window.createOutputChannel("junai Deep Plan");
+  channel.show(true);
+  channel.appendLine("=== junai Deep Plan ===");
+  channel.appendLine(`Saved: ${outputPath}`);
+  channel.appendLine("");
+  channel.appendLine(markdown);
+  const eventBus = JunaiEventBus.getInstance();
+  eventBus.emit({
+    type: "approval-needed",
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    source: "deep-plan",
+    severity: "info",
+    title: "Deep Plan ready",
+    detail: `Confidence ${result.confidence}. Review plan and choose your next step.`,
+    stage: "plan",
+    agent: "Deep Plan",
+    action: "use_deep_plan",
+    riskTier: "medium"
+  });
+  const action = await vscode4.window.showInformationMessage(
+    `junai deep plan ready (${result.confidence} confidence). Choose your next step.`,
+    "Use This Plan",
+    "Copy Next Step",
+    "Open Plan File"
+  );
+  if (action === "Use This Plan") {
+    await vscode4.env.clipboard.writeText(result.nextAction);
+    eventBus.emit({
+      type: "task-completed",
+      timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+      source: "deep-plan",
+      severity: "success",
+      title: "Deep Plan selected",
+      detail: "Next step copied to clipboard",
+      stage: "plan-approved",
+      agent: "Deep Plan",
+      summary: "User selected deep plan and copied the next step to clipboard"
+    });
+    vscode4.window.showInformationMessage("junai deep plan selected. Next step copied to clipboard.");
+    return;
+  }
+  if (action === "Copy Next Step") {
+    await vscode4.env.clipboard.writeText(result.nextAction);
+    vscode4.window.showInformationMessage("junai deep plan next step copied to clipboard.");
+    return;
+  }
+  if (action === "Open Plan File") {
+    const doc = await vscode4.workspace.openTextDocument(vscode4.Uri.file(outputPath));
+    await vscode4.window.showTextDocument(doc, { preview: false });
+  }
+}
+async function cmdCoordinate() {
+  const workspaceFolders = vscode4.workspace.workspaceFolders;
+  if (!workspaceFolders || workspaceFolders.length === 0) {
+    vscode4.window.showErrorMessage("junai: No workspace folder open.");
+    return;
+  }
+  try {
+    requireFeature("coordinator");
+  } catch {
+    return;
+  }
+  const goal = await vscode4.window.showInputBox({
+    prompt: "What should Coordinator Mode investigate?",
+    placeHolder: "e.g. review the extension architecture and verify coordinator-related files",
+    ignoreFocusOut: true
+  });
+  if (!goal) {
+    return;
+  }
+  const workspaceRoot = workspaceFolders[0].uri.fsPath;
+  const channel = vscode4.window.createOutputChannel("junai Coordinator");
+  channel.show(true);
+  channel.appendLine("=== junai Coordinator ===");
+  channel.appendLine(`Goal: ${goal}`);
+  channel.appendLine("Launching 3 read-only workers...");
+  channel.appendLine("");
+  const request = {
+    title: "Coordinator Mode Run",
+    goal,
+    workers: [
+      {
+        id: "explore-1",
+        type: "explore",
+        label: "Explore workspace structure",
+        prompt: `Explore the workspace areas most relevant to: ${goal}`,
+        scopePaths: ["src", "package.json"]
+      },
+      {
+        id: "verify-1",
+        type: "verify",
+        label: "Verify coordinator targets",
+        prompt: `Verify that the main coordinator-related files for this goal exist and are readable: ${goal}`,
+        scopePaths: ["src/extension.ts", "src/coordinator.ts", "package.json"]
+      },
+      {
+        id: "review-1",
+        type: "review",
+        label: "Review implementation signals",
+        prompt: `Review the current implementation for patterns, exports, and TODOs related to: ${goal}`,
+        scopePaths: ["src/extension.ts", "src/coordinator.ts"]
+      }
+    ]
+  };
+  try {
+    const result = await vscode4.window.withProgress(
+      {
+        location: vscode4.ProgressLocation.Notification,
+        title: "junai Coordinator",
+        cancellable: false
+      },
+      async () => coordinate(request, workspaceRoot)
+    );
+    channel.appendLine(`Completed in ${result.totalDurationMs}ms`);
+    channel.appendLine(`Summary: ${result.summary.completed} completed / ${result.summary.failed} failed / ${result.summary.total} total`);
+    channel.appendLine("");
+    channel.appendLine(result.synthesizedOutput);
+    if (dreamMemoryService) {
+      const dreamResult = dreamMemoryService.recordCoordinatorRun({
+        goal,
+        summary: result.summary,
+        workerResults: result.workerResults.map((workerResult) => ({
+          workerId: workerResult.workerId,
+          workerType: workerResult.workerType,
+          label: workerResult.label,
+          status: workerResult.status,
+          output: workerResult.output,
+          error: workerResult.error
+        }))
+      });
+      if (dreamResult) {
+        const promotedCount = dreamResult.factsAdded.length + dreamResult.factsUpdated.length;
+        if (promotedCount > 0 || dreamResult.factsPruned.length > 0) {
+          channel.appendLine("");
+          channel.appendLine(
+            `Dream consolidation: +${dreamResult.factsAdded.length} added / ${dreamResult.factsUpdated.length} updated / ${dreamResult.factsPruned.length} pruned`
+          );
+        }
+      }
+    }
+    vscode4.window.showInformationMessage(
+      `junai coordinator: completed ${result.summary.total} workers in ${result.totalDurationMs}ms.`,
+      "View Output"
+    ).then((choice) => {
+      if (choice === "View Output") {
+        channel.show(true);
+      }
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    channel.appendLine(`Error: ${message}`);
+    vscode4.window.showWarningMessage(message);
+  }
+}
+function readBundledPoolVersion(context) {
+  const f = path4.join(context.extensionPath, "pool", "POOL_VERSION");
+  try {
+    return fs4.readFileSync(f, "utf8").trim();
+  } catch {
+    return null;
+  }
+}
+function readWorkspacePoolVersion(githubDir) {
+  const f = path4.join(githubDir, ".junai-pool-version");
+  try {
+    return fs4.readFileSync(f, "utf8").trim();
+  } catch {
+    return null;
+  }
+}
+function writeWorkspacePoolVersion(context, githubDir) {
+  const v = readBundledPoolVersion(context);
+  if (!v) {
+    return;
+  }
+  fs4.writeFileSync(path4.join(githubDir, ".junai-pool-version"), v, "utf8");
+}
+function checkPoolUpdate(context) {
+  const workspaceFolders = vscode4.workspace.workspaceFolders;
+  if (!workspaceFolders || workspaceFolders.length === 0) {
+    return;
+  }
+  const githubDir = path4.join(workspaceFolders[0].uri.fsPath, ".github");
+  const agentsDir = path4.join(githubDir, "agents");
+  if (!fs4.existsSync(agentsDir)) {
+    return;
+  }
+  const bundled = readBundledPoolVersion(context);
+  const workspace3 = readWorkspacePoolVersion(githubDir);
+  if (!bundled) {
+    return;
+  }
+  if (bundled === workspace3) {
+    return;
+  }
+  vscode4.commands.executeCommand("ptarmigan.update", { silent: true });
+}
+function gitCommitPoolUpdate(workspaceRoot, poolVersion) {
+  const label = poolVersion ? `v${poolVersion}` : "latest";
+  function run(args, cwd, extraEnv) {
+    const env2 = extraEnv ? { ...process.env, ...extraEnv } : void 0;
+    const r = (0, import_child_process.spawnSync)("git", args, { cwd, encoding: "utf8", env: env2 });
+    return { ok: r.status === 0 && !r.error, out: (r.stdout ?? "").trim() };
+  }
+  if (!run(["rev-parse", "--git-dir"], workspaceRoot).ok) {
+    return "skipped-no-repo";
+  }
+  const gitDirResult = run(["rev-parse", "--git-dir"], workspaceRoot);
+  const gitDir = path4.isAbsolute(gitDirResult.out) ? gitDirResult.out : path4.join(workspaceRoot, gitDirResult.out);
+  const inProgressMarkers = ["rebase-merge", "rebase-apply", "MERGE_HEAD", "CHERRY_PICK_HEAD", "BISECT_LOG"];
+  if (inProgressMarkers.some((m) => fs4.existsSync(path4.join(gitDir, m)))) {
+    return "skipped-in-progress";
+  }
+  if (!run(["symbolic-ref", "HEAD"], workspaceRoot).ok) {
+    return "skipped-detached";
+  }
+  const rootResult = run(["rev-parse", "--show-toplevel"], workspaceRoot);
+  if (!rootResult.ok) {
+    return "skipped-no-repo";
+  }
+  const gitRoot = rootResult.out;
+  const githubDir = path4.join(workspaceRoot, COPILOT_RUNTIME_DIR);
+  const claudeDir = path4.join(workspaceRoot, CLAUDE_RUNTIME_DIR);
+  const codexDir = path4.join(workspaceRoot, CODEX_RUNTIME_DIR);
+  const relGithub = path4.relative(gitRoot, githubDir).split(path4.sep).join("/");
+  const stagePaths = [
+    ...["agents", "tools", "skills", "instructions", "prompts", "diagrams", "handoffs", "agent-docs", "plans"].map((d) => `${relGithub}/${d}`),
+    `${relGithub}/copilot-instructions.md`,
+    `${relGithub}/.junai-pool-version`
+  ];
+  if (fs4.existsSync(claudeDir)) {
+    const relClaude = path4.relative(gitRoot, claudeDir).split(path4.sep).join("/");
+    if (fs4.existsSync(path4.join(claudeDir, "agents"))) {
+      stagePaths.push(`${relClaude}/agents`);
+    }
+    if (fs4.existsSync(path4.join(claudeDir, "skills"))) {
+      stagePaths.push(`${relClaude}/skills`);
+    }
+    if (fs4.existsSync(path4.join(claudeDir, "rules"))) {
+      stagePaths.push(`${relClaude}/rules`);
+    }
+  }
+  if (fs4.existsSync(codexDir)) {
+    const relCodex = path4.relative(gitRoot, codexDir).split(path4.sep).join("/");
+    if (fs4.existsSync(path4.join(codexDir, "skills"))) {
+      stagePaths.push(`${relCodex}/skills`);
+    }
+  }
+  const existingStagePaths = stagePaths.filter((p) => {
+    const abs = path4.isAbsolute(p) ? p : path4.join(gitRoot, p);
+    return fs4.existsSync(abs);
+  });
+  if (existingStagePaths.length > 0) {
+    run(["add", "--", ...existingStagePaths], gitRoot);
+  }
+  if (run(["diff", "--cached", "--quiet"], gitRoot).ok) {
+    return "nothing-to-commit";
+  }
+  const commitMsg = `chore(junai): update pool to ${label}`;
+  const commitArgs = ["commit", "-m", commitMsg];
+  if (run(commitArgs, gitRoot).ok) {
+    return "committed";
+  }
+  const fallbackEnv = { GIT_AUTHOR_NAME: "junai", GIT_AUTHOR_EMAIL: "junai-bot@localhost", GIT_COMMITTER_NAME: "junai", GIT_COMMITTER_EMAIL: "junai-bot@localhost" };
+  return run(commitArgs, gitRoot, fallbackEnv).ok ? "committed" : "error";
+}
+function scaffoldSelectiveGithubGitignore(workspaceRoot) {
+  const MARKER = "# \u2500\u2500 junai: selective .github tracking \u2500\u2500";
+  const gitignorePath = path4.join(workspaceRoot, ".gitignore");
+  if (fs4.existsSync(gitignorePath)) {
+    const existing = fs4.readFileSync(gitignorePath, "utf8");
+    if (existing.includes(MARKER)) {
+      return;
+    }
+  }
+  const block = [
+    "",
+    MARKER,
+    ".github/*",
+    "!.github/agent-docs/",
+    "!.github/agent-docs/**",
+    "!.github/plans/",
+    "!.github/plans/**",
+    "!.github/handoffs/",
+    "!.github/handoffs/**",
+    "!.github/copilot-instructions.md",
+    "!.github/project-config.md",
+    "!.github/pipeline-state.json",
+    ".claude/",
+    ""
+  ].join("\n");
+  fs4.appendFileSync(gitignorePath, block, "utf8");
+}
+function scaffoldPipelineState(githubDir, mode) {
+  const stateFile = path4.join(githubDir, "pipeline-state.json");
+  if (!fs4.existsSync(stateFile)) {
+    const state = {
+      version: "1.0.0",
+      initialized: (/* @__PURE__ */ new Date()).toISOString(),
+      mode,
+      stages: {},
+      artefacts: {}
+    };
+    fs4.writeFileSync(stateFile, JSON.stringify(state, null, 2), "utf8");
+  }
+}
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  activate,
+  deactivate
+});
+//# sourceMappingURL=extension.js.map

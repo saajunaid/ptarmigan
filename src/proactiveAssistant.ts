@@ -5,7 +5,11 @@ import {
     type ProactivePolicyOptions,
     createProactivePolicyState,
     evaluateProactiveEvent,
-} from 'fann-core';
+    type ProactiveDecision,
+    type ProactiveNoticeKind,
+    type ProactivePolicyState,
+    type ProactiveSurface,
+} from './proactivePolicy';
 
 const DEFAULT_STATUS_DURATION_MS = 6_000;
 const MAX_NOTICE_MESSAGE_CHARS = 220;
@@ -149,9 +153,9 @@ export type {
     ProactivePolicyOptions,
     ProactivePolicyState,
     ProactiveSurface,
-} from 'fann-core';
+} from './proactivePolicy';
 
 export {
     createProactivePolicyState,
     evaluateProactiveEvent,
-} from 'fann-core';
+} from './proactivePolicy';

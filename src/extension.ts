@@ -90,11 +90,11 @@ function dirHasNonDotEntries(dir: string): boolean {
 }
 
 function shouldAvoidUserLevelRuntimeDuplication(): boolean {
-    return vscode.workspace.getConfiguration('junai').get<boolean>('avoidUserLevelRuntimeDuplication', true);
+    return vscode.workspace.getConfiguration('ptarmigan').get<boolean>('avoidUserLevelRuntimeDuplication', true);
 }
 
 function shouldAvoidClaudeRuleDuplication(): boolean {
-    return vscode.workspace.getConfiguration('junai').get<boolean>('avoidClaudeRuleDuplication', true);
+    return vscode.workspace.getConfiguration('ptarmigan').get<boolean>('avoidClaudeRuleDuplication', true);
 }
 
 function hasGithubInstructionSurface(poolDir: string, targetFolder: string): boolean {
@@ -147,12 +147,12 @@ function formatRuntimeSkipNotice(skippedTargets: RuntimeBundleTarget[]): string 
         .map(workspacePath => `\`${path.basename(workspacePath)}\``)
         .join(', ');
 
-    return `Skipped workspace runtime deployment for ${runtimeList} because matching user-level runtimes were detected. Run \`junai: Clean Up Duplicate Workspace Runtimes\` to archive existing workspace duplicates. Set \`junai.avoidUserLevelRuntimeDuplication\` to \`false\` to force workspace deployment.`;
+    return `Skipped workspace runtime deployment for ${runtimeList} because matching user-level runtimes were detected. Run \`ptarmigan: Clean Up Duplicate Workspace Runtimes\` to archive existing workspace duplicates. Set \`ptarmigan.avoidUserLevelRuntimeDuplication\` to \`false\` to force workspace deployment.`;
 }
 
 function formatClaudeRulesSkipNotice(skipClaudeRules: boolean): string {
     if (!skipClaudeRules) { return ''; }
-    return 'Skipped workspace `.claude/rules` deployment because `.github/instructions` is present, to avoid duplicate instruction surfaces. Set `junai.avoidClaudeRuleDuplication` to `false` to deploy Claude rules as well.';
+    return 'Skipped workspace `.claude/rules` deployment because `.github/instructions` is present, to avoid duplicate instruction surfaces. Set `ptarmigan.avoidClaudeRuleDuplication` to `false` to deploy Claude rules as well.';
 }
 
 function getRuntimeSignalPath(runtimeName: CleanupRuntimeName, runtimeRoot: string): string {
@@ -286,7 +286,7 @@ async function cmdCleanupDuplicateRuntimes(
     }
 
     if (context) {
-        const promptKey = `junai.duplicateRuntimeCleanupPrompted.${targetFolder}`;
+    const promptKey = `ptarmigan.duplicateRuntimeCleanupPrompted.${targetFolder}`;
         await context.workspaceState.update(promptKey, true);
     }
 }
@@ -295,7 +295,7 @@ async function promptDuplicateRuntimeCleanupIfNeeded(context: vscode.ExtensionCo
     if (!shouldAvoidUserLevelRuntimeDuplication()) { return; }
 
     const promptEnabled = vscode.workspace
-        .getConfiguration('junai')
+        .getConfiguration('ptarmigan')
         .get<boolean>('promptDuplicateRuntimeCleanup', true);
     if (!promptEnabled) { return; }
 
@@ -306,12 +306,12 @@ async function promptDuplicateRuntimeCleanupIfNeeded(context: vscode.ExtensionCo
     const duplicateTargets = getDuplicateWorkspaceRuntimeTargets(targetFolder);
     if (duplicateTargets.length === 0) { return; }
 
-    const promptKey = `junai.duplicateRuntimeCleanupPrompted.${targetFolder}`;
+    const promptKey = `ptarmigan.duplicateRuntimeCleanupPrompted.${targetFolder}`;
     if (context.workspaceState.get<boolean>(promptKey)) { return; }
 
     const runtimeList = formatRuntimeTargetNames(duplicateTargets);
     const choice = await vscode.window.showInformationMessage(
-        `junai detected duplicate workspace runtimes (${runtimeList}) while matching user-level runtimes exist. Archive workspace duplicates now to avoid duplicate agent listings?`,
+        `ptarmigan detected duplicate workspace runtimes (${runtimeList}) while matching user-level runtimes exist. Archive workspace duplicates now to avoid duplicate agent listings?`,
         'Archive Duplicates',
         'Later',
         'Never Ask Again',
@@ -352,7 +352,7 @@ function junaiManagedSection(): string {
         '',
         'If no recipe is set, work normally using your built-in expertise and any skills loaded via other mechanisms.',
         '',
-        'For complex, ambiguous, or risky tasks, run `junai.deepPlan` from the Command Palette to generate a phased plan before implementation.',
+        'For complex, ambiguous, or risky tasks, run `ptarmigan.deepPlan` from the Command Palette to generate a phased plan before implementation.',
         '',
         JUNAI_SECTION_END,
     ].join('\n');
@@ -427,16 +427,16 @@ function removeCopilotInstructionsSection(githubDir: string): void {
 // ─────────────────────────────────────────────────────────────
 export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
-        vscode.commands.registerCommand('junai.init',            () => cmdInit(context)),
-        vscode.commands.registerCommand('junai.selectProfile',   (opts?: { targetFolder?: string; silent?: boolean }) => cmdSelectProfile(context, opts)),
-        vscode.commands.registerCommand('junai.status',          () => cmdStatus()),
-        vscode.commands.registerCommand('junai.setMode',         () => cmdSetMode()),
-        vscode.commands.registerCommand('junai.remove',          () => cmdRemove()),
-        vscode.commands.registerCommand('junai.cleanupDuplicateRuntimes', () => cmdCleanupDuplicateRuntimes(context)),
-        vscode.commands.registerCommand('junai.update',          (opts?: { silent?: boolean }) => cmdUpdate(context, opts)),
-        vscode.commands.registerCommand('junai.initPool',        () => cmdInitPool(context)),
-        vscode.commands.registerCommand('junai.setRecipe',       () => cmdSetRecipe()),
-        vscode.commands.registerCommand('junai.probeAutopilot',  () => cmdProbeAutopilot()),
+        vscode.commands.registerCommand('ptarmigan.init',            () => cmdInit(context)),
+        vscode.commands.registerCommand('ptarmigan.selectProfile',   (opts?: { targetFolder?: string; silent?: boolean }) => cmdSelectProfile(context, opts)),
+        vscode.commands.registerCommand('ptarmigan.status',          () => cmdStatus()),
+        vscode.commands.registerCommand('ptarmigan.setMode',         () => cmdSetMode()),
+        vscode.commands.registerCommand('ptarmigan.remove',          () => cmdRemove()),
+        vscode.commands.registerCommand('ptarmigan.cleanupDuplicateRuntimes', () => cmdCleanupDuplicateRuntimes(context)),
+        vscode.commands.registerCommand('ptarmigan.update',          (opts?: { silent?: boolean }) => cmdUpdate(context, opts)),
+        vscode.commands.registerCommand('ptarmigan.initPool',        () => cmdInitPool(context)),
+        vscode.commands.registerCommand('ptarmigan.setRecipe',       () => cmdSetRecipe()),
+        vscode.commands.registerCommand('ptarmigan.probeAutopilot',  () => cmdProbeAutopilot()),
     );
 
     registerExperimentalCommands(context);
@@ -472,7 +472,7 @@ export function activate(context: vscode.ExtensionContext) {
         dreamMemoryService = null;
     }
 
-    // MCP server is registered via .vscode/mcp.json (written by junai.init → scaffoldMcpConfig).
+    // MCP server is registered via .vscode/mcp.json (written by ptarmigan.init → scaffoldMcpConfig).
     // No dynamic registerMcpServerDefinitionProvider needed — the mcp.json key "junai" must match
     // the tool prefix in agent frontmatter (e.g. junai/notify_orchestrator).
 
@@ -489,8 +489,8 @@ export function activate(context: vscode.ExtensionContext) {
 type ExperimentalCommandHandler = () => void | Promise<void>;
 
 const experimentalCommandHandlers: Readonly<Record<string, ExperimentalCommandHandler>> = {
-    'junai.coordinate': () => cmdCoordinate(),
-    'junai.deepPlan': () => cmdDeepPlan(),
+    'ptarmigan.coordinate': () => cmdCoordinate(),
+    'ptarmigan.deepPlan': () => cmdDeepPlan(),
 };
 
 function registerExperimentalCommands(context: vscode.ExtensionContext): void {
@@ -510,7 +510,7 @@ function promptWelcomeIfNeeded(context: vscode.ExtensionContext): void {
     if (fs.existsSync(agentsDir)) { return; }   // already initialised — stay silent
 
     // Check the user's preferred auto-init behaviour
-    const autoMode = vscode.workspace.getConfiguration('junai').get<string>('autoInitializeOnActivation', 'prompt');
+    const autoMode = vscode.workspace.getConfiguration('ptarmigan').get<string>('autoInitializeOnActivation', 'prompt');
     if (autoMode === 'never') { return; }   // user opted out entirely
     if (autoMode === 'always') {
         // Silently initialize without any dialog — cmdInit({ silent: true }) guards against re-init
@@ -519,16 +519,16 @@ function promptWelcomeIfNeeded(context: vscode.ExtensionContext): void {
     }
 
     // 'prompt' mode — default: show info message once per workspace
-    const storageKey = `junai.welcomed.${workspaceFolders[0].uri.fsPath}`;
+    const storageKey = `ptarmigan.welcomed.${workspaceFolders[0].uri.fsPath}`;
     if (context.workspaceState.get<boolean>(storageKey)) { return; }
 
     vscode.window.showInformationMessage(
-        'junai: Agent pipeline not yet set up in this project. Run Initialize to install 23 agents, skills, and MCP config.',
+        'ptarmigan: Agent pipeline not yet set up in this project. Run Initialize to install 23 agents, skills, and MCP config.',
         'Initialize Now',
         'Not Now',
     ).then(choice => {
         if (choice === 'Initialize Now') {
-            vscode.commands.executeCommand('junai.init');
+        void vscode.commands.executeCommand('ptarmigan.init');
         } else {
             // Mark as dismissed so we don't prompt again for this workspace
             context.workspaceState.update(storageKey, true);
@@ -545,7 +545,7 @@ export function deactivate() {
 }
 
 // ─────────────────────────────────────────────────────────────
-// junai.init — copy runtime bundles into workspace .github/.claude/.codex
+// ptarmigan.init — copy runtime bundles into workspace .github/.claude/.codex
 // ─────────────────────────────────────────────────────────────
 async function cmdInit(context: vscode.ExtensionContext, opts?: { silent?: boolean }) {
     const silent = opts?.silent ?? false;
@@ -590,7 +590,7 @@ async function cmdInit(context: vscode.ExtensionContext, opts?: { silent?: boole
         backupProjectConfig(githubDir);
     }
 
-    const cfg  = vscode.workspace.getConfiguration('junai');
+    const cfg  = vscode.workspace.getConfiguration('ptarmigan');
     const mode = cfg.get<string>('defaultMode', 'supervised');
 
     const runtimeSummary = await vscode.window.withProgress<RuntimeInstallSummary>(
@@ -681,7 +681,7 @@ async function cmdSelectProfile(
             'Initialize Now', 'Cancel'
         );
         if (initialize !== 'Initialize Now') { return; }
-        await vscode.commands.executeCommand('junai.init');
+        await vscode.commands.executeCommand('ptarmigan.init');
         if (!fs.existsSync(projectConfigPath)) { return; }
     }
 
@@ -722,13 +722,13 @@ async function cmdSelectProfile(
     fs.writeFileSync(projectConfigPath, updated, 'utf8');
     if (!silent) {
         const finalLabel = selectedProfile || '(blank/manual)';
-        vscode.window.showInformationMessage(`junai: project profile set to ${finalLabel}.`);
+        vscode.window.showInformationMessage(`ptarmigan: project profile set to ${finalLabel}.`);
     }
 
     // Prompt recipe selection after profile is set
     await promptRecipeSelection(targetFolder, silent);
 
-    const storageKey = `junai.profilePrompted.${targetFolder}`;
+    const storageKey = `ptarmigan.profilePrompted.${targetFolder}`;
     await context.workspaceState.update(storageKey, true);
 }
 
@@ -736,7 +736,7 @@ async function promptProfileSelectionAfterInit(
     context: vscode.ExtensionContext,
     targetFolder: string
 ): Promise<void> {
-    const storageKey = `junai.profilePrompted.${targetFolder}`;
+    const storageKey = `ptarmigan.profilePrompted.${targetFolder}`;
     if (context.workspaceState.get<boolean>(storageKey)) { return; }
 
     const projectConfigPath = path.join(targetFolder, '.github', 'project-config.md');
@@ -871,7 +871,7 @@ function backupProjectConfig(githubDir: string): boolean {
 }
 
 // ─────────────────────────────────────────────────────────────
-// junai.status — show pipeline state in output channel
+// ptarmigan.status — show pipeline state in output channel
 // ─────────────────────────────────────────────────────────────
 async function cmdStatus() {
     const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -940,7 +940,7 @@ async function cmdStatus() {
 }
 
 // ─────────────────────────────────────────────────────────────
-// junai.setMode — quick-pick to change pipeline mode
+// ptarmigan.setMode — quick-pick to change pipeline mode
 // ─────────────────────────────────────────────────────────────
 async function cmdSetMode() {
     const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -984,7 +984,7 @@ async function cmdSetMode() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// junai.remove — remove agent pool + state from this project
+// ptarmigan.remove — remove agent pool + state from this project
 // ─────────────────────────────────────────────────────────────────────────────
 async function cmdRemove() {
     const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -1050,7 +1050,7 @@ async function cmdRemove() {
 }
 
 // ─────────────────────────────────────────────────────────────
-// junai.update — overwrite pool files with latest from extension bundle
+// ptarmigan.update — overwrite pool files with latest from extension bundle
 // ─────────────────────────────────────────────────────────────────────────────
 async function cmdUpdate(context: vscode.ExtensionContext, opts?: { silent?: boolean }) {
     const silent = opts?.silent ?? false;
@@ -1162,7 +1162,7 @@ async function cmdUpdate(context: vscode.ExtensionContext, opts?: { silent?: boo
 }
 
 // ─────────────────────────────────────────────────────────────
-// junai.initPool — deploy agent pool only (no pipeline-state.json)
+// ptarmigan.initPool — deploy agent pool only (no pipeline-state.json)
 // For teams that want standalone agents/skills without pipeline orchestration.
 // ─────────────────────────────────────────────────────────────
 async function cmdInitPool(context: vscode.ExtensionContext): Promise<void> {
@@ -1202,12 +1202,12 @@ async function cmdInitPool(context: vscode.ExtensionContext): Promise<void> {
         `junai: Agent pool deployed. Agents and skills are ready — no pipeline-state.json created.${initPoolNotices ? ` ${initPoolNotices}` : ''}`,
         'Select Profile', 'Set Recipe'
     );
-    if (sel === 'Select Profile') { vscode.commands.executeCommand('junai.selectProfile'); }
-    if (sel === 'Set Recipe')     { vscode.commands.executeCommand('junai.setRecipe'); }
+    if (sel === 'Select Profile') { vscode.commands.executeCommand('ptarmigan.selectProfile'); }
+    if (sel === 'Set Recipe')     { vscode.commands.executeCommand('ptarmigan.setRecipe'); }
 }
 
 // ─────────────────────────────────────────────────────────────
-// junai.setRecipe — standalone recipe picker (works any time, not just on init)
+// ptarmigan.setRecipe — standalone recipe picker (works any time, not just on init)
 // ─────────────────────────────────────────────────────────────
 async function cmdSetRecipe(): Promise<void> {
     const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -1668,7 +1668,7 @@ async function cmdProbeAutopilot(): Promise<void> {
 }
 
 // ─────────────────────────────────────────────────────────────
-// junai.deepPlan — run deep planning mode (experimental)
+// ptarmigan.deepPlan — run deep planning mode (experimental)
 // ─────────────────────────────────────────────────────────────
 async function cmdDeepPlan() {
     const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -1786,7 +1786,7 @@ async function cmdDeepPlan() {
 }
 
 // ─────────────────────────────────────────────────────────────
-// junai.coordinate — run coordinator mode (experimental)
+// ptarmigan.coordinate — run coordinator mode (experimental)
 // ─────────────────────────────────────────────────────────────
 async function cmdCoordinate() {
     const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -1943,7 +1943,7 @@ function checkPoolUpdate(context: vscode.ExtensionContext): void {
 
     // Pool files are bundled with the extension — always auto-update silently.
     // No user action required for either a fresh stamp (null) or an older stamp.
-    vscode.commands.executeCommand('junai.update', { silent: true });
+    vscode.commands.executeCommand('ptarmigan.update', { silent: true });
 }
 
 // ─────────────────────────────────────────────────────────────

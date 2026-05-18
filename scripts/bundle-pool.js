@@ -171,5 +171,76 @@ for (const runtime of runtimes) {
 const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
 fs.writeFileSync(path.join(poolDir, 'POOL_VERSION'), pkg.version, 'utf8');
 
+// ── Strip handoffs to agents not present in this pool ──────────────────────
+// Prevents dead-end buttons appearing in the VS Code Copilot chat UI when
+// a user is running ptarmigan (a subset pool) and Orchestrator/Planner etc.
+// reference full-pool agents that aren't bundled here.
+(function stripOutOfPoolHandoffs() {
+    const agentsDir = path.join(poolDir, '.github', 'agents');
+    if (!fs.existsSync(agentsDir)) return;
+
+    // Build set of available agent slugs from filenames
+    const poolAgentSlugs = new Set(
+        fs.readdirSync(agentsDir)
+            .filter(f => f.endsWith('.agent.md'))
+            .map(f => f.replace(/\.agent\.md$/, ''))
+    );
+
+    // Also build a set of display names (title-case slug → name)
+    // by reading the `name:` frontmatter from each agent file
+    const poolAgentNames = new Set();
+    for (const slug of poolAgentSlugs) {
+        const content = fs.readFileSync(path.join(agentsDir, `${slug}.agent.md`), 'utf8');
+        const nameMatch = content.match(/^name:\s*(.+)$/m);
+        if (nameMatch) poolAgentNames.add(nameMatch[1].trim());
+        // Also add slug-derived name (e.g. "code-reviewer" → "Code Reviewer")
+        poolAgentNames.add(slug.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' '));
+    }
+
+    let patchedFiles = 0;
+    let removedHandoffs = 0;
+
+    for (const slug of poolAgentSlugs) {
+        const filePath = path.join(agentsDir, `${slug}.agent.md`);
+        let content = fs.readFileSync(filePath, 'utf8');
+
+        // Normalize CRLF → LF so regex line anchors work correctly
+        const hasCrlf = content.includes('\r\n');
+        const normalized = content.replace(/\r\n/g, '\n');
+
+        // Match YAML handoff blocks in the frontmatter
+        // Each block starts with "  - label:" and continues with indented lines
+        const handoffBlockRe = /^  - label: .+?\n(?:    .+\n)*/gm;
+        const agentLineRe = /^    agent: (.+)$/m;
+
+        let patched = normalized.replace(handoffBlockRe, (block) => {
+            const agentLine = block.match(agentLineRe);
+            if (!agentLine) return block; // no agent line, keep block
+
+            const refName = agentLine[1].trim();
+            const refSlug = refName.toLowerCase().replace(/\s+/g, '-');
+
+            if (poolAgentSlugs.has(refSlug) || poolAgentNames.has(refName)) {
+                return block; // in-pool, keep
+            }
+
+            removedHandoffs++;
+            return ''; // out-of-pool, strip
+        });
+
+        // Restore CRLF if file originally used it
+        if (hasCrlf) patched = patched.replace(/\n/g, '\r\n');
+
+        if (patched !== content) {
+            fs.writeFileSync(filePath, patched, 'utf8');
+            patchedFiles++;
+        }
+    }
+
+    if (removedHandoffs > 0) {
+        console.log(`  ✓  Stripped ${removedHandoffs} out-of-pool handoffs from ${patchedFiles} agent file(s)`);
+    }
+})();
+
 console.log(`\n✅  Pool bundled — ${total} files written to pool/  [pool version: ${pkg.version}]\n`);
 

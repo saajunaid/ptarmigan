@@ -16,33 +16,9 @@ handoffs:
     agent: Tester
     prompt: Create and run tests for the implementation above.
     send: false
-  - label: Debug Issue
-    agent: Debug
-    prompt: Debug and fix the error encountered in the implementation above.
-    send: false
-  - label: Security Check
-    agent: Security Analyst
-    prompt: Perform security analysis on the implementation above.
-    send: false
   - label: Back to Planning
     agent: Planner
     prompt: Review the implementation and update the plan if needed.
-    send: false
-  - label: Deploy
-    agent: DevOps
-    prompt: Deploy the completed implementation above.
-    send: false
-  - label: Refine Prompts
-    agent: Prompt Engineer
-    prompt: Refine the LLM prompts used in the implementation above.
-    send: false
-  - label: Visual Polish
-    agent: Frontend Developer
-    prompt: Feature logic complete — apply visual polish, responsive tuning, and accessibility audit.
-    send: false
-  - label: Check Accessibility
-    agent: Accessibility
-    prompt: Review the implementation above for WCAG 2.2 accessibility compliance.
     send: false
 ---
 

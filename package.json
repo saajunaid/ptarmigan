@@ -2,7 +2,7 @@
     "name": "ptarmigan",
     "displayName": "ptarmigan - AI Agent Delivery System",
     "description": "Turn Copilot into a disciplined delivery system. TDD-enforced stages, quality gates, and specialist agents — from intent to ship.",
-    "version": "0.1.16",
+    "version": "0.1.23",
     "publisher": "junai-labs",
     "engines": {
         "vscode": "^1.101.0"
@@ -44,12 +44,12 @@
     "qna": "https://github.com/saajunaid/ptarmigan/issues",
     "badges": [
         {
-            "url": "https://img.shields.io/badge/Marketplace-junai--labs.ptarmigan-007ACC.png?style=for-the-badge",
+            "url": "https://img.shields.io/badge/VS%20Marketplace-ptarmigan-0078d4?style=flat-square&logo=visualstudiocode&logoColor=white",
             "href": "https://marketplace.visualstudio.com/items?itemName=junai-labs.ptarmigan",
             "description": "VS Code Marketplace listing"
         },
         {
-            "url": "https://img.shields.io/badge/Profile-lean%20public%20lane-22c55e.png?style=for-the-badge",
+            "url": "https://img.shields.io/badge/GitHub-ptarmigan-5c2d91?style=flat-square&logo=github&logoColor=white",
             "href": "https://github.com/saajunaid/ptarmigan",
             "description": "Trimmed public lane profile"
         }
@@ -68,62 +68,62 @@
     "contributes": {
         "commands": [
             {
-                "command": "junai.init",
+                "command": "ptarmigan.init",
                 "title": "Initialize Agent Pipeline",
                 "category": "ptarmigan"
             },
             {
-                "command": "junai.selectProfile",
+                "command": "ptarmigan.selectProfile",
                 "title": "Select Project Profile",
                 "category": "ptarmigan"
             },
             {
-                "command": "junai.status",
+                "command": "ptarmigan.status",
                 "title": "Show Pipeline Status",
                 "category": "ptarmigan"
             },
             {
-                "command": "junai.setMode",
+                "command": "ptarmigan.setMode",
                 "title": "Set Pipeline Mode",
                 "category": "ptarmigan"
             },
             {
-                "command": "junai.remove",
+                "command": "ptarmigan.remove",
                 "title": "Remove from this project",
                 "category": "ptarmigan"
             },
             {
-                "command": "junai.cleanupDuplicateRuntimes",
+                "command": "ptarmigan.cleanupDuplicateRuntimes",
                 "title": "Clean Up Duplicate Workspace Runtimes",
                 "category": "ptarmigan"
             },
             {
-                "command": "junai.update",
+                "command": "ptarmigan.update",
                 "title": "Update Agent Pool",
                 "category": "ptarmigan"
             },
             {
-                "command": "junai.initPool",
+                "command": "ptarmigan.initPool",
                 "title": "Initialize Agent Pool",
                 "category": "ptarmigan"
             },
             {
-                "command": "junai.setRecipe",
+                "command": "ptarmigan.setRecipe",
                 "title": "Set Recipe",
                 "category": "ptarmigan"
             },
             {
-                "command": "junai.probeAutopilot",
+                "command": "ptarmigan.probeAutopilot",
                 "title": "Probe Autopilot Chat Commands (dry run)",
                 "category": "ptarmigan"
             },
             {
-                "command": "junai.coordinate",
+                "command": "ptarmigan.coordinate",
                 "title": "Run Coordinator Mode (experimental)",
                 "category": "ptarmigan"
             },
             {
-                "command": "junai.deepPlan",
+                "command": "ptarmigan.deepPlan",
                 "title": "Deep Plan: Build Structured Plan (experimental)",
                 "category": "ptarmigan"
             }
@@ -131,7 +131,7 @@
         "configuration": {
             "title": "ptarmigan",
             "properties": {
-                "junai.defaultMode": {
+                "ptarmigan.defaultMode": {
                     "type": "string",
                     "enum": [
                         "supervised",
@@ -141,7 +141,7 @@
                     "default": "supervised",
                     "description": "Default pipeline mode for new projects. supervised = all gates manual; assisted = manual gates with AI hints; autopilot = all gates auto-satisfied except intent_approved."
                 },
-                "junai.autoInitializeOnActivation": {
+                "ptarmigan.autoInitializeOnActivation": {
                     "type": "string",
                     "enum": [
                         "prompt",
@@ -156,37 +156,37 @@
                     "default": "prompt",
                     "description": "Controls automatic agent pipeline initialization when VS Code opens a workspace. prompt = offer with a notification; always = initialize silently on first open; never = suppress all activation prompts."
                 },
-                "junai.avoidUserLevelRuntimeDuplication": {
+                "ptarmigan.avoidUserLevelRuntimeDuplication": {
                     "type": "boolean",
                     "default": true,
                     "description": "When enabled, ptarmigan skips deploying workspace .claude/.codex runtime bundles if matching user-level runtimes are already present, preventing duplicate agent listings across user and workspace scopes."
                 },
-                "junai.avoidClaudeRuleDuplication": {
+                "ptarmigan.avoidClaudeRuleDuplication": {
                     "type": "boolean",
                     "default": true,
                     "description": "When enabled, ptarmigan skips deploying workspace .claude/rules whenever .github/instructions is present, preventing duplicated instruction surfaces that can increase context compaction pressure for Claude."
                 },
-                "junai.promptDuplicateRuntimeCleanup": {
+                "ptarmigan.promptDuplicateRuntimeCleanup": {
                     "type": "boolean",
                     "default": true,
                     "description": "When enabled, ptarmigan shows a one-time prompt to archive legacy workspace .claude/.codex runtime folders if matching user-level runtimes exist, preventing duplicate agent listings without deleting data."
                 },
-                "junai.experimental.coordinator": {
+                "ptarmigan.experimental.coordinator": {
                     "type": "boolean",
                     "default": false,
                     "description": "Enable Coordinator Mode - fan out tasks to parallel workers and synthesize results. Implemented experimental feature."
                 },
-                "junai.experimental.dream": {
+                "ptarmigan.experimental.dream": {
                     "type": "boolean",
                     "default": false,
                     "description": "Enable Dream Memory Consolidation - quiet, opt-in memory consolidation after significant work/events. Implemented experimental feature."
                 },
-                "junai.experimental.deepPlan": {
+                "ptarmigan.experimental.deepPlan": {
                     "type": "boolean",
                     "default": false,
                     "description": "Enable Deep Plan Mode - structured planning lane for complex tasks with assumptions, risks, phased outline, and approval-ready next action. Implemented experimental feature."
                 },
-                "junai.experimental.proactive": {
+                "ptarmigan.experimental.proactive": {
                     "type": "boolean",
                     "default": false,
                     "description": "Enable KAIROS-lite Proactive Assistant - low-noise, opt-in notifications for meaningful runtime events with dedupe and cooldown. Implemented experimental feature."
@@ -212,5 +212,3 @@
         "typescript": "^5.3.0"
     }
 }
-
-

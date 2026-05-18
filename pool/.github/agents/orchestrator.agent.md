@@ -4,14 +4,6 @@ description: Pipeline brain - reads pipeline state, validates artefact contracts
 tools: [read, search, web, problems, changes, junai-mcp/*, github/*]
 model: Claude Sonnet 4.6
 handoffs:
-  - label: Generate PRD
-    agent: PRD
-    prompt: The pipeline is routing to you. Read pipeline-state.json and the Intent Document first, then begin PRD discovery.
-    send: false
-  - label: Design Architecture
-    agent: Architect
-    prompt: The pipeline is routing to you. Read pipeline-state.json and the approved PRD first, then design the system architecture.
-    send: false
   - label: Create Plan
     agent: Planner
     prompt: The pipeline is routing to you. Read pipeline-state.json and the approved Architecture doc first, then create the implementation plan.
@@ -31,42 +23,6 @@ handoffs:
   - label: Review Code
     agent: Code Reviewer
     prompt: The pipeline is routing to you. Read pipeline-state.json first — hotfix: read _notes._hotfix_brief for scope. Otherwise review against Plan and PRD requirements.
-    send: false
-  - label: Debug
-    agent: Debug
-    prompt: The pipeline is routing to you. Read pipeline-state.json and the escalation or defect report first, then diagnose the root cause.
-    send: false
-  - label: Security Review
-    agent: Security Analyst
-    prompt: The pipeline is routing to you. Read pipeline-state.json and the Architecture doc first, then perform a threat analysis.
-    send: false
-  - label: UX Design
-    agent: UX Designer
-    prompt: The pipeline is routing to you. Read pipeline-state.json, the PRD, and any existing design docs first, then conduct UX research and produce the design spec or review.
-    send: false
-  - label: Build Frontend
-    agent: Frontend Developer
-    prompt: The pipeline is routing to you. Read pipeline-state.json and the UI/UX design spec first, then implement the frontend.
-    send: false
-  - label: Build Streamlit
-    agent: Streamlit Developer
-    prompt: The pipeline is routing to you. Read pipeline-state.json and the UI/UX design spec first, then implement the Streamlit components.
-    send: false
-  - label: Data Engineering
-    agent: Data Engineer
-    prompt: The pipeline is routing to you. Read pipeline-state.json and the Architecture doc first, then implement the data layer.
-    send: false
-  - label: SQL Work
-    agent: SQL Expert
-    prompt: The pipeline is routing to you. Read pipeline-state.json and the data requirements first, then write or optimise the SQL.
-    send: false
-  - label: DevOps
-    agent: DevOps
-    prompt: The pipeline is routing to you. Read pipeline-state.json and the deployment requirements first, then handle the infrastructure or CI/CD task.
-    send: false
-  - label: Patch Files
-    agent: Janitor
-    prompt: The pipeline is routing to you. Read pipeline-state.json and the debug or review report first, then apply the targeted patches.
     send: false
 ---
 

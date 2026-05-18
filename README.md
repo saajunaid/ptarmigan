@@ -6,10 +6,10 @@
 
 **Test-first. Gate-guarded. Auditable from intent to ship.**
 
-[![Marketplace](https://img.shields.io/badge/VS%20Marketplace-junai--labs.ptarmigan-007ACC.svg?style=for-the-badge&logo=visualstudiocode&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=junai-labs.ptarmigan)
-[![License](https://img.shields.io/badge/License-MIT-22c55e.svg?style=for-the-badge)](https://github.com/saajunaid/ptarmigan/blob/HEAD/LICENSE.md)
-[![VS Code](https://img.shields.io/badge/VS%20Code-1.101%2B-007ACC.svg?style=for-the-badge&logo=visualstudiocode&logoColor=white)](https://code.visualstudio.com)
-[![GitHub Copilot](https://img.shields.io/badge/GitHub%20Copilot-required-6e40c9.svg?style=for-the-badge&logo=github)](https://github.com/features/copilot)
+[![Marketplace](https://img.shields.io/badge/VS%20Marketplace-ptarmigan-0078d4?style=flat-square&logo=visualstudiocode&logoColor=white)](https://marketplace.visualstudio.com/items?itemName=junai-labs.ptarmigan)
+[![License](https://img.shields.io/badge/License-MIT-4ec820?style=flat-square)](https://github.com/saajunaid/ptarmigan/blob/HEAD/LICENSE.md)
+[![VS Code](https://img.shields.io/badge/VS%20Code-1.101%2B-0078d4?style=flat-square&logo=visualstudiocode&logoColor=white)](https://code.visualstudio.com)
+[![GitHub Copilot](https://img.shields.io/badge/GitHub%20Copilot-required-5c2d91?style=flat-square&logo=github&logoColor=white)](https://github.com/features/copilot)
 
 </div>
 
@@ -37,7 +37,7 @@ The result is AI-assisted development that stays disciplined — no hallucinated
 |---|---|---|
 | Capture intent | `@Orchestrator` | — |
 | Plan the work | `@Planner` | ✅ Plan Approved? |
-| Validate plan vs codebase | `@Preflight` | ✅ Plan Validated? |
+| Validate plan vs codebase *(optional)* | `@Preflight` | ✅ Plan Validated? *(optional)* |
 | Implement (tests first) | `@Implement` | — |
 | Run and fix tests | `@Tester` | ✅ Tests Pass? |
 | Review the change | `@Code Reviewer` | ✅ Review Approved? |
@@ -123,7 +123,7 @@ One command installs everything into `.github/` — it travels with your repo an
 |---|---|
 | `@Orchestrator` | Pipeline brain — reads state, routes between agents, manages gates |
 | `@Planner` | Produces structured implementation plans with phases and acceptance criteria |
-| `@Preflight` | Validates plans against the real codebase before implementation |
+| `@Preflight` | *(optional)* Validates plan claims against the real codebase — catches stale assumptions before implementation |
 | `@Implement` | Writes tests first, then production code — enforces TDD discipline |
 | `@Tester` | Runs the suite, triages failures, loops back to Implement on red |
 | `@Code Reviewer` | Reviews for correctness, security, performance, and coding standards |
@@ -161,11 +161,11 @@ One command installs everything into `.github/` — it travels with your repo an
 
 | Setting | Default | Description |
 |---|---|---|
-| `junai.defaultMode` | `supervised` | Delivery mode for new projects |
-| `junai.autoInitializeOnActivation` | `prompt` | First-open behavior: prompt, always, or never |
-| `junai.avoidUserLevelRuntimeDuplication` | `true` | Skip workspace runtime bundles when user-level equivalents exist |
-| `junai.avoidClaudeRuleDuplication` | `true` | Skip `.claude/rules` when `.github/instructions` already covers them |
-| `junai.promptDuplicateRuntimeCleanup` | `true` | One-time prompt to archive legacy duplicate folders |
+| `ptarmigan.defaultMode` | `supervised` | Delivery mode for new projects |
+| `ptarmigan.autoInitializeOnActivation` | `prompt` | First-open behavior: prompt, always, or never |
+| `ptarmigan.avoidUserLevelRuntimeDuplication` | `true` | Skip workspace runtime bundles when user-level equivalents exist |
+| `ptarmigan.avoidClaudeRuleDuplication` | `true` | Skip `.claude/rules` when `.github/instructions` already covers them |
+| `ptarmigan.promptDuplicateRuntimeCleanup` | `true` | One-time prompt to archive legacy duplicate folders |
 
 ---
 

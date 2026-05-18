@@ -8,33 +8,13 @@ handoffs:
     agent: Orchestrator
     prompt: Stage complete. Read pipeline-state.json and _routing_decision, then route.
     send: false
-  - label: Review Architecture
-    agent: Architect
-    prompt: Review and refine the architecture for this plan.
-    send: false
-  - label: Create PRD
-    agent: PRD
-    prompt: Create a formal PRD document for the feature described above.
+  - label: Validate Plan
+    agent: Preflight
+    prompt: The pipeline is routing to you. Read pipeline-state.json first, then validate this plan against the actual codebase before implementation begins.
     send: false
   - label: Build UI
     agent: Implement
     prompt: Implement the UI components from the plan above.
-    send: false
-  - label: Build Data Pipeline
-    agent: Data Engineer
-    prompt: Implement the data pipeline tasks from the plan above.
-    send: false
-  - label: Design Database
-    agent: SQL Expert
-    prompt: Design and implement the database changes from the plan above.
-    send: false
-  - label: Design Prompts
-    agent: Prompt Engineer
-    prompt: Design the LLM prompts needed for the plan above.
-    send: false
-  - label: Design UX
-    agent: UX Designer
-    prompt: Design the user experience for the UI phases outlined in the plan above.
     send: false
 ---
 

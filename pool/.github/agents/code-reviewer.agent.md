@@ -12,14 +12,6 @@ handoffs:
     agent: Implement
     prompt: Fix the issues identified in the code review above.
     send: false
-  - label: Security Review
-    agent: Security Analyst
-    prompt: Perform a deeper security analysis on the code reviewed above.
-    send: false
-  - label: Clean Up Code
-    agent: Janitor
-    prompt: Clean up the code issues identified in the review above — dead code, formatting, organization.
-    send: false
 ---
 
 # Code Reviewer Agent

@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 510" width="1200" height="510" role="img" aria-labelledby="ptitle pdesc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 595" width="1200" height="595" role="img" aria-labelledby="ptitle pdesc">
   <title id="ptitle">Ptarmigan Agentic Development Pipeline</title>
-      <desc id="pdesc">Two-row pipeline: row 1 flows Intent through Planner to a Plan gate; YES drops to row 2 running an explicit TDD loop between Implement and Tester before Test gate, then Code Reviewer, Review gate, and Ship. NO loops route above row 1 and below row 2 without crossing the main flow.</desc>
+  <desc id="pdesc">Three-zone pipeline: zone 1 flows Intent through Planner to Plan gate; optional middle zone runs Preflight and Plan Validated gate; zone 2 runs TDD loop between Implement and Tester, then Code Reviewer, Review gate, and Ship.</desc>
 
   <defs>
     <marker id="ab" viewBox="0 0 8 8" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
@@ -12,161 +12,214 @@
     <marker id="aa" viewBox="0 0 8 8" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
       <path d="M0,1 L7,4 L0,7 Z" fill="#fbbf24"/>
     </marker>
+    <marker id="av" viewBox="0 0 8 8" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,1 L7,4 L0,7 Z" fill="#a78bfa"/>
+    </marker>
   </defs>
 
   <!-- Background -->
-  <rect width="1200" height="510" fill="#0d0f14"/>
+  <rect width="1200" height="595" fill="#0d0f14"/>
 
   <!-- Header -->
-  <text x="600" y="38" text-anchor="middle"
+  <text x="600" y="36" text-anchor="middle"
         fill="#f3f4f6" font-family="Inter, system-ui, sans-serif"
         font-size="20" font-weight="700" letter-spacing="-0.3">
     Ptarmigan — Agentic Development Pipeline
   </text>
-  <text x="600" y="58" text-anchor="middle"
+  <text x="600" y="56" text-anchor="middle"
         fill="#4b5563" font-family="Inter, system-ui, sans-serif" font-size="12">
-            Deterministic stage routing · explicit quality gates · TDD loop (Red → Green → Refactor)
+    Deterministic stage routing · explicit quality gates · TDD loop (Red → Green → Refactor)
   </text>
 
-  <!-- ══ ROW 1 (y-centre 150) ══
-       Node height 48: y=126..174
-       Plan gate height 64: y=118..182
-       x positions: Intent 50, Init 190, Orchestrator 340, Planner 510, Plan gate 650 -->
+  <!-- ══ ROW 1 (y-centre 140) ══
+       Node height 48: y=116..164
+       Plan gate height 64: y=108..172
+       x: Intent 40, Initialize 175, Orchestrator 315, Planner 480, Plan gate 625 -->
 
   <!-- Intent -->
-  <rect x="50" y="126" width="110" height="48" rx="10"
+  <rect x="40" y="116" width="115" height="48" rx="10"
         fill="#111827" stroke="#374151" stroke-width="1.5"/>
-  <text x="105" y="155" text-anchor="middle"
+  <text x="97" y="145" text-anchor="middle"
         fill="#d1d5db" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Intent</text>
 
-  <!-- Initialize pipeline -->
-  <rect x="190" y="126" width="120" height="48" rx="10"
+  <!-- Initialize -->
+  <rect x="175" y="116" width="120" height="48" rx="10"
         fill="#111827" stroke="#374151" stroke-width="1.5"/>
-  <text x="250" y="149" text-anchor="middle"
+  <text x="235" y="139" text-anchor="middle"
         fill="#d1d5db" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Initialize</text>
-  <text x="250" y="165" text-anchor="middle"
+  <text x="235" y="155" text-anchor="middle"
         fill="#6b7280" font-family="Inter, system-ui, sans-serif" font-size="11">pipeline</text>
 
   <!-- @Orchestrator -->
-  <rect x="340" y="126" width="140" height="48" rx="10"
+  <rect x="315" y="116" width="145" height="48" rx="10"
         fill="#111827" stroke="#374151" stroke-width="1.5"/>
-  <text x="410" y="155" text-anchor="middle"
+  <text x="387" y="145" text-anchor="middle"
         fill="#93c5fd" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">@Orchestrator</text>
 
   <!-- Planner -->
-  <rect x="510" y="126" width="110" height="48" rx="10"
+  <rect x="480" y="116" width="115" height="48" rx="10"
         fill="#111827" stroke="#374151" stroke-width="1.5"/>
-  <text x="565" y="155" text-anchor="middle"
+  <text x="537" y="145" text-anchor="middle"
         fill="#d1d5db" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Planner</text>
 
-  <!-- Plan gate (taller, green border) -->
-  <rect x="650" y="118" width="140" height="64" rx="13"
+  <!-- Plan gate (green border) -->
+  <rect x="625" y="108" width="148" height="64" rx="13"
         fill="#071a07" stroke="#22c55e" stroke-width="2"/>
-  <text x="720" y="143" text-anchor="middle"
+  <text x="699" y="133" text-anchor="middle"
         fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">PLAN</text>
-  <text x="720" y="158" text-anchor="middle"
+  <text x="699" y="148" text-anchor="middle"
         fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">APPROVED?</text>
-  <text x="720" y="174" text-anchor="middle"
+  <text x="699" y="164" text-anchor="middle"
         fill="#166534" font-family="Inter, system-ui, sans-serif" font-size="10">gate ①</text>
 
   <!-- Row 1 forward arrows -->
-  <path d="M160 150 H190" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
-  <path d="M310 150 H340" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
-  <path d="M480 150 H510" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
-  <path d="M620 150 H650" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
+  <path d="M155 140 H175" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
+  <path d="M295 140 H315" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
+  <path d="M460 140 H480" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
+  <path d="M595 140 H625" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
 
-  <!-- Plan NO loop — routes ABOVE row 1 at y=80, clear of all nodes -->
-  <path d="M720 118 V88 Q720 78 710 78 H575 Q565 78 565 88 V126"
+  <!-- Plan NO loop — routes ABOVE row 1 at y=70 -->
+  <path d="M699 108 V74 Q699 66 689 66 H548 Q538 66 538 74 V116"
         stroke="#fbbf24" stroke-width="1.8" fill="none" marker-end="url(#aa)"/>
-  <text x="642" y="71" text-anchor="middle"
+  <text x="619" y="59" text-anchor="middle"
         fill="#fbbf24" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600">NO — refine plan</text>
 
-  <!-- YES connector: Plan gate bottom → bridge at y=240 → Implement top -->
-  <path d="M720 182 V232 Q720 240 712 240 H153 Q145 240 145 248 V311"
-        stroke="#4ade80" stroke-width="2.2" fill="none" marker-end="url(#ag)"/>
-  <text x="734" y="215" fill="#4ade80"
-        font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700">YES ↓</text>
+  <!-- ══ OPTIONAL PREFLIGHT ZONE ══ -->
 
-  <!-- ══ ROW 2 (y-centre 335) ══
-       Node height 48: y=311..359
-       Gate height 64: y=303..367
-       x positions: Implement 80, Tester 240, Test gate 380, Code Reviewer 540, Review gate 715, Ship 900 -->
+  <!-- Separator line -->
+  <line x1="40" y1="208" x2="1160" y2="208" stroke="#1f2937" stroke-width="1" stroke-dasharray="5,4"/>
+  <text x="600" y="224" text-anchor="middle"
+        fill="#4b5563" font-family="Inter, system-ui, sans-serif" font-size="11" font-style="italic">
+    optional preflight phase — validate plan against codebase before writing code
+  </text>
+
+  <!-- Preflight node (optional — violet dashed border) -->
+  <rect x="395" y="246" width="170" height="52" rx="10"
+        fill="#0c0c1e" stroke="#7c3aed" stroke-width="1.8" stroke-dasharray="7,3"/>
+  <text x="480" y="269" text-anchor="middle"
+        fill="#c4b5fd" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">@Preflight</text>
+  <text x="480" y="287" text-anchor="middle"
+        fill="#6d28d9" font-family="Inter, system-ui, sans-serif" font-size="10">optional · plan validation</text>
+
+  <!-- Plan Validated gate (optional — dotted green border) -->
+  <rect x="594" y="238" width="158" height="64" rx="13"
+        fill="#071a07" stroke="#22c55e" stroke-width="1.8" stroke-dasharray="7,3"/>
+  <text x="673" y="263" text-anchor="middle"
+        fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">PLAN</text>
+  <text x="673" y="278" text-anchor="middle"
+        fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">VALIDATED?</text>
+  <text x="673" y="294" text-anchor="middle"
+        fill="#166534" font-family="Inter, system-ui, sans-serif" font-size="10">gate ② optional</text>
+
+  <!-- Plan gate YES → Preflight (violet dashed) -->
+  <path d="M699 172 V224 Q699 232 689 232 H480 Q472 232 472 240 V246"
+        stroke="#7c3aed" stroke-width="1.8" fill="none" stroke-dasharray="6,3" marker-end="url(#av)"/>
+  <text x="730" y="202" text-anchor="middle"
+        fill="#4ade80" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700">YES ↓</text>
+
+  <!-- Preflight → Plan Validated gate (violet dashed) -->
+  <path d="M565 272 H594" stroke="#7c3aed" stroke-width="1.8" fill="none" stroke-dasharray="6,3" marker-end="url(#av)"/>
+
+  <!-- Skip preflight — thin dashed arc from Plan gate right → down to bridge level -->
+  <path d="M773 140 H836 V371 Q836 379 826 379 H673"
+        stroke="#374151" stroke-width="1.4" fill="none" stroke-dasharray="5,4"/>
+  <text x="888" y="262" text-anchor="middle"
+        fill="#374151" font-family="Inter, system-ui, sans-serif" font-size="10" font-style="italic">skip preflight</text>
+  <polygon points="673,375 681,371 681,383" fill="#374151"/>
+
+  <!-- Plan Validated YES → bridge → Implement top (green) -->
+  <path d="M673 302 V371 Q673 379 663 379 H127 Q117 379 117 389 V411"
+        stroke="#4ade80" stroke-width="2.2" fill="none" marker-end="url(#ag)"/>
+  <text x="695" y="344" text-anchor="middle"
+        fill="#4ade80" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="700">YES ↓</text>
+
+  <!-- ══ ROW 2 (y-centre 435) ══
+       Node height 48: y=411..459
+       Gate height 64: y=403..467
+       x: Implement 55, Tester 222, Test gate 361, Code Reviewer 520, Review gate 705, Ship 895 -->
 
   <!-- Implement -->
-  <rect x="80" y="311" width="130" height="48" rx="10"
+  <rect x="55" y="411" width="145" height="48" rx="10"
         fill="#111827" stroke="#374151" stroke-width="1.5"/>
-  <text x="145" y="340" text-anchor="middle"
+  <text x="127" y="440" text-anchor="middle"
         fill="#d1d5db" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Implement</text>
 
   <!-- Tester -->
-  <rect x="240" y="311" width="110" height="48" rx="10"
+  <rect x="222" y="411" width="115" height="48" rx="10"
         fill="#111827" stroke="#374151" stroke-width="1.5"/>
-  <text x="295" y="340" text-anchor="middle"
+  <text x="279" y="440" text-anchor="middle"
         fill="#d1d5db" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Tester</text>
 
   <!-- Test gate -->
-  <rect x="380" y="303" width="130" height="64" rx="13"
+  <rect x="361" y="403" width="135" height="64" rx="13"
         fill="#071a07" stroke="#22c55e" stroke-width="2"/>
-  <text x="445" y="328" text-anchor="middle"
+  <text x="428" y="428" text-anchor="middle"
         fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">TESTS</text>
-  <text x="445" y="343" text-anchor="middle"
+  <text x="428" y="443" text-anchor="middle"
         fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">PASS?</text>
-  <text x="445" y="358" text-anchor="middle"
-        fill="#166534" font-family="Inter, system-ui, sans-serif" font-size="10">gate ②</text>
+  <text x="428" y="458" text-anchor="middle"
+        fill="#166534" font-family="Inter, system-ui, sans-serif" font-size="10">gate ③</text>
 
   <!-- Code Reviewer -->
-  <rect x="540" y="311" width="145" height="48" rx="10"
+  <rect x="520" y="411" width="158" height="48" rx="10"
         fill="#111827" stroke="#374151" stroke-width="1.5"/>
-  <text x="612" y="340" text-anchor="middle"
+  <text x="599" y="440" text-anchor="middle"
         fill="#d1d5db" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Code Reviewer</text>
 
   <!-- Review gate -->
-  <rect x="715" y="303" width="155" height="64" rx="13"
+  <rect x="705" y="403" width="158" height="64" rx="13"
         fill="#071a07" stroke="#22c55e" stroke-width="2"/>
-  <text x="792" y="328" text-anchor="middle"
+  <text x="784" y="428" text-anchor="middle"
         fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">REVIEW</text>
-  <text x="792" y="343" text-anchor="middle"
+  <text x="784" y="443" text-anchor="middle"
         fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700">APPROVED?</text>
-  <text x="792" y="358" text-anchor="middle"
-        fill="#166534" font-family="Inter, system-ui, sans-serif" font-size="10">gate ③</text>
+  <text x="784" y="458" text-anchor="middle"
+        fill="#166534" font-family="Inter, system-ui, sans-serif" font-size="10">gate ④</text>
 
   <!-- Ship -->
-  <rect x="900" y="311" width="120" height="48" rx="10"
+  <rect x="895" y="411" width="120" height="48" rx="10"
         fill="#061a06" stroke="#22c55e" stroke-width="2"/>
-  <text x="960" y="333" text-anchor="middle"
+  <text x="955" y="433" text-anchor="middle"
         fill="#4ade80" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="700">Ship /</text>
-  <text x="960" y="350" text-anchor="middle"
+  <text x="955" y="450" text-anchor="middle"
         fill="#4ade80" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="700">Merge ✓</text>
 
   <!-- Row 2 forward arrows -->
-  <path d="M210 335 H240" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
-  <text x="225" y="303" text-anchor="middle"
+  <path d="M200 435 H222" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
+  <text x="211" y="403" text-anchor="middle"
         fill="#a7f3d0" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700">TDD</text>
-  <text x="225" y="316" text-anchor="middle"
+  <text x="211" y="416" text-anchor="middle"
         fill="#6ee7b7" font-family="Inter, system-ui, sans-serif" font-size="9">Red → Green → Refactor</text>
-  <path d="M350 335 H380" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
+  <path d="M337 435 H361" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
   <!-- Test gate YES → Code Reviewer -->
-  <path d="M510 335 H540" stroke="#4ade80" stroke-width="2" fill="none" marker-end="url(#ag)"/>
-  <text x="523" y="329" text-anchor="middle"
+  <path d="M496 435 H520" stroke="#4ade80" stroke-width="2" fill="none" marker-end="url(#ag)"/>
+  <text x="508" y="429" text-anchor="middle"
         fill="#4ade80" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700">YES</text>
-  <path d="M685 335 H715" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
+  <!-- Code Reviewer → Review gate -->
+  <path d="M678 435 H705" stroke="#60a5fa" stroke-width="2" fill="none" marker-end="url(#ab)"/>
   <!-- Review gate YES → Ship -->
-  <path d="M870 335 H900" stroke="#4ade80" stroke-width="2" fill="none" marker-end="url(#ag)"/>
-  <text x="883" y="329" text-anchor="middle"
+  <path d="M863 435 H895" stroke="#4ade80" stroke-width="2" fill="none" marker-end="url(#ag)"/>
+  <text x="878" y="429" text-anchor="middle"
         fill="#4ade80" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700">YES</text>
 
-  <!-- Test NO loop — routes BELOW row 2 at y=418, clear of all nodes
-       From Test gate bottom-centre (445,367) → down → left → up into Implement bottom (160,359) -->
-  <path d="M445 367 V408 Q445 418 435 418 H168 Q158 418 158 408 V359"
+  <!-- Test NO loop — routes BELOW row 2 at y=514 -->
+  <path d="M428 467 V506 Q428 514 418 514 H143 Q133 514 133 506 V459"
         stroke="#fbbf24" stroke-width="1.8" fill="none" marker-end="url(#aa)"/>
-  <text x="300" y="436" text-anchor="middle"
+  <text x="284" y="530" text-anchor="middle"
         fill="#fbbf24" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600">NO — fix and retest</text>
 
-  <!-- Review NO loop — routes BELOW row 2 at y=458, deeper than Test NO (no crossing)
-       From Review gate bottom-centre (792,367) → down → left → up into Implement bottom (125,359) -->
-  <path d="M792 367 V448 Q792 458 782 458 H133 Q123 458 123 448 V359"
+  <!-- Review NO loop — routes BELOW row 2 at y=554 -->
+  <path d="M784 467 V546 Q784 554 774 554 H113 Q103 554 103 546 V459"
         stroke="#fbbf24" stroke-width="1.8" fill="none" marker-end="url(#aa)"/>
-  <text x="458" y="477" text-anchor="middle"
+  <text x="443" y="571" text-anchor="middle"
         fill="#fbbf24" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600">NO — address review feedback</text>
+
+  <!-- Legend -->
+  <rect x="40" y="578" width="10" height="10" rx="2" fill="none" stroke="#22c55e" stroke-width="2"/>
+  <text x="55" y="587" fill="#4b5563" font-family="Inter, system-ui, sans-serif" font-size="10">required gate</text>
+  <rect x="148" y="578" width="10" height="10" rx="2" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="163" y="587" fill="#4b5563" font-family="Inter, system-ui, sans-serif" font-size="10">optional gate</text>
+  <rect x="256" y="578" width="10" height="10" rx="2" fill="none" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="271" y="587" fill="#4b5563" font-family="Inter, system-ui, sans-serif" font-size="10">optional phase</text>
 
 </svg>

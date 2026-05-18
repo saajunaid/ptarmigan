@@ -8,9 +8,9 @@ handoffs:
     agent: Orchestrator
     prompt: Stage complete. Read pipeline-state.json and _routing_decision, then route.
     send: false
-  - label: Fix Failing Tests
-    agent: Debug
-    prompt: Debug and fix the failing tests identified above.
+  - label: Implement Fixes (TDD Red → Green)
+    agent: Implement
+    prompt: Tests are failing (red phase). Read the failing test output above, then fix the production code to make the tests pass. Do not modify the tests.
     send: false
   - label: Review Code
     agent: Code Reviewer

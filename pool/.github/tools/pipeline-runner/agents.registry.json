@@ -13,6 +13,10 @@
       "agent": "Planner",
       "agent_file": "agents/planner.agent.md"
     },
+    "preflight": {
+      "agent": "Preflight",
+      "agent_file": "agents/preflight.agent.md"
+    },
     "implement": {
       "agent": "Implement",
       "agent_file": "agents/implement.agent.md",
@@ -39,6 +43,21 @@
     }
   },
   "transitions": [
+    {
+      "id": "T-04",
+      "from_stage": "plan",
+      "to_stage": "preflight",
+      "event": "complete",
+      "guards": [
+        "artefact_exists",
+        "artefact_approved",
+        "ui_track_not_enabled"
+      ],
+      "gate": "plan_approved",
+      "hotfix_only": false,
+      "priority": 0,
+      "_comment": "plan → preflight (validates plan against codebase before implementation)"
+    },
     {
       "id": "T-05",
       "from_stage": "implement",
@@ -191,6 +210,30 @@
       "_comment": "all modes: review retry budget exhausted → HALT pipeline (autopilot writes sentinel file)"
     },
     {
+      "id": "T-34",
+      "from_stage": "preflight",
+      "to_stage": "implement",
+      "event": "passed",
+      "guards": [
+        "artefact_exists"
+      ],
+      "gate": "plan_validated",
+      "hotfix_only": false,
+      "priority": 0,
+      "_comment": "preflight passed → proceed to implementation"
+    },
+    {
+      "id": "T-35",
+      "from_stage": "preflight",
+      "to_stage": "plan",
+      "event": "failed",
+      "guards": [],
+      "gate": null,
+      "hotfix_only": false,
+      "priority": 0,
+      "_comment": "preflight failed → return to planner for corrections"
+    },
+    {
       "id": "T-24",
       "from_stage": "*",
       "to_stage": "*",
@@ -252,7 +295,7 @@
     {
       "id": "T-S02",
       "from_stage": "plan",
-      "to_stage": "implement",
+      "to_stage": "preflight",
       "event": "complete",
       "guards": [
         "artefact_exists",
@@ -261,7 +304,18 @@
       "gate": "plan_approved",
       "hotfix_only": false,
       "priority": 0,
-      "_comment": "ADLC-ptarmigan: direct plan → implement (preflight stage absent)"
+      "_comment": "ADLC-ptarmigan: plan → preflight (optional validation gate)"
+    },
+    {
+      "id": "T-S03",
+      "from_stage": "preflight",
+      "to_stage": "implement",
+      "event": "complete",
+      "guards": [],
+      "gate": "plan_validated",
+      "hotfix_only": false,
+      "priority": 0,
+      "_comment": "ADLC-ptarmigan: preflight → implement (plan_validated gate, optional — skip by setting gate=passed manually)"
     }
   ]
 }
