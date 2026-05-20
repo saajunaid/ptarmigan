@@ -1,7 +1,9 @@
 ﻿out/
 node_modules/
+dist/
 *.vsix
 pool/
+.env
 
 # Local secret files (never commit)
 ptarmigan.pat
