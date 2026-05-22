@@ -1,216 +1,158 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 420" width="1440" height="420" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 640" width="1600" height="640" role="img" aria-labelledby="title desc">
   <title id="title">junai end-to-end extension workflow</title>
-  <desc id="desc">Wide landscape diagram showing the junai extension workflow with clean external routing arrows: setup, orchestrated planning, optional preflight, implementation, testing, review, shipping, and governed knowledge promotion.</desc>
+  <desc id="desc">Readable landscape flow for the junai extension: setup, orchestrated planning, optional preflight, implementation, testing, review, shipping, and governed knowledge promotion back into the pool.</desc>
 
   <defs>
     <linearGradient id="hero" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#ffffff"/>
       <stop offset="100%" stop-color="#eef6ff"/>
     </linearGradient>
-    <filter id="shadow" x="-10%" y="-20%" width="120%" height="150%">
-      <feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#94a3b8" flood-opacity="0.16"/>
+    <filter id="shadow" x="-8%" y="-15%" width="116%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#94a3b8" flood-opacity="0.16"/>
     </filter>
     <style>
       .ui { font-family: Inter, system-ui, sans-serif; }
-      .panel { fill: #ffffff; stroke: #dbe6f3; stroke-width: 1.4; }
-      .card { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; }
-      .blue-card { fill: #eff6ff; stroke: #38bdf8; stroke-width: 1.9; }
-      .green-card { fill: #f0fdf4; stroke: #22c55e; stroke-width: 1.9; }
-      .purple-card { fill: #faf5ff; stroke: #8b5cf6; stroke-width: 1.9; stroke-dasharray: 6 5; }
-      .purple-knowledge { fill: #f5f3ff; stroke: #8b5cf6; stroke-width: 1.8; }
-      .ship-card { fill: #ecfdf5; stroke: #16a34a; stroke-width: 1.9; }
-      .title { fill: #0f172a; font-size: 29px; font-weight: 700; }
-      .subtitle { fill: #475569; font-size: 12px; }
-      .section-blue { fill: #2563eb; font-size: 14px; font-weight: 700; }
-      .section-green { fill: #16a34a; font-size: 14px; font-weight: 700; }
-      .section-purple { fill: #7c3aed; font-size: 14px; font-weight: 700; }
-      .card-title { fill: #0f172a; font-size: 14px; font-weight: 700; }
-      .card-sub { fill: #475569; font-size: 10px; }
-      .note { fill: #64748b; font-size: 10px; font-style: italic; }
-      .yes { fill: #16a34a; font-size: 10px; font-weight: 700; }
-      .warn { fill: #b45309; font-size: 10px; font-weight: 700; }
-      .legend-blue { fill: #2563eb; font-size: 10px; font-weight: 600; }
-      .legend-green { fill: #16a34a; font-size: 10px; font-weight: 600; }
-      .legend-amber { fill: #d97706; font-size: 10px; font-weight: 600; }
-      .legend-purple { fill: #7c3aed; font-size: 10px; font-weight: 600; }
+      .panel { fill: #ffffff; stroke: #dbe7f5; stroke-width: 1.5; }
+      .card { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.8; }
+      .blue-card { fill: #eff6ff; stroke: #38bdf8; stroke-width: 2.2; }
+      .green-card { fill: #f0fdf4; stroke: #22c55e; stroke-width: 2.2; }
+      .purple-card { fill: #faf5ff; stroke: #8b5cf6; stroke-width: 2.2; stroke-dasharray: 8 6; }
+      .purple-knowledge { fill: #f5f3ff; stroke: #8b5cf6; stroke-width: 2; }
+      .ship-card { fill: #ecfdf5; stroke: #16a34a; stroke-width: 2.2; }
+      .title { fill: #0f172a; font-size: 32px; font-weight: 700; }
+      .subtitle { fill: #475569; font-size: 15px; }
+      .section-blue { fill: #2563eb; font-size: 18px; font-weight: 700; }
+      .section-green { fill: #16a34a; font-size: 18px; font-weight: 700; }
+      .section-purple { fill: #7c3aed; font-size: 18px; font-weight: 700; }
+      .card-title { fill: #0f172a; font-size: 24px; font-weight: 700; }
+      .card-sub { fill: #475569; font-size: 14px; }
+      .note { fill: #64748b; font-size: 14px; font-style: italic; }
+      .warn { fill: #b45309; font-size: 15px; font-weight: 700; }
       .line-blue, .line-green, .line-amber, .line-purple, .line-gray {
         fill: none;
         stroke-linecap: round;
         stroke-linejoin: round;
       }
-      .line-blue { stroke: #2563eb; stroke-width: 2.2; }
-      .line-green { stroke: #16a34a; stroke-width: 2.2; }
-      .line-amber { stroke: #d97706; stroke-width: 2; }
-      .line-purple { stroke: #7c3aed; stroke-width: 2; stroke-dasharray: 6 5; }
-      .line-gray { stroke: #94a3b8; stroke-width: 1.8; stroke-dasharray: 5 5; }
+      .line-blue { stroke: #2563eb; stroke-width: 3; }
+      .line-green { stroke: #16a34a; stroke-width: 3; }
+      .line-amber { stroke: #d97706; stroke-width: 2.6; }
+      .line-purple { stroke: #7c3aed; stroke-width: 2.8; stroke-dasharray: 8 6; }
+      .line-gray { stroke: #94a3b8; stroke-width: 2.6; stroke-dasharray: 7 6; }
     </style>
-    <marker id="arrowBlue" viewBox="0 0 10 10" markerWidth="9" markerHeight="9" refX="8" refY="5" orient="auto">
-      <path d="M0,1 L8,5 L0,9 Z" fill="#2563eb"/>
+    <marker id="arrowBlue" viewBox="0 0 12 12" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto">
+      <path d="M0,1 L11,6 L0,11 Z" fill="#2563eb"/>
     </marker>
-    <marker id="arrowGreen" viewBox="0 0 10 10" markerWidth="9" markerHeight="9" refX="8" refY="5" orient="auto">
-      <path d="M0,1 L8,5 L0,9 Z" fill="#16a34a"/>
+    <marker id="arrowGreen" viewBox="0 0 12 12" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto">
+      <path d="M0,1 L11,6 L0,11 Z" fill="#16a34a"/>
     </marker>
-    <marker id="arrowAmber" viewBox="0 0 10 10" markerWidth="9" markerHeight="9" refX="8" refY="5" orient="auto">
-      <path d="M0,1 L8,5 L0,9 Z" fill="#d97706"/>
+    <marker id="arrowAmber" viewBox="0 0 12 12" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto">
+      <path d="M0,1 L11,6 L0,11 Z" fill="#d97706"/>
     </marker>
-    <marker id="arrowPurple" viewBox="0 0 10 10" markerWidth="9" markerHeight="9" refX="8" refY="5" orient="auto">
-      <path d="M0,1 L8,5 L0,9 Z" fill="#7c3aed"/>
+    <marker id="arrowPurple" viewBox="0 0 12 12" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto">
+      <path d="M0,1 L11,6 L0,11 Z" fill="#7c3aed"/>
     </marker>
-    <marker id="arrowGray" viewBox="0 0 10 10" markerWidth="9" markerHeight="9" refX="8" refY="5" orient="auto">
-      <path d="M0,1 L8,5 L0,9 Z" fill="#94a3b8"/>
+    <marker id="arrowGray" viewBox="0 0 12 12" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto">
+      <path d="M0,1 L11,6 L0,11 Z" fill="#94a3b8"/>
     </marker>
   </defs>
 
-  <rect width="1440" height="420" fill="#f8fbff"/>
+  <rect width="1600" height="640" fill="#f8fbff"/>
 
-  <rect x="18" y="14" width="1404" height="48" rx="16" fill="url(#hero)" stroke="#dbe7f5" stroke-width="1.2" filter="url(#shadow)"/>
-  <text class="ui title" x="720" y="42" text-anchor="middle">junai — end-to-end extension workflow</text>
-  <text class="ui subtitle" x="720" y="54" text-anchor="middle">Install → initialize → choose mode → orchestrate → plan → validate → implement → test → review → ship → promote durable knowledge</text>
+  <rect x="24" y="18" width="1552" height="68" rx="20" fill="url(#hero)" stroke="#dbe7f5" stroke-width="1.4" filter="url(#shadow)"/>
+  <text class="ui title" x="800" y="51" text-anchor="middle">junai — end-to-end extension workflow</text>
+  <text class="ui subtitle" x="800" y="73" text-anchor="middle">Project-local pipeline for planning, implementation, verification, and governed learning</text>
 
-  <rect class="panel" x="24" y="78" width="1392" height="72" rx="16"/>
-  <text class="ui section-blue" x="42" y="96">1. Setup in the project</text>
+  <rect class="panel" x="50" y="106" width="1500" height="118" rx="20"/>
+  <text class="ui section-blue" x="74" y="136">1. Setup in the project</text>
 
-  <rect class="panel" x="24" y="166" width="1392" height="160" rx="16"/>
-  <text class="ui section-green" x="42" y="184">2. Run the delivery pipeline</text>
+  <rect class="panel" x="50" y="244" width="1500" height="252" rx="20"/>
+  <text class="ui section-green" x="74" y="274">2. Run the delivery pipeline</text>
 
-  <rect class="panel" x="24" y="342" width="1392" height="62" rx="16"/>
-  <text class="ui section-purple" x="42" y="360">3. Capture and promote reusable knowledge</text>
+  <rect class="panel" x="50" y="516" width="1500" height="96" rx="20"/>
+  <text class="ui section-purple" x="74" y="544">3. Capture and promote reusable knowledge</text>
 
-  <!-- setup row -->
-  <rect class="card" x="54" y="102" width="150" height="32" rx="10"/>
-  <text class="ui card-title" x="129" y="121" text-anchor="middle">Install</text>
-  <text class="ui card-sub" x="129" y="131" text-anchor="middle">Marketplace extension</text>
+  <rect class="card" x="120" y="148" width="170" height="58" rx="16"/>
+  <text class="ui card-title" x="205" y="183" text-anchor="middle">Install</text>
+  <text class="ui card-sub" x="205" y="198" text-anchor="middle">Marketplace extension</text>
 
-  <rect class="card" x="228" y="102" width="180" height="32" rx="10"/>
-  <text class="ui card-title" x="318" y="121" text-anchor="middle">Initialize pipeline</text>
-  <text class="ui card-sub" x="318" y="131" text-anchor="middle">command palette action</text>
+  <rect class="card" x="330" y="148" width="190" height="58" rx="16"/>
+  <text class="ui card-title" x="425" y="183" text-anchor="middle">Initialize</text>
+  <text class="ui card-sub" x="425" y="198" text-anchor="middle">Agent Pipeline</text>
 
-  <rect class="blue-card" x="432" y="95" width="270" height="46" rx="12"/>
-  <text class="ui card-title" x="567" y="115" text-anchor="middle">Project-local runtime</text>
-  <text class="ui card-sub" x="567" y="126" text-anchor="middle">agents + skills + prompts + instructions</text>
-  <text class="ui card-sub" x="567" y="136" text-anchor="middle">`.github/`, `pipeline-state.json`, `.vscode/mcp.json`</text>
+  <rect class="blue-card" x="560" y="140" width="240" height="74" rx="18"/>
+  <text class="ui card-title" x="680" y="176" text-anchor="middle">Project-local runtime</text>
+  <text class="ui card-sub" x="680" y="196" text-anchor="middle">`.github/` + MCP + state</text>
 
-  <rect class="card" x="726" y="102" width="172" height="32" rx="10"/>
-  <text class="ui card-title" x="812" y="121" text-anchor="middle">Set mode + recipe</text>
-  <text class="ui card-sub" x="812" y="131" text-anchor="middle">supervised / assisted / autopilot</text>
+  <rect class="card" x="840" y="148" width="190" height="58" rx="16"/>
+  <text class="ui card-title" x="935" y="183" text-anchor="middle">Set mode</text>
+  <text class="ui card-sub" x="935" y="198" text-anchor="middle">supervised / assisted / autopilot</text>
 
-  <rect class="blue-card" x="922" y="102" width="190" height="32" rx="10"/>
-  <text class="ui card-title" x="1017" y="121" text-anchor="middle">@Orchestrator</text>
-  <text class="ui card-sub" x="1017" y="131" text-anchor="middle">routes the feature request</text>
+  <rect class="blue-card" x="1070" y="148" width="250" height="58" rx="16"/>
+  <text class="ui card-title" x="1195" y="183" text-anchor="middle">@Orchestrator</text>
+  <text class="ui card-sub" x="1195" y="198" text-anchor="middle">routes the feature request</text>
 
-  <rect x="1134" y="100" width="122" height="12" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
-  <text class="ui card-sub" x="1195" y="109" text-anchor="middle" fill="#2563eb">supervised</text>
-  <rect x="1134" y="116" width="122" height="12" rx="6" fill="#fffbeb" stroke="#fcd34d"/>
-  <text class="ui card-sub" x="1195" y="125" text-anchor="middle" fill="#b45309">assisted</text>
-  <rect x="1134" y="132" width="122" height="12" rx="6" fill="#ecfdf5" stroke="#86efac"/>
-  <text class="ui card-sub" x="1195" y="141" text-anchor="middle" fill="#16a34a">autopilot</text>
+  <path class="line-blue" d="M290 177 H318" marker-end="url(#arrowBlue)"/>
+  <path class="line-blue" d="M520 177 H548" marker-end="url(#arrowBlue)"/>
+  <path class="line-blue" d="M800 177 H828" marker-end="url(#arrowBlue)"/>
+  <path class="line-blue" d="M1030 177 H1058" marker-end="url(#arrowBlue)"/>
 
-  <path class="line-blue" d="M204 118 H220" marker-end="url(#arrowBlue)"/>
-  <path class="line-blue" d="M408 118 H424" marker-end="url(#arrowBlue)"/>
-  <path class="line-blue" d="M702 118 H718" marker-end="url(#arrowBlue)"/>
-  <path class="line-blue" d="M898 118 H914" marker-end="url(#arrowBlue)"/>
+  <rect class="blue-card" x="130" y="334" width="210" height="72" rx="18"/>
+  <text class="ui card-title" x="235" y="374" text-anchor="middle">Intent + plan</text>
 
-  <!-- pipeline top row -->
-  <rect class="card" x="54" y="202" width="110" height="30" rx="10"/>
-  <text class="ui card-title" x="109" y="220" text-anchor="middle">Intent</text>
+  <rect class="green-card" x="370" y="334" width="180" height="72" rx="18"/>
+  <text class="ui card-title" x="460" y="374" text-anchor="middle">Plan approved?</text>
 
-  <rect class="card" x="188" y="202" width="120" height="30" rx="10"/>
-  <text class="ui card-title" x="248" y="220" text-anchor="middle">Planner</text>
+  <rect class="purple-card" x="580" y="334" width="180" height="72" rx="18"/>
+  <text class="ui card-title" x="670" y="365" text-anchor="middle">Optional</text>
+  <text class="ui card-title" x="670" y="392" text-anchor="middle">Preflight</text>
 
-  <rect class="green-card" x="332" y="194" width="150" height="46" rx="12"/>
-  <text class="ui card-title" x="407" y="213" text-anchor="middle">Plan approved?</text>
-  <text class="ui card-sub" x="407" y="224" text-anchor="middle" fill="#16a34a">gate ①</text>
+  <rect class="blue-card" x="790" y="334" width="160" height="72" rx="18"/>
+  <text class="ui card-title" x="870" y="374" text-anchor="middle">Implement</text>
 
-  <rect class="purple-card" x="506" y="202" width="146" height="30" rx="10"/>
-  <text class="ui card-title" x="579" y="220" text-anchor="middle">@Preflight</text>
-  <text class="ui card-sub" x="579" y="231" text-anchor="middle" fill="#7c3aed">optional plan-vs-codebase validation</text>
+  <rect class="blue-card" x="980" y="334" width="140" height="72" rx="18"/>
+  <text class="ui card-title" x="1050" y="374" text-anchor="middle">Test</text>
 
-  <rect class="green-card" x="676" y="194" width="150" height="46" rx="12"/>
-  <text class="ui card-title" x="751" y="213" text-anchor="middle">Plan validated?</text>
-  <text class="ui card-sub" x="751" y="224" text-anchor="middle" fill="#16a34a">gate ② optional</text>
+  <rect class="blue-card" x="1150" y="334" width="150" height="72" rx="18"/>
+  <text class="ui card-title" x="1225" y="374" text-anchor="middle">Review</text>
 
-  <path class="line-blue" d="M164 217 H180" marker-end="url(#arrowBlue)"/>
-  <path class="line-blue" d="M308 217 H324" marker-end="url(#arrowBlue)"/>
-  <path class="line-purple" d="M482 217 H498" marker-end="url(#arrowPurple)"/>
-  <path class="line-purple" d="M652 217 H668" marker-end="url(#arrowPurple)"/>
+  <rect class="ship-card" x="1330" y="334" width="120" height="72" rx="18"/>
+  <text class="ui card-title" x="1390" y="374" text-anchor="middle">Ship</text>
 
-  <path class="line-blue" d="M1017 134 V158 H20 V217 H46" marker-end="url(#arrowBlue)"/>
-  <text class="ui note" x="808" y="158">Orchestrator routes the request into the delivery pipeline</text>
+  <path class="line-blue" d="M1195 206 V290 H235 V322" marker-end="url(#arrowBlue)"/>
+  <text class="ui note" x="915" y="284">Orchestrator routes the request into the delivery pipeline</text>
 
-  <path class="line-amber" d="M407 194 V180 H180 V217 H180" marker-end="url(#arrowAmber)"/>
-  <text class="ui warn" x="293" y="176" text-anchor="middle">NO — refine the plan</text>
+  <path class="line-blue" d="M340 370 H358" marker-end="url(#arrowBlue)"/>
+  <path class="line-purple" d="M550 370 H568" marker-end="url(#arrowPurple)"/>
+  <path class="line-purple" d="M760 370 H778" marker-end="url(#arrowPurple)"/>
+  <path class="line-blue" d="M950 370 H968" marker-end="url(#arrowBlue)"/>
+  <path class="line-blue" d="M1120 370 H1138" marker-end="url(#arrowBlue)"/>
+  <path class="line-green" d="M1300 370 H1318" marker-end="url(#arrowGreen)"/>
 
-  <!-- pipeline bottom row -->
-  <rect class="card" x="66" y="268" width="122" height="30" rx="10"/>
-  <text class="ui card-title" x="127" y="286" text-anchor="middle">Implement</text>
-  <text class="ui card-sub" x="127" y="296" text-anchor="middle">tests first</text>
+  <path class="line-amber" d="M460 334 V304 H235 V322" marker-end="url(#arrowAmber)"/>
+  <text class="ui warn" x="347" y="296" text-anchor="middle">NO — refine the plan</text>
 
-  <rect class="card" x="212" y="268" width="118" height="30" rx="10"/>
-  <text class="ui card-title" x="271" y="286" text-anchor="middle">Tester</text>
-  <text class="ui card-sub" x="271" y="296" text-anchor="middle">run + fix loop</text>
+  <path class="line-gray" d="M460 406 V448 H870 V418" marker-end="url(#arrowGray)"/>
+  <text class="ui note" x="664" y="442" text-anchor="middle">skip preflight when not needed</text>
 
-  <rect class="green-card" x="354" y="260" width="140" height="46" rx="12"/>
-  <text class="ui card-title" x="424" y="279" text-anchor="middle">Tests pass?</text>
-  <text class="ui card-sub" x="424" y="290" text-anchor="middle" fill="#16a34a">gate ③</text>
+  <path class="line-amber" d="M1050 406 V468 H870 V418" marker-end="url(#arrowAmber)"/>
+  <text class="ui warn" x="960" y="488" text-anchor="middle">FAIL — fix and rerun</text>
 
-  <rect class="card" x="518" y="268" width="170" height="30" rx="10"/>
-  <text class="ui card-title" x="603" y="286" text-anchor="middle">Code Reviewer</text>
-  <text class="ui card-sub" x="603" y="296" text-anchor="middle">correctness + security + quality</text>
+  <path class="line-amber" d="M1225 406 V492 H870 V418" marker-end="url(#arrowAmber)"/>
+  <text class="ui warn" x="1048" y="512" text-anchor="middle">NO — address review findings and retest</text>
 
-  <rect class="green-card" x="712" y="260" width="150" height="46" rx="12"/>
-  <text class="ui card-title" x="787" y="279" text-anchor="middle">Review approved?</text>
-  <text class="ui card-sub" x="787" y="290" text-anchor="middle" fill="#16a34a">gate ④</text>
+  <rect class="purple-knowledge" x="120" y="558" width="210" height="32" rx="12"/>
+  <text class="ui card-title" x="225" y="580" text-anchor="middle">Capture nuggets</text>
 
-  <rect class="ship-card" x="886" y="268" width="136" height="30" rx="10"/>
-  <text class="ui card-title" x="954" y="286" text-anchor="middle">Ship / merge</text>
-  <text class="ui card-sub" x="954" y="296" text-anchor="middle" fill="#16a34a">release-ready change</text>
+  <rect class="purple-knowledge" x="380" y="558" width="250" height="32" rx="12"/>
+  <text class="ui card-title" x="505" y="580" text-anchor="middle">Review + promote</text>
 
-  <path class="line-gray" d="M407 240 V252 H46 V283 H58" marker-end="url(#arrowGray)"/>
-  <text class="ui note" x="214" y="255">skip preflight when not needed</text>
+  <rect class="purple-knowledge" x="680" y="558" width="210" height="32" rx="12"/>
+  <text class="ui card-title" x="785" y="580" text-anchor="middle">Update pool</text>
 
-  <path class="line-green" d="M751 240 V248 H34 V283 H58" marker-end="url(#arrowGreen)"/>
-  <text class="ui yes" x="764" y="248">YES</text>
+  <rect class="purple-knowledge" x="940" y="558" width="260" height="32" rx="12"/>
+  <text class="ui card-title" x="1070" y="580" text-anchor="middle">Refresh runtimes</text>
 
-  <path class="line-blue" d="M188 283 H204" marker-end="url(#arrowBlue)"/>
-  <path class="line-blue" d="M330 283 H346" marker-end="url(#arrowBlue)"/>
-  <path class="line-green" d="M494 283 H510" marker-end="url(#arrowGreen)"/>
-  <text class="ui yes" x="500" y="274">YES</text>
-  <path class="line-blue" d="M688 283 H704" marker-end="url(#arrowBlue)"/>
-  <path class="line-green" d="M862 283 H878" marker-end="url(#arrowGreen)"/>
-  <text class="ui yes" x="868" y="274">YES</text>
-
-  <path class="line-amber" d="M424 306 V318 H46 V283 H58" marker-end="url(#arrowAmber)"/>
-  <text class="ui warn" x="250" y="317" text-anchor="middle">tests fail → fix and rerun</text>
-
-  <path class="line-amber" d="M787 306 V330 H510 V283 H510" marker-end="url(#arrowAmber)"/>
-  <text class="ui warn" x="648" y="330" text-anchor="middle">NO — address review findings and come back through the gates</text>
-
-  <!-- knowledge row -->
-  <rect class="purple-knowledge" x="42" y="364" width="182" height="32" rx="10"/>
-  <text class="ui card-title" x="133" y="383" text-anchor="middle">Capture nuggets</text>
-  <text class="ui card-sub" x="133" y="393" text-anchor="middle" fill="#7c3aed">release lessons + reusable patterns</text>
-
-  <rect class="purple-knowledge" x="248" y="364" width="244" height="32" rx="10"/>
-  <text class="ui card-title" x="370" y="383" text-anchor="middle">Review: keep / promote / discard</text>
-  <text class="ui card-sub" x="370" y="393" text-anchor="middle" fill="#7c3aed">human-reviewed promotion instead of blind auto-sync</text>
-
-  <rect class="purple-knowledge" x="516" y="364" width="170" height="32" rx="10"/>
-  <text class="ui card-title" x="601" y="383" text-anchor="middle">Update pool</text>
-  <text class="ui card-sub" x="601" y="393" text-anchor="middle" fill="#7c3aed">canonical source improves</text>
-
-  <rect class="purple-knowledge" x="710" y="364" width="228" height="32" rx="10"/>
-  <text class="ui card-title" x="824" y="383" text-anchor="middle">Refresh project runtimes</text>
-  <text class="ui card-sub" x="824" y="393" text-anchor="middle" fill="#7c3aed">projects pull the improved pool forward</text>
-
-  <path class="line-purple" d="M224 380 H240" marker-end="url(#arrowPurple)"/>
-  <path class="line-purple" d="M492 380 H508" marker-end="url(#arrowPurple)"/>
-  <path class="line-purple" d="M686 380 H702" marker-end="url(#arrowPurple)"/>
-
-  <text class="ui note" x="958" y="377">The governed loop keeps local project context local</text>
-  <text class="ui note" x="958" y="389">while still promoting durable patterns back into the pool.</text>
-
-  <text class="ui legend-blue" x="42" y="404">Blue = normal forward flow</text>
-  <text class="ui legend-green" x="224" y="404">Green = gate satisfied</text>
-  <text class="ui legend-amber" x="402" y="404">Amber = rework loop</text>
-  <text class="ui legend-purple" x="558" y="404">Purple = optional validation / governance loop</text>
+  <path class="line-purple" d="M330 574 H368" marker-end="url(#arrowPurple)"/>
+  <path class="line-purple" d="M630 574 H668" marker-end="url(#arrowPurple)"/>
+  <path class="line-purple" d="M890 574 H928" marker-end="url(#arrowPurple)"/>
 </svg>
