@@ -1,0 +1,193 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 780" width="1400" height="780" role="img" aria-labelledby="title desc">
+  <title id="title">junai end-to-end extension workflow</title>
+  <desc id="desc">End-to-end diagram showing how the junai extension works: install from marketplace, initialize the project-local runtime, choose mode and recipe, start with Orchestrator, move through planning, optional preflight, implement, tester, review, ship, and promote reusable knowledge back to the pool.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b1020"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="hero" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <marker id="arrowBlue" viewBox="0 0 8 8" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,1 L7,4 L0,7 Z" fill="#60a5fa"/>
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 8 8" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,1 L7,4 L0,7 Z" fill="#4ade80"/>
+    </marker>
+    <marker id="arrowAmber" viewBox="0 0 8 8" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,1 L7,4 L0,7 Z" fill="#fbbf24"/>
+    </marker>
+    <marker id="arrowPurple" viewBox="0 0 8 8" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,1 L7,4 L0,7 Z" fill="#a78bfa"/>
+    </marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="18" flood-color="#020617" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <rect width="1400" height="780" fill="url(#bg)"/>
+
+  <rect x="30" y="24" width="1340" height="84" rx="20" fill="url(#hero)" stroke="#1f2937" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="700" y="57" text-anchor="middle" fill="#f8fafc" font-family="Inter, system-ui, sans-serif" font-size="28" font-weight="700">junai — end-to-end extension workflow</text>
+  <text x="700" y="82" text-anchor="middle" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="14">Install → initialize → choose mode → orchestrate → plan → validate → implement → test → review → ship → promote durable knowledge</text>
+
+  <!-- Section labels -->
+  <rect x="54" y="136" width="1292" height="126" rx="22" fill="#0f172a" stroke="#1e293b" stroke-width="1.4"/>
+  <text x="82" y="164" fill="#93c5fd" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="700">1. Setup in the project</text>
+
+  <rect x="54" y="286" width="1292" height="286" rx="22" fill="#0f172a" stroke="#1e293b" stroke-width="1.4"/>
+  <text x="82" y="314" fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="700">2. Run the delivery pipeline</text>
+
+  <rect x="54" y="596" width="1292" height="140" rx="22" fill="#0f172a" stroke="#1e293b" stroke-width="1.4"/>
+  <text x="82" y="624" fill="#c4b5fd" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="700">3. Capture and promote reusable knowledge</text>
+
+  <!-- Setup row -->
+  <rect x="86" y="182" width="150" height="52" rx="12" fill="#111827" stroke="#374151" stroke-width="1.5"/>
+  <text x="161" y="206" text-anchor="middle" fill="#f3f4f6" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Install</text>
+  <text x="161" y="222" text-anchor="middle" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="11">Marketplace extension</text>
+
+  <rect x="278" y="182" width="174" height="52" rx="12" fill="#111827" stroke="#374151" stroke-width="1.5"/>
+  <text x="365" y="206" text-anchor="middle" fill="#f3f4f6" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Initialize pipeline</text>
+  <text x="365" y="222" text-anchor="middle" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="11">command palette action</text>
+
+  <rect x="494" y="174" width="238" height="68" rx="14" fill="#07131f" stroke="#38bdf8" stroke-width="1.8"/>
+  <text x="613" y="198" text-anchor="middle" fill="#bae6fd" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="700">Project-local runtime</text>
+  <text x="613" y="216" text-anchor="middle" fill="#7dd3fc" font-family="Inter, system-ui, sans-serif" font-size="11">agents + skills + prompts + instructions</text>
+  <text x="613" y="232" text-anchor="middle" fill="#7dd3fc" font-family="Inter, system-ui, sans-serif" font-size="11">`.github/`, `pipeline-state.json`, `.vscode/mcp.json`</text>
+
+  <rect x="774" y="182" width="164" height="52" rx="12" fill="#111827" stroke="#374151" stroke-width="1.5"/>
+  <text x="856" y="206" text-anchor="middle" fill="#f3f4f6" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Set mode + recipe</text>
+  <text x="856" y="222" text-anchor="middle" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="11">supervised / assisted / autopilot</text>
+
+  <rect x="980" y="182" width="166" height="52" rx="12" fill="#111827" stroke="#374151" stroke-width="1.5"/>
+  <text x="1063" y="206" text-anchor="middle" fill="#93c5fd" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="700">@Orchestrator</text>
+  <text x="1063" y="222" text-anchor="middle" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="11">start from your feature request</text>
+
+  <path d="M236 208 H278" stroke="#60a5fa" stroke-width="2.4" fill="none" marker-end="url(#arrowBlue)"/>
+  <path d="M452 208 H494" stroke="#60a5fa" stroke-width="2.4" fill="none" marker-end="url(#arrowBlue)"/>
+  <path d="M732 208 H774" stroke="#60a5fa" stroke-width="2.4" fill="none" marker-end="url(#arrowBlue)"/>
+  <path d="M938 208 H980" stroke="#60a5fa" stroke-width="2.4" fill="none" marker-end="url(#arrowBlue)"/>
+
+  <!-- Mode pills -->
+  <rect x="1178" y="178" width="138" height="18" rx="9" fill="#0b1220" stroke="#1e293b"/>
+  <text x="1247" y="191" text-anchor="middle" fill="#93c5fd" font-family="Inter, system-ui, sans-serif" font-size="10">supervised</text>
+  <rect x="1178" y="200" width="138" height="18" rx="9" fill="#0f172a" stroke="#1e293b"/>
+  <text x="1247" y="213" text-anchor="middle" fill="#fcd34d" font-family="Inter, system-ui, sans-serif" font-size="10">assisted</text>
+  <rect x="1178" y="222" width="138" height="18" rx="9" fill="#07131f" stroke="#1e293b"/>
+  <text x="1247" y="235" text-anchor="middle" fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="10">autopilot</text>
+
+  <!-- Down arrow from setup to pipeline -->
+  <path d="M1063 234 V270" stroke="#60a5fa" stroke-width="2.4" fill="none" marker-end="url(#arrowBlue)"/>
+
+  <!-- Pipeline row top -->
+  <rect x="88" y="360" width="120" height="50" rx="12" fill="#111827" stroke="#374151" stroke-width="1.5"/>
+  <text x="148" y="390" text-anchor="middle" fill="#f3f4f6" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Intent</text>
+
+  <rect x="250" y="360" width="120" height="50" rx="12" fill="#111827" stroke="#374151" stroke-width="1.5"/>
+  <text x="310" y="390" text-anchor="middle" fill="#f3f4f6" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Planner</text>
+
+  <rect x="404" y="352" width="144" height="66" rx="14" fill="#06230f" stroke="#22c55e" stroke-width="2"/>
+  <text x="476" y="381" text-anchor="middle" fill="#bbf7d0" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="700">Plan approved?</text>
+  <text x="476" y="399" text-anchor="middle" fill="#4ade80" font-family="Inter, system-ui, sans-serif" font-size="10">gate ①</text>
+
+  <rect x="590" y="359" width="168" height="52" rx="12" fill="#150f2a" stroke="#8b5cf6" stroke-width="1.8" stroke-dasharray="6,4"/>
+  <text x="674" y="384" text-anchor="middle" fill="#ddd6fe" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">@Preflight</text>
+  <text x="674" y="400" text-anchor="middle" fill="#c4b5fd" font-family="Inter, system-ui, sans-serif" font-size="10">optional plan-vs-codebase validation</text>
+
+  <rect x="804" y="352" width="156" height="66" rx="14" fill="#06230f" stroke="#22c55e" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="882" y="381" text-anchor="middle" fill="#bbf7d0" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="700">Plan validated?</text>
+  <text x="882" y="399" text-anchor="middle" fill="#4ade80" font-family="Inter, system-ui, sans-serif" font-size="10">gate ② optional</text>
+
+  <path d="M208 385 H250" stroke="#60a5fa" stroke-width="2.4" fill="none" marker-end="url(#arrowBlue)"/>
+  <path d="M370 385 H404" stroke="#60a5fa" stroke-width="2.4" fill="none" marker-end="url(#arrowBlue)"/>
+  <path d="M548 385 H590" stroke="#a78bfa" stroke-width="2" fill="none" stroke-dasharray="6,4" marker-end="url(#arrowPurple)"/>
+  <path d="M758 385 H804" stroke="#a78bfa" stroke-width="2" fill="none" stroke-dasharray="6,4" marker-end="url(#arrowPurple)"/>
+
+  <!-- No loop for plan -->
+  <path d="M476 352 V332 Q476 322 466 322 H310 Q300 322 300 332 V360" stroke="#fbbf24" stroke-width="1.8" fill="none" marker-end="url(#arrowAmber)"/>
+  <text x="384" y="316" text-anchor="middle" fill="#fcd34d" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600">NO — refine the plan</text>
+
+  <!-- Preflight skip and yes path -->
+  <path d="M548 385 H566" stroke="#4ade80" stroke-width="0" fill="none"/>
+  <path d="M476 418 V454 Q476 464 486 464 H1014 Q1024 464 1024 474 V482" stroke="#374151" stroke-width="1.6" fill="none" stroke-dasharray="5,4"/>
+  <text x="736" y="458" text-anchor="middle" fill="#64748b" font-family="Inter, system-ui, sans-serif" font-size="10" font-style="italic">skip preflight when not needed</text>
+
+  <path d="M882 418 V454 Q882 464 892 464 H1014 Q1024 464 1024 474 V482" stroke="#4ade80" stroke-width="2.3" fill="none" marker-end="url(#arrowGreen)"/>
+  <text x="920" y="442" text-anchor="middle" fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700">YES</text>
+
+  <!-- Pipeline row bottom -->
+  <rect x="956" y="482" width="136" height="52" rx="12" fill="#111827" stroke="#374151" stroke-width="1.5"/>
+  <text x="1024" y="505" text-anchor="middle" fill="#f3f4f6" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Implement</text>
+  <text x="1024" y="521" text-anchor="middle" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="10">tests first</text>
+
+  <rect x="1118" y="482" width="120" height="52" rx="12" fill="#111827" stroke="#374151" stroke-width="1.5"/>
+  <text x="1178" y="505" text-anchor="middle" fill="#f3f4f6" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Tester</text>
+  <text x="1178" y="521" text-anchor="middle" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="10">run + fix loop</text>
+
+  <rect x="752" y="474" width="156" height="68" rx="14" fill="#06230f" stroke="#22c55e" stroke-width="2"/>
+  <text x="830" y="503" text-anchor="middle" fill="#bbf7d0" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="700">Tests pass?</text>
+  <text x="830" y="521" text-anchor="middle" fill="#4ade80" font-family="Inter, system-ui, sans-serif" font-size="10">gate ③</text>
+
+  <rect x="540" y="482" width="174" height="52" rx="12" fill="#111827" stroke="#374151" stroke-width="1.5"/>
+  <text x="627" y="505" text-anchor="middle" fill="#f3f4f6" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Code Reviewer</text>
+  <text x="627" y="521" text-anchor="middle" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="10">correctness + security + quality</text>
+
+  <rect x="342" y="474" width="164" height="68" rx="14" fill="#06230f" stroke="#22c55e" stroke-width="2"/>
+  <text x="424" y="503" text-anchor="middle" fill="#bbf7d0" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="700">Review approved?</text>
+  <text x="424" y="521" text-anchor="middle" fill="#4ade80" font-family="Inter, system-ui, sans-serif" font-size="10">gate ④</text>
+
+  <rect x="144" y="482" width="160" height="52" rx="12" fill="#06230f" stroke="#22c55e" stroke-width="2"/>
+  <text x="224" y="505" text-anchor="middle" fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="700">Ship / merge</text>
+  <text x="224" y="521" text-anchor="middle" fill="#4ade80" font-family="Inter, system-ui, sans-serif" font-size="10">release-ready change</text>
+
+  <!-- Bottom row arrows right-to-left to keep gates readable -->
+  <path d="M1238 508 H1280 Q1292 508 1292 492 V450 Q1292 438 1280 438 H1180 Q1170 438 1170 482" stroke="#fbbf24" stroke-width="1.8" fill="none" marker-end="url(#arrowAmber)"/>
+  <text x="1290" y="435" text-anchor="end" fill="#fcd34d" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="600">tests fail → back to implement</text>
+
+  <path d="M1118 508 H908" stroke="#60a5fa" stroke-width="2.3" fill="none" marker-end="url(#arrowBlue)"/>
+  <text x="1013" y="473" text-anchor="middle" fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700">TDD loop</text>
+
+  <path d="M752 508 H714" stroke="#4ade80" stroke-width="2.3" fill="none" marker-end="url(#arrowGreen)"/>
+  <text x="733" y="500" text-anchor="middle" fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700">YES</text>
+  <path d="M540 508 H506" stroke="#60a5fa" stroke-width="2.3" fill="none" marker-end="url(#arrowBlue)"/>
+  <path d="M342 508 H304" stroke="#4ade80" stroke-width="2.3" fill="none" marker-end="url(#arrowGreen)"/>
+  <text x="323" y="500" text-anchor="middle" fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700">YES</text>
+
+  <path d="M424 542 V560 Q424 572 434 572 H976 Q986 572 986 560 V534" stroke="#fbbf24" stroke-width="1.8" fill="none" marker-end="url(#arrowAmber)"/>
+  <text x="700" y="586" text-anchor="middle" fill="#fcd34d" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600">NO — fix review findings, rerun tests, and come back through the gates</text>
+
+  <!-- Knowledge row -->
+  <rect x="98" y="646" width="182" height="56" rx="12" fill="#1a1333" stroke="#8b5cf6" stroke-width="1.8"/>
+  <text x="189" y="671" text-anchor="middle" fill="#ddd6fe" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Capture nuggets</text>
+  <text x="189" y="689" text-anchor="middle" fill="#c4b5fd" font-family="Inter, system-ui, sans-serif" font-size="10">release lessons + reusable patterns</text>
+
+  <rect x="326" y="646" width="224" height="56" rx="12" fill="#1a1333" stroke="#8b5cf6" stroke-width="1.8"/>
+  <text x="438" y="671" text-anchor="middle" fill="#ddd6fe" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Review: keep / promote / discard</text>
+  <text x="438" y="689" text-anchor="middle" fill="#c4b5fd" font-family="Inter, system-ui, sans-serif" font-size="10">human-reviewed promotion instead of blind auto-sync</text>
+
+  <rect x="596" y="646" width="182" height="56" rx="12" fill="#1a1333" stroke="#8b5cf6" stroke-width="1.8"/>
+  <text x="687" y="671" text-anchor="middle" fill="#ddd6fe" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Update pool</text>
+  <text x="687" y="689" text-anchor="middle" fill="#c4b5fd" font-family="Inter, system-ui, sans-serif" font-size="10">canonical source improves</text>
+
+  <rect x="824" y="646" width="218" height="56" rx="12" fill="#1a1333" stroke="#8b5cf6" stroke-width="1.8"/>
+  <text x="933" y="671" text-anchor="middle" fill="#ddd6fe" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="600">Refresh project runtimes</text>
+  <text x="933" y="689" text-anchor="middle" fill="#c4b5fd" font-family="Inter, system-ui, sans-serif" font-size="10">projects pull the improved pool forward</text>
+
+  <path d="M304 508 V620 Q304 632 294 632 H189 Q179 632 179 646" stroke="#a78bfa" stroke-width="2.2" fill="none" marker-end="url(#arrowPurple)"/>
+  <path d="M280 674 H326" stroke="#a78bfa" stroke-width="2.2" fill="none" marker-end="url(#arrowPurple)"/>
+  <path d="M550 674 H596" stroke="#a78bfa" stroke-width="2.2" fill="none" marker-end="url(#arrowPurple)"/>
+  <path d="M778 674 H824" stroke="#a78bfa" stroke-width="2.2" fill="none" marker-end="url(#arrowPurple)"/>
+
+  <path d="M1042 674 H1124 Q1136 674 1136 662 V250 Q1136 238 1124 238 H1063 V182" stroke="#60a5fa" stroke-width="1.8" fill="none" stroke-dasharray="5,4" marker-end="url(#arrowBlue)"/>
+  <text x="1188" y="454" text-anchor="middle" fill="#7dd3fc" font-family="Inter, system-ui, sans-serif" font-size="10" font-style="italic">future projects start from a stronger runtime</text>
+
+  <!-- Footer legend -->
+  <text x="98" y="748" fill="#94a3b8" font-family="Inter, system-ui, sans-serif" font-size="11">Blue = normal forward flow</text>
+  <text x="300" y="748" fill="#86efac" font-family="Inter, system-ui, sans-serif" font-size="11">Green = gate satisfied</text>
+  <text x="486" y="748" fill="#fcd34d" font-family="Inter, system-ui, sans-serif" font-size="11">Amber = rework loop</text>
+  <text x="661" y="748" fill="#c4b5fd" font-family="Inter, system-ui, sans-serif" font-size="11">Purple = optional validation / governance loop</text>
+  <text x="1058" y="748" text-anchor="end" fill="#64748b" font-family="Inter, system-ui, sans-serif" font-size="11">Designed for Marketplace Overview rendering</text>
+</svg>
