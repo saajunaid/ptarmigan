@@ -430,6 +430,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('ptarmigan.init',            () => cmdInit(context)),
         vscode.commands.registerCommand('ptarmigan.selectProfile',   (opts?: { targetFolder?: string; silent?: boolean }) => cmdSelectProfile(context, opts)),
         vscode.commands.registerCommand('ptarmigan.status',          () => cmdStatus()),
+        vscode.commands.registerCommand('ptarmigan.nuggetsReview',   () => cmdNuggetsReview()),
         vscode.commands.registerCommand('ptarmigan.setMode',         () => cmdSetMode()),
         vscode.commands.registerCommand('ptarmigan.remove',          () => cmdRemove()),
         vscode.commands.registerCommand('ptarmigan.cleanupDuplicateRuntimes', () => cmdCleanupDuplicateRuntimes(context)),
@@ -937,6 +938,54 @@ async function cmdStatus() {
         }
     }
     channel.appendLine('─────────────────────────────────────────────');
+}
+
+function psSingleQuote(value: string): string {
+    return `'${value.replace(/'/g, "''")}'`;
+}
+
+// ─────────────────────────────────────────────────────────────
+// ptarmigan.nuggetsReview — launch interactive nuggets review in terminal
+// ─────────────────────────────────────────────────────────────
+async function cmdNuggetsReview() {
+    const targetFolder = await pickTargetFolder();
+    if (!targetFolder) { return; }
+
+    const ciPath = path.join(targetFolder, '.gitea', 'workflows', 'ci.yml');
+    if (!fs.existsSync(ciPath)) {
+        const proceed = await vscode.window.showWarningMessage(
+            'ptarmigan: .gitea/workflows/ci.yml was not found in this folder. You can still run nuggets review manually.',
+            'Run Anyway',
+            'Cancel',
+        );
+        if (proceed !== 'Run Anyway') { return; }
+    }
+
+    const projectArg = psSingleQuote(targetFolder);
+    const terminal = vscode.window.createTerminal({
+        name: 'ptarmigan nuggets review',
+        cwd: targetFolder,
+    });
+
+    const command = [
+        `$project = ${projectArg}`,
+        `if (Get-Command ptarmigan -ErrorAction SilentlyContinue) {`,
+        `  ptarmigan pool nuggets review --project $project`,
+        `} elseif (Get-Command junai -ErrorAction SilentlyContinue) {`,
+        `  junai pool nuggets review --project $project`,
+        `} elseif (Test-Path '.venv\\Scripts\\python.exe' -PathType Leaf -ErrorAction SilentlyContinue) {`,
+        `  .\\.venv\\Scripts\\python.exe .github\\tools\\pipeline-runner\\junai.py pool nuggets review --project $project`,
+        `} elseif (Get-Command python -ErrorAction SilentlyContinue) {`,
+        `  python .github\\tools\\pipeline-runner\\junai.py pool nuggets review --project $project`,
+        `} else {`,
+        `  Write-Error 'ptarmigan/junai command and python interpreter were not found. Install Python or run from a repo where wrappers are available.'`,
+        `}`,
+    ].join('; ');
+
+    terminal.show(true);
+    terminal.sendText(command, true);
+
+    vscode.window.showInformationMessage('ptarmigan: Started nugget inbox review in terminal.');
 }
 
 // ─────────────────────────────────────────────────────────────
