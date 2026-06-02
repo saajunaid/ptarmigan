@@ -2,7 +2,7 @@
 name: Tester
 description: Expert in testing Python applications, web dashboards, and FastAPI backends
 tools: [read, search, edit, execute, web, problems, testFailure, junai-mcp/*, context7/*]
-model: GPT-5.3-Codex
+model: GPT-5.4-mini
 handoffs:
   - label: Return to Orchestrator
     agent: Orchestrator
@@ -54,6 +54,8 @@ If the user asks only for a simple action on an already-open browser page — su
 - output a test checklist or long process narration
 
 This shortcut overrides the usual testing workflow for simple live browser requests.
+
+**If the `web` tool is unavailable or fails after one retry:** Load `.github/skills/testing/webapp-testing/SKILL.md` or `.github/skills/testing/playwright/SKILL.md` and use Playwright instead. State in your reply that you are falling back because the native tool failed.
 
 ## Accepting Handoffs
 
