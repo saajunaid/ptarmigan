@@ -2,7 +2,7 @@
     "name": "ptarmigan",
     "displayName": "ptarmigan - AI Agent Delivery System",
     "description": "Turn Copilot into a disciplined delivery system. TDD-enforced stages, quality gates, and specialist agents — from intent to ship.",
-    "version": "0.1.39",
+    "version": "0.1.40",
     "publisher": "junai-labs",
     "engines": {
         "vscode": "^1.101.0"
